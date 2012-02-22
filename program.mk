@@ -6,8 +6,8 @@
 CC=gcc
 CXX=g++
 
-VERBOSE=@true
-EXEC=
+VERBOSE=@echo 
+EXEC=@
 
 define c_template
 # 1 - component name
