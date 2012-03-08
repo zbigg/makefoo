@@ -1,0 +1,38 @@
+srcdir = @srcdir@
+top_srcdir = @top_srcdir@
+top_builddir = .
+
+# components
+LIBFOO_DIR = $(top_srcdir)/libfoo
+LIBBAR_DIR = $(top_srcdir)/libfoo
+BAZ_DIR    = $(top_srcdir)/baz
+
+# libbaz definiions (should be in libfoo/component_defs.mk)
+LIBFOO_SOURCES = foo.cpp
+LIBFOO_NAME    = foo
+SHARED_LIBRARIES += LIBFOO
+
+# libbar definiions (should be in libbar/component_defs.mk)
+LIBBAR_SOURCES = foo.cpp
+LIBBAR_NAME    = bar2
+STATIC_LIBRARIES += LIBBAR
+
+# baz program definiions (should be in baz/component_defs.mk)
+BAZ_NAME=x
+BAZ_SOURCES = baz.cpp
+BAZ_DEPS    = LIBBAR LIBFOO
+
+PROGRAMS += BAZ
+# locate makefoo components
+# in production it should look like this
+#MAKEFOO=$(top_srcdir)/makefoo
+# but in tests we're testing current source tree
+MAKEFOO=$(top_srcdir)/../../
+
+include $(MAKEFOO)/defs.mk
+include $(MAKEFOO)/native.mk
+include $(MAKEFOO)/autoconf.mk 
+include $(MAKEFOO)/main.mk
+
+# jedit: :tabSize=8:mode=makefile:
+
