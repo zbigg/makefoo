@@ -3,6 +3,23 @@
 #
 # (most probably bash-only compatible)
 #
+#
+# example of use
+#
+# -- header
+# . ./testlib.sh
+#
+# -- prepare env
+# mkdir foo
+# 
+# -- invoke the tested command
+# invoke_test make
+#
+# -- and now all assertions
+# assert_grep "compiling foo.exe" stdout
+# assert_exists foo.exe
+# assert_grep   some_symbol foo.map
+#
 
 
 PNAME=`basename $0`
