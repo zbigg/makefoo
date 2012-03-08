@@ -3,7 +3,7 @@
 #
 #    common rules applicable for all components
 #   
-all: $(COMPONENTS)
+build: $(COMPONENTS)
 
 clean:
 	rm -rf $(all_objects) $(all_outputs)

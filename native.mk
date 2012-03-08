@@ -1,9 +1,35 @@
 
 # product/system defs
+
+# GNU defaults
+ifndef CC
 CC=gcc
+endif
+
+ifndef CFLAGS
+CFLAGS = -g -O2
+endif
+
+ifndef CXX
 CXX=g++
+endif
+
+
+ifndef CXX
 AR=ar
+endif
+
+ifndef CXXFLAGS
+CXXFLAGS = -g -O2
+endif
+
+ifndef LDFLAGS
+LDFLAGS = -g 
+endif
+
+ifndef RANLIB
 RANLIB=ranlib
+endif
 
 #
 # C compilation
@@ -61,7 +87,7 @@ SHARED_LIBRARY_CXXFLAGS  = -D$(1)_STATIC
 
 SHARED_LIBRARY_SUFFIX   := so
 SHARED_LIBRARY_LDFLAGS  := -shared
-SHARED_LIBRARY_CXXFLAGS  = -fPIC -D$(1)_EXPORTS
+SHARED_LIBRARY_CXXFLAGS  = -fPIC
 
 # TBD: dll support 
 # TBD: in dll builddefine -D$(1)_EXPORTS
@@ -70,7 +96,7 @@ SHARED_LIBRARY_CXXFLAGS  = -fPIC -D$(1)_EXPORTS
 define shared_library
 # 1 - component name
 
-$(1)_output  := $$($(1)_builddir)/$$($(1)_NAME).$$(SHARED_LIBRARY_SUFFIX)
+$(1)_output  := $$($(1)_builddir)/lib$$($(1)_NAME).$$(SHARED_LIBRARY_SUFFIX)
 $(1)_ldflags := $$($(1)_LDFLAGS) $$(LDFLAGS) $$(SHARED_LIBRARY_LDFLAGS) $$($(1)_LIBS) $$(LIBS)
 
 # link with CXX if there are any C++ sources in
@@ -111,7 +137,7 @@ $(foreach library,$(SHARED_LIBRARIES_sorted), $(eval $(call shared_library,$(lib
 define static_library
 # 1 - component name
 
-$(1)_output  := $$($(1)_builddir)/$$($(1)_NAME).$$(STATIC_LIBRARY_SUFFIX)
+$(1)_output  := $$($(1)_builddir)/lib$$($(1)_NAME).$$(STATIC_LIBRARY_SUFFIX)
 
 $(1)_archiver=$(AR)
 

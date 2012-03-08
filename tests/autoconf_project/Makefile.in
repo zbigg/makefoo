@@ -3,9 +3,9 @@ top_srcdir = @top_srcdir@
 top_builddir = .
 
 # components
-LIBFOO_DIR = $(top_srcdir)/libfoo
-LIBBAR_DIR = $(top_srcdir)/libfoo
-BAZ_DIR    = $(top_srcdir)/baz
+LIBFOO_DIR = libfoo
+LIBBAR_DIR = libfoo
+BAZ_DIR    = baz
 
 # libbaz definiions (should be in libfoo/component_defs.mk)
 LIBFOO_SOURCES = foo.cpp

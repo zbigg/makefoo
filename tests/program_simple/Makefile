@@ -2,14 +2,12 @@ srcdir = .
 top_srcdir = .
 top_builddir = .
 
-A_SOURCES=a.cpp b.c
-A_NAME=x
+AAA_SOURCES=a.cpp b.c
+AAA_NAME=program_simple
 
-PROGRAMS=A
+PROGRAMS=AAA
 
-all: x
-
-MAKEFOO=$(top_srcdir)/../../
+MAKEFOO=$(top_srcdir)/../..
 
 include $(MAKEFOO)/defs.mk
 include $(MAKEFOO)/native.mk
