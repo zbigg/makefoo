@@ -1,10 +1,39 @@
+ifeq ($(QUIET),1)
+VERBOSE=0
+endif
 
-
-VERBOSE=@echo 
+ifeq ($(VERBOSE),1)
+COMMENT=@true 
+EXEC=
+else
+COMMENT=@echo 
 EXEC=@
+endif
 
-#VERBOSE=@true 
-#EXEC=
+#
+# the not-autoconf build dir and build options
+#
+
+ifndef BUILD_TYPE
+BUILD_TYPE=debug
+endif
+
+ifndef ARCH
+ARCH=$(shell uname -m)
+endif
+
+build_name := $(BUILD_TYPE)-$(ARCH)
+ifeq ($(COVERAGE),1)
+build_name := $(build_name)-coverage
+endif
+
+ifeq ($(PROFILE),1)
+build_name := $(build_name)-profile
+endif
+
+ifndef top_builddir
+top_builddir = $(top_srcdir)/$(build_name)
+endif
 
 all: build
 

@@ -1,13 +1,35 @@
 
 # product/system defs
 
+ifeq ($(BUILD_TYPE),debug)
+build_type_CXXFLAGS = -g -O0
+build_type_CFLAGS   = -g -O0
+build_type_LDFLAGS  = -g
+else
+build_type_CXXFLAGS = -g -O2
+build_type_CFLAGS   = -g -O2
+build_type_LDFLAGS  = -g
+endif
+
+ifeq ($(COVERAGE),1)
+build_type_CXXFLAGS += -fprofile-arcs -ftest-coverage
+build_type_CFLAGS   += -fprofile-arcs -ftest-coverage
+build_type_LDFLAGS  += -fprofile-arcs -ftest-coverage
+endif
+
+ifeq ($(PROFILE),1)
+build_type_CXXFLAGS += -pg
+build_type_CFLAGS   += -pg
+build_type_LDFLAGS  += -pg
+endif
+
 # GNU defaults
 ifndef CC
 CC=gcc
 endif
 
 ifndef CFLAGS
-CFLAGS = -g -O2
+CFLAGS = $(build_type_CFLAGS)
 endif
 
 ifndef CXX
@@ -20,11 +42,11 @@ AR=ar
 endif
 
 ifndef CXXFLAGS
-CXXFLAGS = -g -O2
+CXXFLAGS = $(build_type_CXXFLAGS)
 endif
 
 ifndef LDFLAGS
-LDFLAGS = -g 
+LDFLAGS = $(build_type_LDFLAGS)
 endif
 
 ifndef RANLIB
@@ -48,7 +70,7 @@ $(1)_d_files  += $$(patsubst %.o, %.d, $$($(1)_c_objects))
 
 $$($(1)_c_objects): $$($(1)_objdir)/%.o: $(top_srcdir)/$$($(1)_DIR)/%.c
 	@mkdir -p $$($(1)_objdir)
-	$(VERBOSE) [$1] compiling $$<
+	$(COMMENT) [$1] compiling $$<
 	$(EXEC) $$(CC) $$($(1)_cflags) -c -o $$@ $$< 
 endef
 
@@ -71,7 +93,7 @@ $(1)_d_files    += $$(patsubst %.o, %.d, $$($(1)_cpp_objects))
 
 $$($(1)_cpp_objects): $$($(1)_objdir)/%.o: $(top_srcdir)/$$($(1)_DIR)/%.cpp
 	@mkdir -p $$($(1)_objdir)
-	$(VERBOSE) [$1] compiling $$<
+	$(COMMENT) [$1] compiling $$<
 	$(EXEC) $$(CXX) $$($(1)_cxxflags) -c -o $$@ $$<
 endef
 
@@ -86,7 +108,6 @@ STATIC_LIBRARY_SUFFIX   := a
 SHARED_LIBRARY_CXXFLAGS  = -D$(1)_STATIC
 
 SHARED_LIBRARY_SUFFIX   := so
-SHARED_LIBRARY_LDFLAGS  := -shared
 SHARED_LIBRARY_CXXFLAGS  = -fPIC
 
 # TBD: dll support 
@@ -97,7 +118,7 @@ define shared_library
 # 1 - component name
 
 $(1)_output  := $$($(1)_builddir)/lib$$($(1)_NAME).$$(SHARED_LIBRARY_SUFFIX)
-$(1)_ldflags := $$($(1)_LDFLAGS) $$(LDFLAGS) $$(SHARED_LIBRARY_LDFLAGS) $$($(1)_LIBS) $$(LIBS)
+$(1)_ldflags := $$($(1)_LDFLAGS) $$(LDFLAGS) $$($(1)_LIBS) $$(LIBS)
 
 # link with CXX if there are any C++ sources in
 
@@ -109,8 +130,8 @@ endif
 
 $$($(1)_output): $$($(1)_objects)
 	@mkdir -p $$($(1)_builddir)
-	$(VERBOSE) [$1] linking shared library $$@ using $$($(1)_linker) 
-	$(EXEC) $$($(1)_linker)  -o $$@ $$^ $$($(1)_ldflags)
+	$(COMMENT) [$1] linking shared library $$@ using $$($(1)_linker) 
+	$(EXEC) $$($(1)_linker) -shared  -o $$@ $$^ $$($(1)_ldflags)
 
 all_objects   += $$($(1)_objects)
 all_outputs   += $$($(1)_output)
@@ -143,7 +164,7 @@ $(1)_archiver=$(AR)
 
 $$($(1)_output): $$($(1)_objects)
 	@mkdir -p $$($(1)_builddir)
-	$(VERBOSE) [$1] creating static library $$@ using $$($(1)_archiver) 
+	$(COMMENT) [$1] creating static library $$@ using $$($(1)_archiver) 
 	$(EXEC) $$($(1)_archiver) rcu $$@ $$^ $$($(1)_ldflags)
 	$(EXEC) $$(RANLIB) $$@
 
@@ -186,7 +207,7 @@ endif
 
 $$($(1)_output): $$($(1)_objects)
 	@mkdir -p $$($(1)_builddir)
-	$(VERBOSE) [$1] linking program $$@ using $$($(1)_linker) 
+	$(COMMENT) [$1] linking program $$@ using $$($(1)_linker) 
 	$(EXEC) $$($(1)_linker) -o $$@ $$^ $$($(1)_ldflags)
 
 all_objects   += $$($(1)_objects)
