@@ -1,7 +1,7 @@
 #                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
 
-AC_PREREQ([2.67])
+AC_PREREQ([2.59])
 AC_INIT([makefoo-autoconf-test],[0.0.1],[z.zagorski@gmail.com])
 AC_CONFIG_AUX_DIR([../_autoconf_helpers/])
 AC_CONFIG_SRCDIR([Makefile.in])

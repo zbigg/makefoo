@@ -6,6 +6,8 @@ rm -rf simple_autoconf_build
 mkdir simple_autoconf_build
 cd simple_autoconf_build
 
+[ -f ../autoconf_project/configure ] || ( cd ../autoconf_project ; autoconf ; )
+
 invoke_test ../autoconf_project/configure
 {
     assert_exists Makefile
