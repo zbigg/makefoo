@@ -11,6 +11,7 @@
 #
 #
 
+OMSBUILD_USE_AUTOCONF:=1
 $(top_srcdir)/configure: $(top_srcdir)/configure.ac
 	(cd $(srcdir); autoconf ; )
 

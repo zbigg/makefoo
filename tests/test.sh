@@ -1,5 +1,9 @@
 #!/bin/sh
 overall_result=0
+
+MAKEFOO=`pwd`/..
+export MAKEFOO
+
 for test_script in *_test.sh ; do
     test_name=`echo $test_script | sed -e 'sX_test.shXX'`
     r=0

@@ -25,7 +25,7 @@ endif
 
 # GNU defaults
 ifndef CC
-CC=gcc
+CC=$(TOOLSET_CC)
 endif
 
 ifndef CFLAGS
@@ -33,11 +33,11 @@ CFLAGS = $(build_type_CFLAGS)
 endif
 
 ifndef CXX
-CXX=g++
+CXX=$(TOOLSET_CXX)
 endif
 
 
-ifndef CXX
+ifndef AR
 AR=ar
 endif
 
@@ -69,7 +69,7 @@ $(1)_cflags    = $$($(1)_CFLAGS) $$($(2)_CFLAGS) $$(CFLAGS)
 $(1)_d_files  += $$(patsubst %.o, %.d, $$($(1)_c_objects))
 
 $$($(1)_c_objects): $$($(1)_objdir)/%.o: $(top_srcdir)/$$($(1)_DIR)/%.c
-	@mkdir -p $$($(1)_objdir)
+	mkdir -p $$($(1)_objdir)
 	$(COMMENT) [$1] compiling $$<
 	$(EXEC) $$(CC) $$($(1)_cflags) -c -o $$@ $$< 
 endef
@@ -104,11 +104,17 @@ endef
 # builds .so or .dll from set of sources
 #
 
-STATIC_LIBRARY_SUFFIX   := a
-SHARED_LIBRARY_CXXFLAGS  = -D$(1)_STATIC
+#STATIC_LIBRARY_SUFFIX   := a
 
-SHARED_LIBRARY_SUFFIX   := so
-SHARED_LIBRARY_CXXFLAGS  = -fPIC
+ifeq ($(SHARED_LIBRARY_MODEL),dll)
+STATIC_LIBRARY_CXXFLAGS  = -D$(1)_STATIC
+endif
+
+ifeq ($(SHARED_LIBRARY_MODEL),dll)
+SHARED_LIBRARY_CXXFLAGS  = -D$(1)_EXPORTS -fPIC
+else
+SHARED_LIBRARY_CXXFLAGS = -fPIC
+endif
 
 # TBD: dll support 
 # TBD: in dll builddefine -D$(1)_EXPORTS
@@ -117,7 +123,7 @@ SHARED_LIBRARY_CXXFLAGS  = -fPIC
 define shared_library
 # 1 - component name
 
-$(1)_output  := $$($(1)_builddir)/lib$$($(1)_NAME).$$(SHARED_LIBRARY_SUFFIX)
+$(1)_output  := $$($(1)_builddir)/lib$$($(1)_NAME).$$(SHARED_LIBRARY_EXT)
 $(1)_ldflags := $$($(1)_LDFLAGS) $$(LDFLAGS) $$($(1)_LIBS) $$(LIBS)
 
 # link with CXX if there are any C++ sources in
@@ -158,7 +164,7 @@ $(foreach library,$(SHARED_LIBRARIES_sorted), $(eval $(call shared_library,$(lib
 define static_library
 # 1 - component name
 
-$(1)_output  := $$($(1)_builddir)/lib$$($(1)_NAME).$$(STATIC_LIBRARY_SUFFIX)
+$(1)_output  := $$($(1)_builddir)/lib$$($(1)_NAME).$$(STATIC_LIBRARY_EXT)
 
 $(1)_archiver=$(AR)
 
@@ -188,13 +194,17 @@ $(foreach library,$(STATIC_LIBRARIES_sorted),   $(eval $(call static_library,$(l
 
 COMPONENTS += $(STATIC_LIBRARIES_sorted)
 
+ifneq ($(EXECUTABLE_EXT),)
+PROGRAM_SUFFIX   := .$(EXECUTABLE_EXT)
+endif
+
 #
 # native progam, will create an executable
 # 
 define program_template
 # 1 - component name
 
-$(1)_output = $$($(1)_builddir)/$$($(1)_NAME)
+$(1)_output = $$($(1)_builddir)/$$($(1)_NAME)$(PROGRAM_SUFFIX)
 $(1)_ldflags = $$($(1)_LDFLAGS) $$(LDFLAGS) $$($(1)_LIBS) $$(LIBS)
 
 # link with CXX if there are any C++ sources in

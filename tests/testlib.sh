@@ -66,3 +66,14 @@ invoke_test()
     ( "$@" 2>&1 ) | tee stdout
 }
 
+if [ -z $MAKEFOO ] ; then
+    MAKEFOO=`pwd`/..
+    export MAKEFOO
+fi
+eval `${MAKEFOO}/configure.sh`
+
+if test "x" = "$EXECUTABLE_EXT" ; then
+    EXECUTABLE_SUFFIX=
+else
+    EXECUTABLE_SUFFIX=.$EXECUTABLE_EXT
+fi

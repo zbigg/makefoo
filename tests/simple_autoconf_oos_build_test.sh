@@ -16,8 +16,8 @@ invoke_test ../autoconf_project/configure
 invoke_test make
 {    
     assert_exists baz/x
-    assert_exists libfoo/libfoo.so
-    assert_exists libfoo/libbar2.a
+    assert_exists libfoo/libfoo.$SHARED_LIBRARY_EXT
+    assert_exists libfoo/libbar2.$STATIC_LIBRARY_EXT
 }
 
 cd ..

@@ -1,0 +1,36 @@
+===================
+an idea how to enable custom configurations, esp for 
+target environment
+
+the configure_defs.mk shall be created in top_srcdir.
+and then it must be included in makefile.
+
+there will be a rule somewhere in defs.mk:
+
+    include $(top_srcdir)/configure_defs.mk
+    $(top_srcdir)/configure_defs.mk: 
+        $(OMSBUILD)/configure.sh -o $@
+        
+and the configure script will:
+
+detect configuration environment:
+    compiler type (gcc, clang, cl)
+    target platform (win32-msvc, win32-mingw, win64??, linux-gcc ? ...)
+    
+set required variables
+    STATIC_LIBRARY_EXT: .a | .lib
+    SHARED_LIBRARY_EXT: .so | .dll
+    SHARED_LIBRARY_MODEL: dll | so
+    
+set EXE_EXTENSION=.exe or null
+    
+==================
+
+how to build two types of targets from one component ? e.g
+
+STATIC_LIBRARY += component
+SHARED_LIBRARY += component 
+
+??
+current problem, the X_output, X_objdir and X_objects are overriden
+but later target

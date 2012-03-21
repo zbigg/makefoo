@@ -2,6 +2,10 @@ srcdir = @srcdir@
 top_srcdir = @top_srcdir@
 top_builddir = .
 
+MAKEFOO=@MAKEFOO@
+CC=@CC@
+CXX=@CXX@
+
 # components
 LIBFOO_DIR = libfoo
 LIBBAR_DIR = libfoo
@@ -27,7 +31,7 @@ PROGRAMS += BAZ
 # in production it should look like this
 #MAKEFOO=$(top_srcdir)/makefoo
 # but in tests we're testing current source tree
-MAKEFOO=$(top_srcdir)/../../
+#MAKEFOO=$(top_srcdir)/../../
 
 include $(MAKEFOO)/defs.mk
 include $(MAKEFOO)/native.mk

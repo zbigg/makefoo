@@ -1,3 +1,6 @@
+
+include $(top_builddir)/makefoo_configured_defs.mk
+
 ifeq ($(QUIET),1)
 VERBOSE=0
 endif
@@ -19,7 +22,7 @@ BUILD_TYPE=debug
 endif
 
 ifndef ARCH
-ARCH=$(shell uname -m)
+ARCH=$(TARGET_ARCH)
 endif
 
 build_name := $(BUILD_TYPE)-$(ARCH)
