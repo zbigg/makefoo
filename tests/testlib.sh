@@ -72,7 +72,7 @@ if [ -z $MAKEFOO ] ; then
 fi
 eval `${MAKEFOO}/configure.sh`
 
-if test "x" = "$EXECUTABLE_EXT" ; then
+if test "x" = "x$EXECUTABLE_EXT" ; then
     EXECUTABLE_SUFFIX=
 else
     EXECUTABLE_SUFFIX=.$EXECUTABLE_EXT
