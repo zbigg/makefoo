@@ -11,15 +11,16 @@
 #
 #
 
-OMSBUILD_USE_AUTOCONF:=1
+MAKEFOO_USE_AUTOCONF:=1
+
 $(top_srcdir)/configure: $(top_srcdir)/configure.ac
 	(cd $(srcdir); autoconf ; )
 
-$(top_builddir)/config.status : $(top_srcdir)/configure
-	(cd $(top_builddir) ; ./config.status --recheck ; )
+config.status : $(top_srcdir)/configure
+	./config.status --recheck 
 	
-Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
-	(cd $(top_builddir) ; ./config.status ; )
+Makefile: $(srcdir)/Makefile.in config.status
+	./config.status
 
 # jedit: :tabSize=8:mode=makefile:
 

@@ -14,7 +14,7 @@ show:
 $(top_builddir)/makefoo_configured_defs.mk: $(MAKEFOO)/configure.sh
 	MAKEFOO=$(MAKEFOO) $(MAKEFOO)/configure.sh > $@
 
-ifndef OMSBUILD_USE_AUTOCONF
+ifndef MAKEFOO_USE_AUTOCONF
 
 configure:
 	@rm $(top_builddir)/makefoo_configured_defs.mk

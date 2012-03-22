@@ -1,0 +1,43 @@
+#
+# makefoo Makefile
+# 
+# supported targets:
+#   install     -- install to previously configured prefix
+#   check       -- run the testsuite
+#
+
+srcdir=@srcdir@
+top_srcdir=@top_srcdir@
+
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir = @libdir@
+
+INSTALL = @INSTALL@
+INSTALL_DATA = @INSTALL_DATA@
+INSTALL_DIR = mkdir -p
+
+
+all:
+
+check:
+	( cd tests ; ./test.sh)
+
+makefoo = $(libdir)/makefoo
+
+install:
+	$(INSTALL_DIR) $(DESTDIR)$(makefoo)
+	$(INSTALL_DIR) $(DESTDIR)$(makefoo)/autoconf_helpers
+
+	$(INSTALL_DATA) $(srcdir)/autoconf.mk $(DESTDIR)$(makefoo)	
+	$(INSTALL_DATA) $(srcdir)/configure.sh $(DESTDIR)$(makefoo)
+	$(INSTALL_DATA) $(srcdir)/autoconf_helpers/config.guess $(DESTDIR)$(makefoo)/autoconf_helpers
+
+	$(INSTALL_DATA) $(srcdir)/defs.mk $(DESTDIR)$(makefoo)
+	$(INSTALL_DATA) $(srcdir)/main.mk $(DESTDIR)$(makefoo)
+	$(INSTALL_DATA) $(srcdir)/native.mk $(DESTDIR)$(makefoo)
+
+include $(srcdir)/autoconf.mk
+
+# jedit: :tabSize=8:mode=makefile:
+

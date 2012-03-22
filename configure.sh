@@ -15,7 +15,7 @@ export MAKEFOO
 
 set -e
 
-build_arch=${build_arch-`sh ${MAKEFOO}/tests/_autoconf_helpers/config.guess`}
+build_arch=${build_arch-`sh ${MAKEFOO}/autoconf_helpers/config.guess`}
 target_arch=${target_arch-$build_arch}
 
 #
