@@ -60,6 +60,11 @@ assert_exists() {
     fi
 }
 
+invoke_make()
+{
+    invoke_test ${MAKEFOO_MAKE} "$@"
+}
+
 invoke_test()
 {
     last_command="$@"

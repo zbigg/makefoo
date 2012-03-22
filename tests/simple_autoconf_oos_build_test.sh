@@ -13,7 +13,7 @@ invoke_test ../autoconf_project/configure
     assert_exists Makefile
     assert_exists ./config.status
 }   
-invoke_test make
+invoke_make
 {    
     assert_exists baz/x
     assert_exists libfoo/libfoo.$SHARED_LIBRARY_EXT

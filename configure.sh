@@ -21,6 +21,15 @@ target_arch=${target_arch-$build_arch}
 #
 # choose default compiler and flags
 # 
+case "${build_arch}" in
+    *freebsd*)
+	MAKEFOO_MAKE=gmake
+	;;
+    *)
+	MAKEFOO_MAKE=make
+	;;
+esac
+
 case "${target_arch}" in
     *msvc*|*msvs*)
         TOOLSET=${TOOLSET-msvs}
@@ -88,6 +97,7 @@ emit()
 }
 TARGET_ARCH="${target_arch}"
 
+emit MAKEFOO_MAKE
 emit TARGET_ARCH
 emit TOOLSET TOOLSET_CC TOOLSET_CXX TOOLSET_LINKER
 emit EXECUTABLE_EXT
