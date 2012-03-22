@@ -58,6 +58,22 @@ define install_common
 $(1)_install: $$($(1)_install_targets)
 endef
 
+define install_verbatim
+$(1)_install_verbatim:
+
+	for FILE in $$($(1)_FILES) ; do \
+		dir=`dirname $$$$FILE` ; \
+		$(INSTALL_DATA) -D $(srcdir)/$$($(1)_DIR)/$$$$FILE $$(DESTDIR)$$($(1)_INSTALL_DEST)/$$$$dir ; done
+
+	for FILE in $$($(1)_SCRIPTS) ; do \
+		dir=`dirname $$$$FILE` ; \
+		$(INSTALL) -D $(srcdir)/$$($(1)_DIR)/$$$$FILE $$(DESTDIR)$$($(1)_INSTALL_DEST)/$$$$dir ; done
+
+install_targets      += $(1)_install_verbatim
+$(1)_install_targets += $(1)_install_verbatim
+
+endef
+
 $(DESTDIR)$(bindir):
 	mkdir -p $@
 
@@ -74,6 +90,7 @@ $(foreach library,$(SHARED_LIBRARIES_sorted), $(eval $(call install_fhs_lib,$(li
 $(foreach library,$(STATIC_LIBRARIES_sorted), $(eval $(call install_fhs_lib,$(library))))
 $(foreach program,$(PROGRAMS_sorted), $(eval $(call install_fhs_bin,$(program))))
 $(foreach component,$(INSTALLABLE_sorted), $(eval $(call install_common,$(component))))
+$(foreach verbatim,$(INSTALL_VERBATIM), $(eval $(call install_verbatim,$(verbatim))))
 
 install-fhs: $(install_targets)
 

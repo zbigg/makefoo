@@ -25,18 +25,23 @@ check:
 
 makefoo = $(libdir)/makefoo
 
-install:
-	$(INSTALL_DIR) $(DESTDIR)$(makefoo)
-	$(INSTALL_DIR) $(DESTDIR)$(makefoo)/autoconf_helpers
+makefoo_lib_DIR=.
 
-	$(INSTALL_DATA) $(srcdir)/autoconf.mk $(DESTDIR)$(makefoo)	
-	$(INSTALL_DATA) $(srcdir)/configure.sh $(DESTDIR)$(makefoo)
-	$(INSTALL_DATA) $(srcdir)/autoconf_helpers/config.guess $(DESTDIR)$(makefoo)/autoconf_helpers
+makefoo_lib_FILES = \
+        autoconf.mk \
+        defs.mk \
+        main.mk \
+        native.mk
 
-	$(INSTALL_DATA) $(srcdir)/defs.mk $(DESTDIR)$(makefoo)
-	$(INSTALL_DATA) $(srcdir)/main.mk $(DESTDIR)$(makefoo)
-	$(INSTALL_DATA) $(srcdir)/native.mk $(DESTDIR)$(makefoo)
+makefoo_lib_SCRIPTS = \
+        configure.sh \
+        autoconf_helpers/config.guess
+        
+makefoo_lib_INSTALL_DEST=$(libdir)/makefoo
 
+INSTALL_VERBATIM += makefoo_lib
+
+include $(srcdir)/install-fhs.mk
 include $(srcdir)/autoconf.mk
 
 # jedit: :tabSize=8:mode=makefile:
