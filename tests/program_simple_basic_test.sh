@@ -12,7 +12,7 @@ invoke_make
     assert_grep "compiling b.c" stdout
     assert_grep "linking program program_simple" stdout
     
-    assert_exists .obj/a.o .obj/b.o program_simple$EXECUTABLE_SUFFIX
+    assert_exists .obj/a.prog.o .obj/b.prog.o program_simple$EXECUTABLE_SUFFIX
 
 # now remote program and check if it is relinked
 rm program_simple$EXECUTABLE_SUFFIX
@@ -32,7 +32,7 @@ invoke_make
     assert_grepv "compiling a.c" stdout
     assert_grep "linking program program_simple" stdout
     
-    assert_exists .obj/a.o .obj/b.o program_simple$EXECUTABLE_SUFFIX
+    assert_exists .obj/a.prog.o .obj/b.prog.o program_simple$EXECUTABLE_SUFFIX
 
 invoke_make clean
 
