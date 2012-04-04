@@ -8,16 +8,17 @@ CXX=@CXX@
 
 # components
 LIBFOO_DIR = libfoo
-LIBBAR_DIR = libfoo
+LIBBAR_DIR = libbar
 BAZ_DIR    = baz
 
 # libbaz definiions (should be in libfoo/component_defs.mk)
-LIBFOO_SOURCES = foo.cpp
+LIBFOO_SOURCES = foo.cpp spam.c
 LIBFOO_NAME    = foo
 SHARED_LIBRARIES += LIBFOO
+STATIC_LIBRARIES += LIBFOO
 
 # libbar definiions (should be in libbar/component_defs.mk)
-LIBBAR_SOURCES = foo.cpp
+LIBBAR_SOURCES = bar.cpp
 LIBBAR_NAME    = bar2
 STATIC_LIBRARIES += LIBBAR
 
