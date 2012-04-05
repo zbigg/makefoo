@@ -17,7 +17,8 @@ invoke_make
 {    
     assert_exists baz/x
     assert_exists libfoo/libfoo.$SHARED_LIBRARY_EXT
-    assert_exists libfoo/libbar2.$STATIC_LIBRARY_EXT
+    assert_exists libfoo/libfoo.$STATIC_LIBRARY_EXT
+    assert_exists libbar/libbar2.$STATIC_LIBRARY_EXT
 }
 
 cd ..

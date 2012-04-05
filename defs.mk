@@ -1,16 +1,22 @@
 
 include $(top_builddir)/makefoo_configured_defs.mk
 
+#USE_MAKEFOO_LOG=0
+
+ifdef USE_MAKEFOO_LOG
+LOG=$(MAKEFOO)/log.sh $(1)
+endif
+
 ifeq ($(QUIET),1)
 VERBOSE=0
 endif
 
 ifeq ($(VERBOSE),1)
 COMMENT=@true 
-EXEC=
+EXEC=$(LOG)
 else
-COMMENT=@echo 
-EXEC=@
+COMMENT=@$(LOG) echo 
+EXEC=@$(LOG)
 endif
 
 #
@@ -46,15 +52,8 @@ define common_defs
 
 $(1)_builddir := $(top_builddir)/$$($(1)_DIR)
 $(1)_srcdir   := $(top_srcdir)/$$($(1)_DIR)
-
-# object files are keps in builddir/.target_type
-# as one component can be built in 
-# few ways
-ifeq ($(2),SHARED_LIBRARY)
-$(1)_objdir := $$($(1)_builddir)/.shobj
-else
 $(1)_objdir := $$($(1)_builddir)/.obj
-endif
+
 
 endef
 
