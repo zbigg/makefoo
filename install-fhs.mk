@@ -27,13 +27,18 @@ ifndef sysconfdir
 sysconfdir  := ${prefix}/etc
 endif
 
-ifndef datadir
-datadir     := ${prefix}/share
+ifndef datarootdir
+datarootdir     := ${prefix}/share
 endif
 
 ifndef localstatedir
 localstatedir     := ${prefix}/var
 endif
+
+ifndef docdir
+docdir            := $(datarootdir)/doc
+endif
+
 
 define install_fhs_lib
 $(1)_install_lib: $$($(1)_output) $$(DESTDIR)$(libdir)
@@ -61,13 +66,15 @@ endef
 define install_verbatim
 $(1)_install_verbatim:
 
-	for FILE in $$($(1)_FILES) ; do \
-		dir=`dirname $$$$FILE` ; \
-		$(INSTALL_DATA) -D $(srcdir)/$$($(1)_DIR)/$$$$FILE $$(DESTDIR)$$($(1)_INSTALL_DEST)/$$$$dir ; done
+	set -x ; for FILE in $$($(1)_FILES) ; do \
+		dir="$$(DESTDIR)$$($(1)_INSTALL_DEST)/`dirname $$$$FILE`" ; \
+		mkdir -pv $$$$dir ; \
+		$(INSTALL_DATA)  "$(srcdir)/$$($(1)_DIR)/$$$$FILE" "$$$$dir" ; done
 
-	for FILE in $$($(1)_SCRIPTS) ; do \
-		dir=`dirname $$$$FILE` ; \
-		$(INSTALL) -D $(srcdir)/$$($(1)_DIR)/$$$$FILE $$(DESTDIR)$$($(1)_INSTALL_DEST)/$$$$dir ; done
+	set -x ; for FILE in $$($(1)_SCRIPTS) ; do \
+		dir="$$(DESTDIR)$$($(1)_INSTALL_DEST)/`dirname $$$$FILE`" ; \
+		mkdir -pv $$$$dir ; \
+		$(INSTALL)  "$(srcdir)/$$($(1)_DIR)/$$$$FILE" "$$$$dir" ; done
 
 install_targets      += $(1)_install_verbatim
 $(1)_install_targets += $(1)_install_verbatim

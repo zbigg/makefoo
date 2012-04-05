@@ -40,6 +40,14 @@ ifeq ($(PROFILE),1)
 build_name := $(build_name)-profile
 endif
 
+ifndef srcdir
+srcdir=.
+endif
+
+ifndef top_srcdir
+top_srcdir = $(srcdir)
+endif
+
 ifndef top_builddir
 top_builddir = $(top_srcdir)/$(build_name)
 endif

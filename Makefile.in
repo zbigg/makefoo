@@ -23,8 +23,9 @@ all:
 check:
 	( cd tests ; ./test.sh)
 
-makefoo = $(libdir)/makefoo
-
+#
+# makefoo lib > prefix/lib/makefoo
+#
 makefoo_lib_DIR=.
 
 makefoo_lib_FILES = \
@@ -40,6 +41,13 @@ makefoo_lib_SCRIPTS = \
 makefoo_lib_INSTALL_DEST=$(libdir)/makefoo
 
 INSTALL_VERBATIM += makefoo_lib
+
+#
+# makefoo documentation > docdir (prefix/share/doc/makefoo)
+#
+makefoo_doc_FILES = MANUAL.txt
+makefoo_doc_INSTALL_DEST=$(docdir)/makefoo
+INSTALL_VERBATIM += makefoo_doc
 
 include $(srcdir)/install-fhs.mk
 include $(srcdir)/autoconf.mk
