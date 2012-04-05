@@ -41,8 +41,8 @@ endif
 
 
 define install_fhs_lib
-$(1)_install_lib: $$($(1)_output) $$(DESTDIR)$(libdir)
-	$$(INSTALL) $$($(1)_output) $$(DESTDIR)$(libdir)
+$(1)_install_lib: $$($(1)_outputs) $$(DESTDIR)$(libdir)
+	$$(INSTALL) $$($(1)_outputs) $$(DESTDIR)$(libdir)
 
 install_targets += $(1)_install_lib
 $(1)_install_targets += $(1)_install_lib
@@ -52,16 +52,13 @@ $(DESTDIR)$(libdir):
 	mkdir -p $@
 
 define install_fhs_bin
-$(1)_install_bin: $$($(1)_output) $$(DESTDIR)$(bindir)
-	$$(INSTALL) $$($(1)_output) $$(DESTDIR)$(bindir)
+$(1)_install_bin: $$($(1)_outputs) $$(DESTDIR)$(bindir)
+	$$(INSTALL) $$($(1)_outputs) $$(DESTDIR)$(bindir)
 
 install_targets += $(1)_install_bin
 $(1)_install_targets += $(1)_install_bin
 endef
 
-define install_common
-$(1)_install: $$($(1)_install_targets)
-endef
 
 define install_verbatim
 $(1)_install_verbatim:
@@ -81,6 +78,10 @@ $(1)_install_targets += $(1)_install_verbatim
 
 endef
 
+define install_common
+$(1)_install: $$($(1)_install_targets)
+endef
+
 $(DESTDIR)$(bindir):
 	mkdir -p $@
 
@@ -89,15 +90,16 @@ $(DESTDIR)$(bindir):
 INSTALLABLE=\
 	$(SHARED_LIBRARIES) \
 	$(STATIC_LIBRARIES) \
-	$(PROGRAMS)
+	$(PROGRAMS) \
+	$(INSTALL_VERBATIM)
 
 INSTALLABLE_sorted = $(sort $(INSTALLABLE))
 
 $(foreach library,$(SHARED_LIBRARIES_sorted), $(eval $(call install_fhs_lib,$(library))))
 $(foreach library,$(STATIC_LIBRARIES_sorted), $(eval $(call install_fhs_lib,$(library))))
 $(foreach program,$(PROGRAMS_sorted), $(eval $(call install_fhs_bin,$(program))))
-$(foreach component,$(INSTALLABLE_sorted), $(eval $(call install_common,$(component))))
 $(foreach verbatim,$(INSTALL_VERBATIM), $(eval $(call install_verbatim,$(verbatim))))
+$(foreach component,$(INSTALLABLE_sorted), $(eval $(call install_common,$(component))))
 
 install-fhs: $(install_targets)
 

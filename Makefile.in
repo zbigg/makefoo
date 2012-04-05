@@ -8,6 +8,7 @@
 
 srcdir=@srcdir@
 top_srcdir=@top_srcdir@
+top_builddir=@top_builddir@
 
 prefix=@prefix@
 exec_prefix=@exec_prefix@
@@ -32,7 +33,10 @@ makefoo_lib_FILES = \
         autoconf.mk \
         defs.mk \
         main.mk \
-        native.mk
+        native.mk \
+        rpm.mk \
+        rpm-spec-template.in \
+        install-fhs.mk\
 
 makefoo_lib_SCRIPTS = \
         configure.sh \
@@ -40,17 +44,26 @@ makefoo_lib_SCRIPTS = \
         
 makefoo_lib_INSTALL_DEST=$(libdir)/makefoo
 
+makefoo_lib:
+makefoo_doc:
 INSTALL_VERBATIM += makefoo_lib
 
 #
 # makefoo documentation > docdir (prefix/share/doc/makefoo)
 #
-makefoo_doc_FILES = MANUAL.txt
+makefoo_doc_FILES = MANUAL.txt README.txt
 makefoo_doc_INSTALL_DEST=$(docdir)/makefoo
 INSTALL_VERBATIM += makefoo_doc
 
+makefoo_COMPONENTS = makefoo_lib makefoo_doc
+PACKAGES += makefoo
+
+MAKEFOO=$(srcdir)
+include $(srcdir)/defs.mk
 include $(srcdir)/install-fhs.mk
 include $(srcdir)/autoconf.mk
+include $(srcdir)/rpm.mk
+include $(srcdir)/main.mk
 
 # jedit: :tabSize=8:mode=makefile:
 
