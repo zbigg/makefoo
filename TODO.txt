@@ -1,0 +1,13 @@
+TODO:
+    general install target design
+        (general fuckup)
+    general install target implementation
+        (some proof of concept ready)
+        
+    rpm package for all files based on install
+        (in progress)
+    
+    deb package for all files based on install
+        
+    manual (in asciidoc format?)
+        

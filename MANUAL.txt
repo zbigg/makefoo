@@ -1,0 +1,17 @@
+MAKEFOO
+
+This is the makefoo manual. 
+
+Table of contents:
+ - Installation
+    easy_install URL
+    
+    wget URL & configure & make install
+    
+ - Usage in projects
+ 
+    Write makefile as declarations.
+    Include $(MAKEFOO)/files.mk.
+    
+    
+ - Distribution with project
