@@ -22,12 +22,19 @@ LIBBAR_SOURCES = bar.cpp
 LIBBAR_NAME    = bar2
 STATIC_LIBRARIES += LIBBAR
 
+libbar_tests_SOURCES=bar_test.cpp bar.cpp
+libbar_tests_DIR=libbar
+
+PROGRAMS += libbar_tests
+TEST_PROGRAMS += libbar_tests
+
 # baz program definiions (should be in baz/component_defs.mk)
 BAZ_NAME=x
 BAZ_SOURCES = baz.cpp
 BAZ_DEPS    = LIBBAR LIBFOO
 
 PROGRAMS += BAZ
+
 # locate makefoo components
 # in production it should look like this
 #MAKEFOO=$(top_srcdir)/makefoo
@@ -36,6 +43,7 @@ PROGRAMS += BAZ
 
 include $(MAKEFOO)/defs.mk
 include $(MAKEFOO)/native.mk
+include $(MAKEFOO)/test-program.mk
 include $(MAKEFOO)/autoconf.mk 
 include $(MAKEFOO)/main.mk
 
