@@ -125,7 +125,7 @@ endif
 define shared_library
 # 1 - component name
 
-$(1)_shlib_output = $$($(1)_builddir)/lib$$($(1)_NAME).$$(SHARED_LIBRARY_EXT)
+$(1)_shlib_output = $$($(1)_builddir)/lib$$($(1)_name).$$(SHARED_LIBRARY_EXT)
 $(1)_outputs += $$($(1)_shlib_output)
 
 $(1)_ldflags := $$($(1)_LDFLAGS) $$(LDFLAGS) $$($(1)_LIBS) $$(LIBS)
@@ -159,7 +159,7 @@ $(foreach library,$(SHARED_LIBRARIES_sorted), $(eval $(call shared_library,$(lib
 define static_library
 # 1 - component name
 
-$(1)_stlib_output  := $$($(1)_builddir)/lib$$($(1)_NAME).$$(STATIC_LIBRARY_EXT)
+$(1)_stlib_output  := $$($(1)_builddir)/lib$$($(1)_name).$$(STATIC_LIBRARY_EXT)
 $(1)_outputs += $$($(1)_stlib_output)
 $(1)_archiver=$(AR)
 
@@ -190,7 +190,7 @@ endif
 define program_template
 # 1 - component name
 
-$(1)_outputs = $$($(1)_builddir)/$$($(1)_NAME)$(PROGRAM_SUFFIX)
+$(1)_outputs = $$($(1)_builddir)/$$($(1)_name)$(PROGRAM_SUFFIX)
 $(1)_ldflags = $$($(1)_LDFLAGS) $$(LDFLAGS) $$($(1)_LIBS) $$(LIBS)
 
 # link with CXX if there are any C++ sources in
