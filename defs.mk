@@ -53,7 +53,7 @@ define common_defs
 $(1)_builddir := $(top_builddir)/$$($(1)_DIR)
 $(1)_srcdir   := $(top_srcdir)/$$($(1)_DIR)
 $(1)_objdir := $$($(1)_builddir)/.obj
-
+$(1)_name := $$(if $$($(1)_NAME),$$($(1)_NAME),$(1))
 
 endef
 
