@@ -13,7 +13,7 @@ AC_DEFUN(AC_MAKEFOO,
             
     AC_MSG_CHECKING(for makefoo path)
     if test x$makefoo_dir = x ; then
-        for DIR in /usr/lib/MAKEFOO /usr/local/lib/MAKEFOO $srcdir $srcdir/.. $srcdir/../.. $srcdir/../../.. ; do
+        for DIR in /usr/local/lib/MAKEFOO /usr/lib/MAKEFOO $srcdir $srcdir/.. $srcdir/../.. $srcdir/../../.. ; do
             #echo "...trying $DIR" 
             if test -f $DIR/defs.mk ; then
                 makefoo_dir=$DIR

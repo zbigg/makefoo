@@ -33,9 +33,12 @@ PROGRAMS += BAZ
 #MAKEFOO=$(top_srcdir)/makefoo
 # but in tests we're testing current source tree
 #MAKEFOO=$(top_srcdir)/../../
-
+ddd_COMPONENTS=BAZ LIBBAR
+PACKAGES=ddd LIBFOO
 include $(MAKEFOO)/defs.mk
 include $(MAKEFOO)/native.mk
+include $(MAKEFOO)/install-fhs.mk
+include $(MAKEFOO)/rpm.mk
 include $(MAKEFOO)/autoconf.mk 
 include $(MAKEFOO)/main.mk
 
