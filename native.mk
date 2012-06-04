@@ -59,7 +59,8 @@ endif
 define c_template
 # 1 - component name
 # 2 - target type (PROGRAM, SHARED_LIBRARY, STATIC_LIBRARY)
-
+# 3 - target obj sufix prog|shobj|stobj
+#      (note, on most targets static lib obj == prog obj)
 # TBD, output to $(1)_objdir
 $(1)_$(3)_c_sources = $$(filter %.c, $$($(1)_SOURCES))
 $(1)_$(3)_c_sources_rel = $$(patsubst %.c, $$(top_srcdir)/$$($(1)_DIR)/%.c, $$($(1)_$(3)_c_sources))
@@ -126,6 +127,7 @@ define shared_library
 # 1 - component name
 
 $(1)_shlib_output = $$($(1)_builddir)/lib$$($(1)_name).$$(SHARED_LIBRARY_EXT)
+$(1)_lib_outputs += $$($(1)_shlib_output)
 $(1)_outputs += $$($(1)_shlib_output)
 
 $(1)_ldflags := $$($(1)_LDFLAGS) $$(LDFLAGS) $$($(1)_LIBS) $$(LIBS)
@@ -160,6 +162,7 @@ define static_library
 # 1 - component name
 
 $(1)_stlib_output  := $$($(1)_builddir)/lib$$($(1)_name).$$(STATIC_LIBRARY_EXT)
+$(1)_lib_outputs += $$($(1)_stlib_output)
 $(1)_outputs += $$($(1)_stlib_output)
 $(1)_archiver=$(AR)
 
@@ -190,7 +193,7 @@ endif
 define program_template
 # 1 - component name
 
-$(1)_outputs = $$($(1)_builddir)/$$($(1)_name)$(PROGRAM_SUFFIX)
+$(1)_bin_outputs = $$($(1)_builddir)/$$($(1)_name)$(PROGRAM_SUFFIX)
 $(1)_ldflags = $$($(1)_LDFLAGS) $$(LDFLAGS) $$($(1)_LIBS) $$(LIBS)
 
 # link with CXX if there are any C++ sources in
@@ -201,10 +204,12 @@ else
 $(1)_linker=$$(CC)
 endif
 
-$$($(1)_outputs): $$($(1)_objects)
+$$($(1)_bin_outputs): $$($(1)_objects)
 	@mkdir -p $$($(1)_builddir)
 	$(COMMENT) [$1] linking program $$@ using $$($(1)_linker) 
 	$(EXEC) $$($(1)_linker) -o $$@ $$^ $$($(1)_ldflags)
+
+$(1)_outputs += $$($(1)_bin_outputs)
 
 endef
 
@@ -233,6 +238,7 @@ endef
 NATIVE_COMPONENTS_sorted = $(sort $(NATIVE_COMPONENTS))
 $(foreach component,$(NATIVE_COMPONENTS_sorted),$(eval $(call native_common,$(component))))
 
+DEFAULT_COMPONENTS += $(NATIVE_COMPONENTS_sorted)
 COMPONENTS += $(NATIVE_COMPONENTS_sorted)
 
 # jedit: :tabSize=8:mode=makefile:

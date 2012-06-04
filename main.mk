@@ -3,7 +3,21 @@
 #
 #    common rules applicable for all components
 #   
-build: $(COMPONENTS)
+
+include $(MAKEFOO)/defs.mk
+
+makefoo_pre_includes = $(patsubst %,$(MAKEFOO)/%.pre.mk,$(MAKEFOO_USE))
+#makefoo_main_includes = $(patsubst %,%.main.mk,$(MAKEFOO_USE))
+makefoo_main_includes = $(patsubst %,$(MAKEFOO)/%.mk,$(MAKEFOO_USE))
+makefoo_post_includes = $(patsubst %,$(MAKEFOO)/%.post.mk,$(MAKEFOO_USE))
+
+default: build
+-include $(makefoo_pre_includes)
+
+include $(makefoo_main_includes)
+-include $(makefoo_post_includes)
+
+build: $(DEFAULT_COMPONENTS)
 
 clean:
 	rm -rf $(all_objects) $(all_outputs)
@@ -19,7 +33,7 @@ ifndef MAKEFOO_USE_AUTOCONF
 
 configure:
 	@mkdir -p $(top_builddir)
-	@rm $(top_builddir)/makefoo_configured_defs.mk
+	@rm $(top_build `																                                                                                            dir)/makefoo_configured_defs.mk
 	@$(MAKE) $(top_builddir)/makefoo_configured_defs.mk
 	@cat $(top_builddir)/makefoo_configured_defs.mk
 endif

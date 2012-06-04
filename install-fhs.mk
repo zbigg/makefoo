@@ -7,7 +7,7 @@ ifndef INSTALL
 INSTALL     := install
 endif
 
-ifndef
+ifndef prefix
 prefix      := /usr/local
 endif
 
@@ -39,66 +39,93 @@ ifndef docdir
 docdir            := $(datarootdir)/doc
 endif
 
-
-define install_fhs_lib
-$(1)_install_lib: $$($(1)_outputs) $$(DESTDIR)$(libdir)
-	$$(INSTALL) $$($(1)_outputs) $$(DESTDIR)$(libdir)
-
-install_targets += $(1)_install_lib
-$(1)_install_targets += $(1)_install_lib
-endef
+#
+# install script for all targets that
+# define X_lib_outputs
+#
 
 $(DESTDIR)$(libdir):
 	mkdir -p $@
 
-define install_fhs_bin
-$(1)_install_bin: $$($(1)_outputs) $$(DESTDIR)$(bindir)
-	$$(INSTALL) $$($(1)_outputs) $$(DESTDIR)$(bindir)
+define install_fhs_libs
+ifdef $(1)_lib_outputs
 
-install_targets += $(1)_install_bin
-$(1)_install_targets += $(1)_install_bin
+$(1)_install_lib: $$($(1)_lib_outputs) $$(DESTDIR)$(libdir)
+	$$(INSTALL) $$($(1)_lib_outputs) $$(DESTDIR)$(libdir)
+
+$(1)_install_targets += $(1)_install_lib
+
+endif
 endef
 
+#
+# install script for all targets that
+# define X_bin_outputs
+#
+$(DESTDIR)$(bindir):
+	mkdir -p $@
 
+define install_fhs_programs
+ifdef $(1)_bin_outputs
+
+$(1)_install_bin: $$($(1)_bin_outputs) $$(DESTDIR)$(bindir)
+	$$(INSTALL) $$($(1)_bin_outputs) $$(DESTDIR)$(bindir)
+
+$(1)_install_targets += $(1)_install_bin
+endif
+endef
+
+#
+# install script for all targets that
+# define X_FILES and X_SCRIPTS
+# installs them into X_INSTALL_DEST
+#
 define install_verbatim
-$(1)_install_verbatim:
 
-	set -x ; for FILE in $$($(1)_FILES) ; do \
+ifdef $(1)_FILES
+$(1)_install_files:
+	for FILE in $$($(1)_FILES) ; do \
 		dir="$$(DESTDIR)$$($(1)_INSTALL_DEST)/`dirname $$$$FILE`" ; \
 		mkdir -pv $$$$dir ; \
 		$(INSTALL_DATA)  "$(srcdir)/$$($(1)_DIR)/$$$$FILE" "$$$$dir" ; done
 
-	set -x ; for FILE in $$($(1)_SCRIPTS) ; do \
+$(1)_install_targets      += $(1)_install_files
+
+endif
+ifdef $(1)_SCRIPTS
+$(1)_install_scripts:
+	for FILE in $$($(1)_SCRIPTS) ; do \
 		dir="$$(DESTDIR)$$($(1)_INSTALL_DEST)/`dirname $$$$FILE`" ; \
 		mkdir -pv $$$$dir ; \
 		$(INSTALL)  "$(srcdir)/$$($(1)_DIR)/$$$$FILE" "$$$$dir" ; done
 
-install_targets      += $(1)_install_verbatim
-$(1)_install_targets += $(1)_install_verbatim
-
+$(1)_install_targets      += $(1)_install_scripts
+endif
 endef
 
 define install_common
-$(1)_install: $$($(1)_install_targets)
-endef
 
-$(DESTDIR)$(bindir):
-	mkdir -p $@
+ifdef $(1)_install_targets
+$(1)_install: $$($(1)_install_targets)
+install: $(1)_install  
+endif
+
+endef
 
 # TBD, there must be other way to register
 # installablbe items
-INSTALLABLE=\
+INSTALLABLE+=\
+	$(PUBLIC_COMPONENTS) \
 	$(SHARED_LIBRARIES) \
 	$(STATIC_LIBRARIES) \
-	$(PROGRAMS) \
-	$(INSTALL_VERBATIM)
+	$(PROGRAMS)
 
 INSTALLABLE_sorted = $(sort $(INSTALLABLE))
 
-$(foreach library,$(SHARED_LIBRARIES_sorted), $(eval $(call install_fhs_lib,$(library))))
-$(foreach library,$(STATIC_LIBRARIES_sorted), $(eval $(call install_fhs_lib,$(library))))
-$(foreach program,$(PROGRAMS_sorted), $(eval $(call install_fhs_bin,$(program))))
-$(foreach verbatim,$(INSTALL_VERBATIM), $(eval $(call install_verbatim,$(verbatim))))
+$(foreach component,$(INSTALLABLE_sorted), $(eval $(call install_fhs_programs,$(component))))
+$(foreach component,$(INSTALLABLE_sorted), $(eval $(call install_fhs_libs,$(component))))
+$(foreach component,$(INSTALLABLE_sorted), $(eval $(call install_verbatim,$(component))))
+
 $(foreach component,$(INSTALLABLE_sorted), $(eval $(call install_common,$(component))))
 
 install-fhs: $(install_targets)

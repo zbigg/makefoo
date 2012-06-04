@@ -99,11 +99,11 @@ ifdef $(1)_COMPONENTS
 $(1)_deps = $$($(1)_COMPONENTS)
 $(1)_install_targets = $$(patsubst %,%_install, $$($(1)_COMPONENTS))
 else
-$(1)_deps = $(1)
+$(1)_deps = $$($(1)_outputs)
 $(1)_install_targets = $(1)_install
 endif
 
-$$($(1)_rpm): $$($(1)_deps)
+$$($(1)_rpm): $(MAKEFOO)/rpm-spec-template.in
 	@mkdir -p $$($(1)_rpmbuilddir)/SOURCES $$($(1)_rpmbuilddir)/SPECS $$($(1)_rpmbuilddir)/BUILD $$($(1)_rpmbuilddir)/RPMS
 	
 	$(COMMENT) "[$1]/rpm creating spec file"
@@ -118,10 +118,11 @@ $$($(1)_rpm): $$($(1)_deps)
 	$(EXEC) $(MAKE) $$($(1)_install_targets) DESTDIR=$$($(1)_rpmbuilddir)/BUILDROOT/$$($(1)_rpm_name) \
 		prefix=$(rpm_prefix)           \
 		exec_prefix=$(rpm_exec_prefix) \
-		conf_dir=$(rpm_conf_dir) \
-		var_dir=$(rpm_var_dir)   \
-		bindir=$(rpm_bindir) \
-		libdir=$(rpm_libdir) 
+		bindir=$(rpm_bindir)           \
+		libdir=$(rpm_libdir)           \
+		sysconfdir=$(rpm_sysconfdir)   \
+		datadir=$(rpm_datadir)         \
+		localstatedir=$(rpm_localstatedir) 
 	
 	$(COMMENT) "[$1]/rpm" creating $$($(1)_rpm)
 	$(EXEC) rpmbuild $(RPMBUILD_FLAGS) --define "_topdir $$(abspath $$($(1)_rpmbuilddir))" -bb $$($(1)_spec)

@@ -43,27 +43,25 @@ makefoo_lib_SCRIPTS = \
         autoconf_helpers/config.guess
         
 makefoo_lib_INSTALL_DEST=$(libdir)/makefoo
-
-makefoo_lib:
-makefoo_doc:
-INSTALL_VERBATIM += makefoo_lib
+:
+INSTALLABLE += makefoo_lib
 
 #
 # makefoo documentation > docdir (prefix/share/doc/makefoo)
 #
 makefoo_doc_FILES = MANUAL.txt README.txt
 makefoo_doc_INSTALL_DEST=$(docdir)/makefoo
-INSTALL_VERBATIM += makefoo_doc
+INSTALLABLE += makefoo_doc
 
 makefoo_COMPONENTS = makefoo_lib makefoo_doc
 PACKAGES += makefoo
 
 MAKEFOO=$(srcdir)
-include $(srcdir)/defs.mk
-include $(srcdir)/install-fhs.mk
-include $(srcdir)/autoconf.mk
-include $(srcdir)/rpm.mk
-include $(srcdir)/main.mk
+MAKEFOO_USE += install-fhs
+MAKEFOO_USE += autoconf
+MAKEFOO_USE += rpm
+
+include $(MAKEFOO)/main.mk
 
 # jedit: :tabSize=8:mode=makefile:
 

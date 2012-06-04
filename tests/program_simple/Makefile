@@ -8,8 +8,6 @@ AAA_NAME=program_simple
 PROGRAMS=AAA
 
 MAKEFOO=$(top_srcdir)/../..
-
-include $(MAKEFOO)/defs.mk
-include $(MAKEFOO)/native.mk
+MAKEFOO_USE += native
 include $(MAKEFOO)/main.mk
 

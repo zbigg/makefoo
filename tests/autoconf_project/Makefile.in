@@ -35,11 +35,12 @@ PROGRAMS += BAZ
 #MAKEFOO=$(top_srcdir)/../../
 ddd_COMPONENTS=BAZ LIBBAR
 PACKAGES=ddd LIBFOO
-include $(MAKEFOO)/defs.mk
-include $(MAKEFOO)/native.mk
-include $(MAKEFOO)/install-fhs.mk
-include $(MAKEFOO)/rpm.mk
-include $(MAKEFOO)/autoconf.mk 
+
+MAKEFOO_USE += native
+MAKEFOO_USE += install-fhs
+MAKEFOO_USE += rpm
+MAKEFOO_USE += autoconf
+ 
 include $(MAKEFOO)/main.mk
 
 # jedit: :tabSize=8:mode=makefile:
