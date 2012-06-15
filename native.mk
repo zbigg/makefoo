@@ -68,6 +68,7 @@ $(1)_$(3)_c_objects = $$(patsubst $$(top_srcdir)/$$($(1)_DIR)/%.c, $$($(1)_objdi
 $(1)_$(3)_objects  += $$($(1)_$(3)_c_objects)
 $(1)_$(3)_cflags    = $$($(1)_CFLAGS) $$($(2)_CFLAGS) $$(CFLAGS)
 
+$(1)_sources_rel += $$($(1)_$(3)_c_sources_rel) 
 $(1)_objects    += $$($(1)_$(3)_c_objects)
 
 $$($(1)_$(3)_c_objects): $$($(1)_objdir)/%.$(3).o: $(top_srcdir)/$$($(1)_DIR)/%.c
@@ -93,6 +94,7 @@ $(1)_$(3)_objects    += $$($(1)_$(3)_cpp_objects)
 $(1)_$(3)_cxxflags    = $$($(1)_CXXFLAGS) $$($(2)_CXXFLAGS) $$(CXXFLAGS)
 
 $(1)_objects    += $$($(1)_$(3)_cpp_objects)
+$(1)_sources_rel += $$($(1)_$(3)_cpp_sources_rel)
 
 $$($(1)_$(3)_cpp_objects): $$($(1)_objdir)/%.$(3).o: $(top_srcdir)/$$($(1)_DIR)/%.cpp
 	@mkdir -p $$($(1)_objdir)
@@ -175,11 +177,10 @@ $$($(1)_stlib_output): $$($(1)_stlib_objects)
 endef
 
 STATIC_LIBRARIES_sorted=$(sort $(STATIC_LIBRARIES))
-
-$(foreach library,$(STATIC_LIBRARIES_sorted),$(eval $(call common_defs,$(library),STATIC_LIBRARY)))
+$(foreach library,$(STATIC_LIBRARIES_sorted), $(eval $(call common_defs,$(library),STATIC_LIBRARY)))
 $(foreach library,$(STATIC_LIBRARIES_sorted), $(eval $(call c_template,$(library),STATIC_LIBRARY,stlib)))
 $(foreach library,$(STATIC_LIBRARIES_sorted), $(eval $(call cpp_template,$(library),STATIC_LIBRARY,stlib)))
-$(foreach library,$(STATIC_LIBRARIES_sorted),   $(eval $(call static_library,$(library))))
+$(foreach library,$(STATIC_LIBRARIES_sorted), $(eval $(call static_library,$(library))))
 
 NATIVE_COMPONENTS += $(STATIC_LIBRARIES_sorted)
 
@@ -198,7 +199,7 @@ $(1)_ldflags = $$($(1)_LDFLAGS) $$(LDFLAGS) $$($(1)_LIBS) $$(LIBS)
 
 # link with CXX if there are any C++ sources in
 
-ifneq ($$($(1)_cpp_objects),)
+ifneq ($$($(1)_prog_cpp_objects),)
 $(1)_linker=$$(CXX)
 else
 $(1)_linker=$$(CC)
