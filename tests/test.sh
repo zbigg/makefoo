@@ -21,8 +21,18 @@ for test_script in *_test.sh ; do
         overall_result=1
     fi
 done
+
+for test_script in *_test.sh ; do
+    test_name=`echo $test_script | sed -e 'sX_test.shXX'`
+    if grep -qF -- "---- > failure" $test_name.log ; then
+        echo "test '$test_name' failed"
+    fi
+done
+
 if [ "$overall_result" != "0" ] ; then
     echo "$0: error, some tests failed"
-fi    
+else
+    echo "$0: all tests passed"
+fi
 
 exit $overall_result
