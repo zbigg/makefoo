@@ -1,5 +1,6 @@
 #include "bar.h"
 #include <cassert>
+#include <iostream>
 
 void test_zero()
 {
@@ -18,6 +19,7 @@ void test_positive()
 
 int main()
 {
+    std::cout << "this is bar_test, hello\n";
     test_negative();
     test_positive();
     test_zero();

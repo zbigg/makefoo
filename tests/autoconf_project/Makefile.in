@@ -7,41 +7,46 @@ CC=@CC@
 CXX=@CXX@
 
 # components
-LIBFOO_DIR = libfoo
-LIBBAR_DIR = libbar
-BAZ_DIR    = baz
+libfoo_DIR = libfoo
+libbar_DIR = libbar
+baz_DIR    = baz
 
 # libbaz definiions (should be in libfoo/component_defs.mk)
-LIBFOO_SOURCES = foo.cpp spam.c
-LIBFOO_NAME    = foo
-SHARED_LIBRARIES += LIBFOO
-STATIC_LIBRARIES += LIBFOO
+libfoo_SOURCES = foo.cpp spam.c
+libfoo_NAME    = foo
+
+SHARED_LIBRARIES += libfoo
+STATIC_LIBRARIES += libfoo
 
 # libbar definiions (should be in libbar/component_defs.mk)
-LIBBAR_SOURCES = bar.cpp
-LIBBAR_NAME    = bar2
-STATIC_LIBRARIES += LIBBAR
+libbar_SOURCES = bar.cpp bar_ex.cpp
+libbar_NAME    = bar2
+STATIC_LIBRARIES += libbar
 
-libbar_tests_SOURCES=bar_test.cpp bar.cpp
-libbar_tests_DIR=libbar
+libbar_TEST_SOURCES = bar_test.cpp bar.cpp bar_ex.cpp
 
-PROGRAMS += libbar_tests
-TEST_PROGRAMS += libbar_tests
+#libbar_unittests_SOURCES   = bar_test.cpp
+#libbar_unittests_DIR       = libbar
+#libbar_unittests_LINK_DEPS = bar2
+#libbar_unittests_TESTED_COMPONENT = libbar
+
+#PROGRAMS      += libbar_unittests
+#TEST_PROGRAMS += libbar_unittests
 
 # baz program definiions (should be in baz/component_defs.mk)
-BAZ_NAME=x
-BAZ_SOURCES = baz.cpp
-BAZ_DEPS    = LIBBAR LIBFOO
+baz_NAME    = baz
+baz_SOURCES = baz.cpp
+baz_DEPS    = libbar libfoo
 
-PROGRAMS += BAZ
+PROGRAMS += baz
 
 # locate makefoo components
 # in production it should look like this
 #MAKEFOO=$(top_srcdir)/makefoo
 # but in tests we're testing current source tree
 #MAKEFOO=$(top_srcdir)/../../
-ddd_COMPONENTS=BAZ LIBBAR
-PACKAGES=ddd LIBFOO
+ddd_COMPONENTS=baz libbar
+PACKAGES=ddd libfoo
 
 MAKEFOO_USE += native
 MAKEFOO_USE += test-program
