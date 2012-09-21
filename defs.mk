@@ -4,7 +4,7 @@ include $(top_builddir)/makefoo_configured_defs.mk
 #USE_MAKEFOO_LOG=0
 
 ifdef USE_MAKEFOO_LOG
-LOG=$(MAKEFOO)/log.sh $(1)
+LOG=$(MAKEFOO_dir)/log.sh $(1)
 endif
 
 ifeq ($(QUIET),1)
@@ -28,7 +28,7 @@ BUILD_TYPE=debug
 endif
 
 ifndef ARCH
-ARCH=$(TARGET_ARCH)
+ARCH=$(TARGET_ARCH)     
 endif
 
 build_name := $(BUILD_TYPE)-$(ARCH)

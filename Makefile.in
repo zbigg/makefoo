@@ -45,6 +45,7 @@ makefoo_lib_FILES = \
 
 makefoo_lib_SCRIPTS = \
         configure.sh \
+        log.sh \
         autoconf_helpers/config.guess
         
 makefoo_lib_INSTALL_DEST=$(libdir)/makefoo
