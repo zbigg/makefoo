@@ -26,13 +26,15 @@ ifndef AUTOCONF_AUX_DIR
 AUTOCONF_AUX_DIR=.
 endif
 
-xEXTRA_DIST += \
+EXTRA_DIST += \
 	configure.ac \
 	configure \
 	Makefile.in \
-	$(AUTOCONF_AUX_DIR)/install-sh \
+	$(patsubst $(srcdir)/%,%,$(wildcard $(srcdir)/$(AUTOCONF_AUX_DIR)/install-sh)) \
+	$(patsubst $(srcdir)/%,%,$(wildcard $(srcdir)/$(AUTOCONF_AUX_DIR)/install.sh)) \
 	$(AUTOCONF_AUX_DIR)/config.guess \
 	$(AUTOCONF_AUX_DIR)/config.sub
+        
 
 #mkdirs ??
 
