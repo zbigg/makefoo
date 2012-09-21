@@ -34,22 +34,52 @@ endif
 
 endef
 
+
 $(foreach component,$(COMPONENTS_sorted),$(eval $(call src_dist_component,$(component))))
 
 ifdef EXTRA_DIST
 src_dist_all_files += $(EXTRA_DIST)
 endif
 
+define makefoo_component_files
+makefoo_dist_files_abs += \
+        $$(wildcard $(MAKEFOO_dir)/$(1).pre.mk) \
+        $$(wildcard $(MAKEFOO_dir)/$(1).mk) \
+        $$(wildcard $(MAKEFOO_dir)/$(1).post.mk) \
+        $$(patsubst %, $$(MAKEFOO_dir)/%, $$($(1)_MAKEFOO_DIST)) 
+endef
+
+ifndef MAKEFOO_SRC_DIST_DONT_BUNDLE_MAKEFOO
+
+$(foreach makefoo_component, $(MAKEFOO_USE) main defs, $(eval $(call makefoo_component_files,$(makefoo_component))))
+
+makefoo_dist_files_rel = $(patsubst $(MAKEFOO_dir)/%,%, $(makefoo_dist_files_abs))
+
+src-dist-makefoo: $(makefoo_dist_files_abs)
+	@for file in $(makefoo_dist_files_rel) ; do \
+		dir="$(src_dist_folder)/makefoo/`dirname $$file`" ; \
+		if [ ! -d $$dir ] ; then mkdir -p $$dir ; fi ; \
+		cp  -p -fvr $(MAKEFOO_dir)/$$file $$dir/ ; \
+	done
+else
+src-dist-makefoo:
+endif
+#.PHONY: src-dist-makefoo
+
+
 ifneq ($(src_dist_all_files),)
 
 src_dist_all_files_rel = $(patsubst %, $(top_srcdir)/%, $(sort $(src_dist_all_files)))
 
-src-dist: $(src_dist_folder) $(src_dist_all_files_rel) 
+
+src-dist: $(src_dist_folder) $(src_dist_all_files_rel) src-dist-makefoo  
 	for file in $(src_dist_all_files) ; do \
 		dir="$(src_dist_folder)/`dirname $$file`" ; \
 		if [ ! -d $$dir ] ; then mkdir -p $$dir ; fi ; \
 		cp  -p -fvr $(top_srcdir)/$$file $$dir/ ; \
 	done
+	
+	
 endif
 
 

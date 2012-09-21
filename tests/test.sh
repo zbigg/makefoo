@@ -1,7 +1,7 @@
 #!/bin/sh
 overall_result=0
 
-MAKEFOO=`pwd`/..
+MAKEFOO=`pwd`/../main.mk
 export MAKEFOO
 
 for test_script in *_test.sh ; do
@@ -36,3 +36,4 @@ else
 fi
 
 exit $overall_result
+

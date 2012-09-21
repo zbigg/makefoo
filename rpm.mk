@@ -63,7 +63,7 @@ else
 RPMBUILD_FLAGS=--quiet
 endif
 
-RPM_ARCH = $(shell uname -i)
+RPM_ARCH = $(shell uname -m)
 #
 # RPM build
 #
@@ -87,7 +87,7 @@ define rpm_template
 # TBD, output to $(1)_objdir
 
 $(1)_version     = dev
-$(1)_rpm_name    =  $(1)-$$($(1)_version)-$(RPM_RELEASE).$(RPM_ARCH)
+$(1)_rpm_name    =  $(1)-$$($(1)_version)-$$(RPM_RELEASE).$$(RPM_ARCH)
 $(1)_rpm         := $$($(1)_builddir)/$$($(1)_rpm_name).rpm
 $(1)_rpmbuilddir := $$($(1)_builddir)/.rpmbuild
 $(1)_spec        := $$($(1)_rpmbuilddir)/SPECS/$(1).spec
@@ -103,7 +103,7 @@ $(1)_deps = $$($(1)_outputs)
 $(1)_install_targets = $(1)_install
 endif
 
-$$($(1)_rpm): $(MAKEFOO)/rpm-spec-template.in
+$$($(1)_rpm): $(MAKEFOO_dir)/rpm-spec-template.in
 	@mkdir -p $$($(1)_rpmbuilddir)/SOURCES $$($(1)_rpmbuilddir)/SPECS $$($(1)_rpmbuilddir)/BUILD $$($(1)_rpmbuilddir)/RPMS
 	
 	$(COMMENT) "[$1]/rpm creating spec file"
@@ -111,7 +111,7 @@ $$($(1)_rpm): $(MAKEFOO)/rpm-spec-template.in
 	    -e s/@RELEASE@/$(RPM_RELEASE)/   \
 	    -e s/@COMPONENT@/$(1)/           \
 	    -e s/@PRODUCT@/$(PRODUCT)/       \
-	    $$(MAKEFOO)/rpm-spec-template.in > $$($(1)_spec)
+	    $$(MAKEFOO_dir)/rpm-spec-template.in > $$($(1)_spec)
 	    
 	$(COMMENT) "[$1]/rpm installing in staging area [$$($(1)_rpmbuilddir)/BUILDROOT/]"
 	@rm -rf $$($(1)_rpmbuilddir)/BUILDROOT/
@@ -143,6 +143,9 @@ $(foreach component,$(RPM_COMPONENTS_sorted),$(eval $(call common_defs,$(compone
 $(foreach component,$(RPM_COMPONENTS_sorted),$(eval $(call rpm_template,$(component))))
 
 rpm: $(rpm_targets)
+
+# makefoo_amalgamation support:
+rpm_MAKEFOO_DIST=rpm-spec-template.in
 
 # jedit: :tabSize=8:mode=makefile:
 

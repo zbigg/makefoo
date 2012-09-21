@@ -7,7 +7,7 @@ AAA_NAME=program_simple
 
 PROGRAMS=AAA
 
-MAKEFOO=$(top_srcdir)/../..
+MAKEFOO=$(top_srcdir)/../../main.mk
 MAKEFOO_USE += native
-include $(MAKEFOO)/main.mk
+include $(MAKEFOO)
 

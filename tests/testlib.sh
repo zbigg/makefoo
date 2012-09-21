@@ -72,13 +72,21 @@ invoke_test()
 }
 
 if [ -z $MAKEFOO ] ; then
-    MAKEFOO=`pwd`/..
-    export MAKEFOO
+    MAKEFOO_dir=`pwd`/../
+    MAKEFOO=${MAKEFOO_dir}/main.mk
+    
+    
 fi
-eval `${MAKEFOO}/configure.sh`
+MAKEFOO_dir=`dirname $MAKEFOO`
+
+export MAKEFOO
+export MAKEFOO_dir
+
+eval `${MAKEFOO_dir}/configure.sh`
 
 if test "x" = "x$EXECUTABLE_EXT" ; then
     EXECUTABLE_SUFFIX=
 else
     EXECUTABLE_SUFFIX=.$EXECUTABLE_EXT
 fi
+

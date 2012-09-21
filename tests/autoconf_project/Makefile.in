@@ -55,7 +55,7 @@ MAKEFOO_USE += rpm
 MAKEFOO_USE += autoconf
 MAKEFOO_USE += src-dist
 
-include $(MAKEFOO)/main.mk
+include $(MAKEFOO)
 
 # jedit: :tabSize=8:mode=makefile:
 

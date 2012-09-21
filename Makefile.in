@@ -72,17 +72,20 @@ PACKAGES += makefoo
 PRODUCT=makefoo
 VERSION=0.0.1-dev
 
-EXTRA_DIST = #$(shell cd $(top_srcdir) ; mtn ls known tests )
+#TBD, it shall be EXTRA_DIST_WILDCARD 
+#     realized as in autoconf.mk EXTRA_DIST addition
+#EXTRA_DIST = #$(shell cd $(top_srcdir) ; mtn ls known tests )
 
 AUTOCONF_AUX_DIR=autoconf_helpers
 
-MAKEFOO=$(srcdir)
+MAKEFOO=$(srcdir)/main.mk
 MAKEFOO_USE += install-fhs
 MAKEFOO_USE += autoconf
 MAKEFOO_USE += rpm
 MAKEFOO_USE += src-dist
+MAKEFOO_SRC_DIST_DONT_BUNDLE_MAKEFOO=1
 
-include $(MAKEFOO)/main.mk
+include $(MAKEFOO)
 
 # jedit: :tabSize=8:mode=makefile:
 

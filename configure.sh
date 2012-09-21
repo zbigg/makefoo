@@ -1,21 +1,22 @@
 #!/bin/sh
 
 PNAME=`basename $0`
-if test "x$MAKEFOO" = "x" ; then
+if test "x$MAKEFOO_dir" = "x" ; then
     #DEFAULT_MAKEFOO=/usr/lib/MAKEFOO
-    DEFAULT_MAKEFOO=`pwd`
-    if test -d $DEFAULT_MAKEFOO ; then
-        MAKEFOO="$DEFAULT_MAKEFOO"
+    DEFAULT_MAKEFOO_dir=`pwd`
+    if test -d $DEFAULT_MAKEFOO_dir ; then
+        MAKEFOO_dir="$DEFAULT_MAKEFOO_dir"
     else    
         echo "$PNAME: MAKEFOO variable not set and MAKEFOO not found in default location ($DEFAULT_MAKEFOO)"
         exit 1
     fi
 fi
 export MAKEFOO
+export MAKEFOO_dir
 
 set -e
 
-build_arch=${build_arch-`sh ${MAKEFOO}/autoconf_helpers/config.guess`}
+build_arch=${build_arch-`sh ${MAKEFOO_dir}/autoconf_helpers/config.guess`}
 target_arch=${target_arch-$build_arch}
 
 #
@@ -104,3 +105,4 @@ emit EXECUTABLE_EXT
 emit SHARED_LIBRARY_EXT SHARED_LIBRARY_MODEL
 emit IMPORT_LIBRARY_EXT
 emit STATIC_LIBRARY_EXT
+

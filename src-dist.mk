@@ -22,6 +22,13 @@
 #   
 #   EXTRA_DIST - bundle also these (remap to $(top_srcdir))
 #
-# note: main implementation in src-dist.post.mk
+# NOTE:
+#   By default 'makefoo' used files are bundled in makefoo subdir of source
+#   distribution.
+#   ./configure script will detect and use this bundled version by default
+#   use MAKEFOO_SRC_DIST_DONT_BUNDLE_MAKEFOO=1 to prevent bundling makefoo in src-dist)
 #
+# impl note: main implementation in src-dist.post.mk
+#
+
 
