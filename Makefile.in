@@ -13,6 +13,7 @@ top_builddir=@top_builddir@
 prefix=@prefix@
 exec_prefix=@exec_prefix@
 libdir = @libdir@
+datarootdir = @datarootdir@
 
 INSTALL = @INSTALL@
 INSTALL_DATA = @INSTALL_DATA@
@@ -36,30 +37,50 @@ makefoo_lib_FILES = \
         native.mk \
         rpm.mk \
         rpm-spec-template.in \
-        install-fhs.mk\
+        install-fhs.mk \
+        test-program.mk \
+        test-program.pre.mk \
+        src-dist.mk \
+        src-dist.post.mk
 
 makefoo_lib_SCRIPTS = \
         configure.sh \
         autoconf_helpers/config.guess
         
 makefoo_lib_INSTALL_DEST=$(libdir)/makefoo
-:
-INSTALLABLE += makefoo_lib
+COMPONENTS += makefoo_lib
 
 #
 # makefoo documentation > docdir (prefix/share/doc/makefoo)
 #
 makefoo_doc_FILES = MANUAL.txt README.txt
 makefoo_doc_INSTALL_DEST=$(docdir)/makefoo
-INSTALLABLE += makefoo_doc
+COMPONENTS += makefoo_doc
 
-makefoo_COMPONENTS = makefoo_lib makefoo_doc
+makefoo_aclocal_FILES = makefoo.m4
+makefoo_aclocal_INSTALL_DEST=$(datarootdir)/aclocal
+
+COMPONENTS += makefoo_aclocal
+PUBLIC_COMPONENTS += $(COMPONENTS)
+
+makefoo_COMPONENTS = \
+	makefoo_lib \
+	makefoo_doc \
+	makefoo_aclocal
 PACKAGES += makefoo
+
+PRODUCT=makefoo
+VERSION=0.0.1-dev
+
+EXTRA_DIST = #$(shell cd $(top_srcdir) ; mtn ls known tests )
+
+AUTOCONF_AUX_DIR=autoconf_helpers
 
 MAKEFOO=$(srcdir)
 MAKEFOO_USE += install-fhs
 MAKEFOO_USE += autoconf
 MAKEFOO_USE += rpm
+MAKEFOO_USE += src-dist
 
 include $(MAKEFOO)/main.mk
 

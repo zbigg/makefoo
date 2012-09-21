@@ -15,3 +15,27 @@ Table of contents:
     
     
  - Distribution with project
+ 
+Definable symbols:
+
+compilation:
+    PROGRAMS += component
+    SHARED_LIBRARIES += component
+    STATIC_LIBRARIES += componene
+
+test:
+    TEST_PROGRAMS += component
+    implies build of program 
+        but not installale
+        but not built by default
+    
+        
+packaging:
+    PACKAGES += package
+    package_COMPONENTS += all components that are not named 'package'
+
+    component_FILES        installed normal files
+    component_SCRIPTS      installed script files
+    component_INSTALL_DEST where is installed ?  
+    
+PACKAGES

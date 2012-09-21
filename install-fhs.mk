@@ -7,6 +7,10 @@ ifndef INSTALL
 INSTALL     := install
 endif
 
+ifndef INSTALL_DATA
+INSTALL_DATA     := $(INSTALL)
+endif
+
 ifndef prefix
 prefix      := /usr/local
 endif
@@ -107,7 +111,7 @@ define install_common
 
 ifdef $(1)_install_targets
 $(1)_install: $$($(1)_install_targets)
-install: $(1)_install  
+install_targets += $$($(1)_install_targets)
 endif
 
 endef
@@ -125,7 +129,6 @@ INSTALLABLE_sorted = $(sort $(INSTALLABLE))
 $(foreach component,$(INSTALLABLE_sorted), $(eval $(call install_fhs_programs,$(component))))
 $(foreach component,$(INSTALLABLE_sorted), $(eval $(call install_fhs_libs,$(component))))
 $(foreach component,$(INSTALLABLE_sorted), $(eval $(call install_verbatim,$(component))))
-
 $(foreach component,$(INSTALLABLE_sorted), $(eval $(call install_common,$(component))))
 
 install-fhs: $(install_targets)

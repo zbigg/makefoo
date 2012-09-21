@@ -53,7 +53,8 @@ MAKEFOO_USE += test-program
 MAKEFOO_USE += install-fhs
 MAKEFOO_USE += rpm
 MAKEFOO_USE += autoconf
- 
+MAKEFOO_USE += src-dist
+
 include $(MAKEFOO)/main.mk
 
 # jedit: :tabSize=8:mode=makefile:

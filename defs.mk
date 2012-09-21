@@ -65,7 +65,7 @@ $(1)_name     := $$(if $$($(1)_NAME),$$($(1)_NAME),$(1))
 
 endef
 
-COMPONENTS_sorted = $(sort $(COMPONENTS))
+COMPONENTS_sorted = $(sort $(COMPONENTS) $(PUBLIC_COMPONENTS))
 
 $(foreach component,$(COMPONENTS_sorted),$(eval $(call common_defs,$(program))))
 

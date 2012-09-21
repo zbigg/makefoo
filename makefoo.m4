@@ -2,7 +2,7 @@ dnl
 dnl makefoo
 dnl
 
-AC_DEFUN(AC_MAKEFOO,
+AC_DEFUN([AC_MAKEFOO],
 [
     #echo "ac_top_srcdir = $ac_top_srcdir"
     #echo "top_srcdir = $top_srcdir"
@@ -13,7 +13,7 @@ AC_DEFUN(AC_MAKEFOO,
             
     AC_MSG_CHECKING(for makefoo path)
     if test x$makefoo_dir = x ; then
-        for DIR in /usr/local/lib/MAKEFOO /usr/lib/MAKEFOO $srcdir $srcdir/.. $srcdir/../.. $srcdir/../../.. ; do
+        for DIR in /usr/local/lib/makefoo /usr/lib/makefoo $srcdir $srcdir/.. $srcdir/../.. $srcdir/../../.. $HOME/lib/makefoo; do
             #echo "...trying $DIR" 
             if test -f $DIR/defs.mk ; then
                 makefoo_dir=$DIR
