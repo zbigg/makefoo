@@ -73,7 +73,7 @@ $(1)_objects    += $$($(1)_$(3)_c_objects)
 
 $$($(1)_$(3)_c_objects): $$($(1)_objdir)/%.$(3).o: $(top_srcdir)/$$($(1)_DIR)/%.c
 	mkdir -p $$($(1)_objdir)
-	$(COMMENT) [$1] compiling $$<
+	$(COMMENT) "[$1] compiling $$< ($(3))"
 	$(EXEC) $$(CC) $$($(1)_$(3)_cflags) -c -o $$@ $$< 
 endef
 
@@ -98,7 +98,7 @@ $(1)_sources_rel += $$($(1)_$(3)_cpp_sources_rel)
 
 $$($(1)_$(3)_cpp_objects): $$($(1)_objdir)/%.$(3).o: $(top_srcdir)/$$($(1)_DIR)/%.cpp
 	@mkdir -p $$(dir $$(@))
-	$(COMMENT) [$1] compiling $$<
+	$(COMMENT) "[$1] compiling $$< ($(3))"
 	$(EXEC) $$(CXX) $$($(1)_$(3)_cxxflags) -c -o $$@ $$<
 endef
 
