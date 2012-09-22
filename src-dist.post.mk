@@ -7,11 +7,17 @@ endif
 ifndef VERSION
 endif
 
-src_dist_folder=$(top_builddir)/$(PRODUCT)-$(VERSION)
+src_dist_name=$(PRODUCT)-$(VERSION)
+
+src_dist_tgz_name=$(src_dist_name).tar.gz
+src_dist_zip_name=$(src_dist_name).zip
+
+src_dist_folder=$(top_builddir)/$(src_dist_name)
 
 $(src_dist_folder):
 	@rm -rf $(src_dist_folder)
 	@mkdir -p $(src_dist_folder)
+
 .PHONY: $(src_dist_folder)
 define src_dist_component
 # $1 - component name
@@ -55,8 +61,13 @@ $(foreach makefoo_component, $(MAKEFOO_USE) main defs, $(eval $(call makefoo_com
 
 makefoo_dist_files_rel = $(patsubst $(MAKEFOO_dir)/%,%, $(makefoo_dist_files_abs))
 
-src-dist-makefoo: $(makefoo_dist_files_abs)
-	@for file in $(makefoo_dist_files_rel) ; do \
+#$(src_dist_folder):
+#	@rm -rf $(src_dist_folder)
+#	@mkdir -p $(src_dist_folder) 
+	
+src-dist-makefoo: $(src_dist_folder) $(makefoo_dist_files_abs)
+	$(COMMENT) copying MAKEFOO files to distribution folder $(src_dist_folder)/makefoo
+	$(EXEC) for file in $(makefoo_dist_files_rel) ; do \
 		dir="$(src_dist_folder)/makefoo/`dirname $$file`" ; \
 		if [ ! -d $$dir ] ; then mkdir -p $$dir ; fi ; \
 		cp  -p -fvr $(MAKEFOO_dir)/$$file $$dir/ ; \
@@ -72,14 +83,16 @@ ifneq ($(src_dist_all_files),)
 src_dist_all_files_rel = $(patsubst %, $(top_srcdir)/%, $(sort $(src_dist_all_files)))
 
 
-src-dist: $(src_dist_folder) $(src_dist_all_files_rel) src-dist-makefoo  
-	for file in $(src_dist_all_files) ; do \
-		dir="$(src_dist_folder)/`dirname $$file`" ; \
-		if [ ! -d $$dir ] ; then mkdir -p $$dir ; fi ; \
-		cp  -p -fvr $(top_srcdir)/$$file $$dir/ ; \
-	done
-	
-	
+src-dist: $(src_dist_folder) $(src_dist_all_files_rel) src-dist-makefoo	
+	$(COMMENT) copying $(PRODUCT) files to distribution folder $(src_dist_folder)
+	$(EXEC) for file in $(src_dist_all_files) ; do \
+		   dir="$(src_dist_folder)/`dirname $$file`" ; \
+		   if [ ! -d $$dir ] ; then mkdir -p $$dir ; fi ; \
+		   cp  -p -fvr $(top_srcdir)/$$file $$dir/ ; \
+	   done
+	$(COMMENT) creating archive $(src_dist_tgz_name)
+	$(EXEC) tar chzf $(src_dist_tgz_name) $(src_dist_folder)
+	$(EXEC) rm -rf $(src_dist_folder)	
 endif
 
 
