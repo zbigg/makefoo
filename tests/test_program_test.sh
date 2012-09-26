@@ -4,9 +4,13 @@ rm -rf test_program_test
 mkdir test_program_test
 cd test_program_test
 
-[ -f ../autoconf_project/configure ] || ( cd ../autoconf_project ; autoconf ; )
+( 
+    cd ../autoconf_project ;
+    autoreconf -I ../../ -f -i
+)
 
 invoke_test ../autoconf_project/configure --with-makefoo-dir=../..
+
 {
     invoke_make test
     assert_grep "this is bar_test, hello" stdout

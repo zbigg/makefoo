@@ -6,7 +6,10 @@ rm -rf simple_autoconf_build
 mkdir simple_autoconf_build
 cd simple_autoconf_build
 
-[ -f ../autoconf_project/configure ] || ( cd ../autoconf_project ; autoconf ; )
+( 
+    cd ../autoconf_project ;
+    autoreconf -I ../../ -f -i
+)
 
 invoke_test ../autoconf_project/configure --with-makefoo-dir=../..
 {
