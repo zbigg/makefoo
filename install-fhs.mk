@@ -35,12 +35,17 @@ ifndef datarootdir
 datarootdir     := ${prefix}/share
 endif
 
+ifndef datadir
+datadir  := ${prefix}/share
+endif
+
+
 ifndef localstatedir
 localstatedir     := ${prefix}/var
 endif
 
 ifndef docdir
-docdir            := $(datarootdir)/doc
+docdir            := $(datadir)/doc
 endif
 
 #
