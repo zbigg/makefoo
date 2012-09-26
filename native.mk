@@ -164,10 +164,11 @@ else
 $(1)_linker=$$(CC)
 endif
 
+$$($(1)_shlib_output): $$($(1)_link_deps_targets)
 $$($(1)_shlib_output): $$($(1)_shlib_objects)
 	@mkdir -p $$($(1)_builddir)
 	$(COMMENT) [$1] linking shared library $$@ using $$($(1)_linker) 
-	$(EXEC) $$($(1)_linker) -shared  -o $$@ $$^ $$($(1)_ldflags)
+	$(EXEC) $$($(1)_linker) -shared  -o $$@ $$($(1)_shlib_objects) $$($(1)_ldflags)
 
 endef
 
@@ -232,10 +233,11 @@ else
 $(1)_linker=$$(CC)
 endif
 
+$$($(1)_bin_outputs): $$($(1)_link_deps_targets)
 $$($(1)_bin_outputs): $$($(1)_objects)
 	@mkdir -p $$($(1)_builddir)
 	$(COMMENT) [$1] linking program $$@ using $$($(1)_linker) 
-	$(EXEC) $$($(1)_linker) -o $$@ $$^ $$($(1)_ldflags)
+	$(EXEC) $$($(1)_linker) -o $$@ $$($(1)_objects) $$($(1)_ldflags)
 
 $(1)_outputs += $$($(1)_bin_outputs)
 
