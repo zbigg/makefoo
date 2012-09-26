@@ -1,4 +1,12 @@
 
+ifndef srcdir
+srcdir=.
+endif
+
+ifndef top_builddir
+top_builddir=$(srcdir)
+endif
+
 include $(top_builddir)/makefoo_configured_defs.mk
 
 #USE_MAKEFOO_LOG=0
