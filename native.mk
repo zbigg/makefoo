@@ -78,6 +78,21 @@ $$($(1)_$(3)_c_objects): $$($(1)_objdir)/%.$(3).o: $(top_srcdir)/$$($(1)_DIR)/%.
 endef
 
 #
+# xxx_LINK_DEPS = yyy zzz
+#  - to build yyy & zzz before linking xxx
+#  - to link xxx (library?program?) with outputs of yyy, xxx 
+#  - yyy, xxx must be libraries
+define link_deps
+
+dupa=1
+ifdef $(1)_LINK_DEPS
+$(1)_link_deps_targets = $$($(1)_LINK_DEPS)
+$(1)_link_deps_link_dirs = $$(foreach dep, $$($(1)_LINK_DEPS), -L$$($$(dep)_builddir))
+$(1)_link_deps_link_libs = $$(foreach dep, $$($(1)_LINK_DEPS), -l$$($$(dep)_name))
+endif
+
+endef	
+#
 # C++ compilation
 #
 
@@ -135,7 +150,11 @@ $(1)_shlib_output = $$($(1)_builddir)/lib$$($(1)_name).$$(SHARED_LIBRARY_EXT)
 $(1)_lib_outputs += $$($(1)_shlib_output)
 $(1)_outputs += $$($(1)_shlib_output)
 
-$(1)_ldflags := $$($(1)_LDFLAGS) $$(LDFLAGS) $$($(1)_LIBS) $$(LIBS)
+$(1)_ldflags := $$($(1)_LDFLAGS) \
+	$$(LDFLAGS) \
+	$$($(1)_LIBS) \
+	$$(sort $$($(1)_link_deps_link_dirs)) $$($(1)_link_deps_link_libs) \
+	$$(LIBS)
 
 # link with CXX if there are any C++ sources in
 
@@ -158,6 +177,7 @@ NATIVE_COMPONENTS += $(SHARED_LIBRARIES_sorted)
 $(foreach library,$(SHARED_LIBRARIES_sorted), $(eval $(call common_defs,$(library),SHARED_LIBRARY)))
 $(foreach library,$(SHARED_LIBRARIES_sorted), $(eval $(call c_template,$(library),SHARED_LIBRARY,shlib)))
 $(foreach library,$(SHARED_LIBRARIES_sorted), $(eval $(call cpp_template,$(library),SHARED_LIBRARY,shlib)))
+$(foreach library,$(SHARED_LIBRARIES_sorted), $(eval $(call link_deps,$(library))))
 $(foreach library,$(SHARED_LIBRARIES_sorted), $(eval $(call shared_library,$(library))))
 
 #
@@ -198,7 +218,11 @@ define program_template
 # 1 - component name
 
 $(1)_bin_outputs = $$($(1)_builddir)/$$($(1)_name)$(PROGRAM_SUFFIX)
-$(1)_ldflags = $$($(1)_LDFLAGS) $$(LDFLAGS) $$($(1)_LIBS) $$(LIBS)
+$(1)_ldflags = $$($(1)_LDFLAGS) \
+	$$(LDFLAGS) \
+	$$($(1)_LIBS) \
+	$$(sort $$($(1)_link_deps_link_dirs)) $$($(1)_link_deps_link_libs) \
+	$$(LIBS)
 
 # link with CXX if there are any C++ sources in
 
@@ -223,6 +247,7 @@ NATIVE_COMPONENTS += $(PROGRAMS_sorted)
 $(foreach program,$(PROGRAMS_sorted),$(eval $(call common_defs,$(program),PROGRAM)))
 $(foreach program,$(PROGRAMS_sorted),$(eval $(call c_template,$(program),PROGRAM,prog)))
 $(foreach program,$(PROGRAMS_sorted),$(eval $(call cpp_template,$(program),PROGRAM,prog)))
+$(foreach program,$(PROGRAMS_sorted),$(eval $(call link_deps,$(program),PROGRAM,prog)))
 $(foreach program,$(PROGRAMS_sorted),$(eval $(call program_template,$(program))))
 
 define native_common
