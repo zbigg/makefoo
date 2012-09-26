@@ -16,8 +16,20 @@ export MAKEFOO_dir
 
 set -e
 
-build_arch=${build_arch-`sh ${MAKEFOO_dir}/autoconf_helpers/config.guess`}
+build_arch=${build_arch-$(sh ${MAKEFOO_dir}/autoconf_helpers/config.guess)}
 target_arch=${target_arch-$build_arch}
+
+#
+# choose architecture tag for various builds
+#
+case "${target_arch}" in
+    i386*|i486*|i586*|i686*)
+        RPM_ARCH=i386
+        ;;
+    x86_64|amd64)
+        RPM_ARCH=x86_64
+        ;;
+esac
 
 #
 # choose default compiler and flags
@@ -105,4 +117,6 @@ emit EXECUTABLE_EXT
 emit SHARED_LIBRARY_EXT SHARED_LIBRARY_MODEL
 emit IMPORT_LIBRARY_EXT
 emit STATIC_LIBRARY_EXT
+emit RPM_ARCH
+
 

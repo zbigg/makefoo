@@ -6,9 +6,13 @@ rm -rf simple_autoconf_project_rpm_build
 mkdir simple_autoconf_project_rpm_build
 cd simple_autoconf_project_rpm_build
 
-[ -f ../autoconf_project/configure ] || ( cd ../autoconf_project ; autoconf ; )
+( 
+    cd ../autoconf_project ;
+    autoreconf -I ../../ -f -i
+)
 
 invoke_test ../autoconf_project/configure --with-makefoo-dir=../..
+    
 invoke_make rpm
 {    
     assert_exists baz/baz$EXECUTABLE_SUFFIX
@@ -24,12 +28,12 @@ invoke_make rpm
     rpm2cpio ddd-dev-1*.rpm | cpio -i -t > ddd.list
     # ddd should contain $p/bin/x and $p/lib/libbar2
     assert_grep "/usr/bin/baz" ddd.list
-    assert_grep "/usr/lib(64?)/libbar2.a" ddd.list
+    assert_grep "/usr/lib(64)?/libbar2.a" ddd.list
     
     rpm2cpio libfoo/libfoo-dev-1*.rpm | cpio -i -t > libfoo.list
     # LIBFOO should contain $p/lib/libfoo
-    assert_grep "/usr/lib(64?)/libfoo.a" libfoo.list
-    assert_grep "/usr/lib(64?)/libfoo.so" libfoo.list
+    assert_grep "/usr/lib(64)?/libfoo.a" libfoo.list
+    assert_grep "/usr/lib(64)?/libfoo.so" libfoo.list
 }
 
 cd ..

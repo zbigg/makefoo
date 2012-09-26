@@ -63,7 +63,10 @@ else
 RPMBUILD_FLAGS=--quiet
 endif
 
+ifndef RPM_ARCH
 RPM_ARCH = $(shell uname -m)
+endif
+
 #
 # RPM build
 #
@@ -113,7 +116,7 @@ $$($(1)_rpm): $(MAKEFOO_dir)/rpm-spec-template.in
 	    -e s/@PRODUCT@/$(PRODUCT)/       \
 	    $$(MAKEFOO_dir)/rpm-spec-template.in > $$($(1)_spec)
 	    
-	$(COMMENT) "[$1]/rpm installing in staging area [$$($(1)_rpmbuilddir)/BUILDROOT/]"
+	$(COMMENT) "[$1]/rpm installing in staging area [$$($(1)_rpmbuilddir)/BUILDROOT/$$($(1)_rpm_name)]"
 	@rm -rf $$($(1)_rpmbuilddir)/BUILDROOT/
 	$(EXEC) $(MAKE) $$($(1)_install_targets) DESTDIR=$$($(1)_rpmbuilddir)/BUILDROOT/$$($(1)_rpm_name) \
 		prefix=$(rpm_prefix)           \
