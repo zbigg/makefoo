@@ -24,7 +24,7 @@ libbar_NAME    = bar2
 STATIC_LIBRARIES += libbar
 
 libbar_TEST_SOURCES = bar_test.cpp
-libbar_test_program_LINK_DEPS = libbar
+libbar_test_program_LINK_DEPS = libbar libfoo
 
 #libbar_unittests_SOURCES   = bar_test.cpp
 #libbar_unittests_DIR       = libbar
