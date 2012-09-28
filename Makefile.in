@@ -58,6 +58,11 @@ makefoo_doc_FILES = MANUAL.txt README.txt
 makefoo_doc_INSTALL_DEST=$(docdir)/makefoo
 COMPONENTS += makefoo_doc
 
+# gosh, jeez it's not src-dir aware
+makefoo_pkg_config_FILES = makefoo.pc
+makefoo_pkg_config_INSTALL_DEST=$(libdir)/pkgconfig
+COMPONENTS += makefoo_pkg_config
+
 makefoo_aclocal_FILES = makefoo.m4
 makefoo_aclocal_INSTALL_DEST=$(datarootdir)/aclocal
 
@@ -66,6 +71,7 @@ PUBLIC_COMPONENTS += $(COMPONENTS)
 
 makefoo_COMPONENTS = \
 	makefoo_lib \
+	makefoo_pkg_config \
 	makefoo_doc \
 	makefoo_aclocal
 PACKAGES += makefoo

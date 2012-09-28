@@ -1,0 +1,13 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+MAKEFOO_dir=${libdir}/makefoo
+
+Name: @PACKAGE_NAME@
+Description: declarative Makefile helper library
+Version: @PACKAGE_VERSION@
+Libs: @LDFLAGS@ -L${libdir} -ltinfra @LIBS@
+Cflags: @CLIENT_CXXFLAGS@ -I${includedir}
+Requires:
+

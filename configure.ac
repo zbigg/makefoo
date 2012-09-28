@@ -9,6 +9,6 @@ AC_CONFIG_SRCDIR([Makefile.in])
 # Checks for programs.
 AC_PROG_INSTALL
 dnl AC_CANONICAL_HOST
-AC_CONFIG_FILES([Makefile])
+AC_CONFIG_FILES([Makefile makefoo.pc])
 AC_OUTPUT
 
