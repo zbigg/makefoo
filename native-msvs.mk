@@ -96,12 +96,10 @@ endef
 #  - to link xxx (library?program?) with outputs of yyy, xxx 
 #  - yyy, xxx must be libraries
 define link_deps
-
-dupa=1
 ifdef $(1)_LINK_DEPS
-$(1)_link_deps_targets = $$($(1)_LINK_DEPS)
-$(1)_link_deps_link_dirs = $$(foreach dep, $$($(1)_LINK_DEPS), -L$$($$(dep)_builddir))
-$(1)_link_deps_link_libs = $$(foreach dep, $$($(1)_LINK_DEPS), -l$$($$(dep)_name))
+$(1)_link_deps_targets =   $$(foreach dep, $$($(1)_LINK_DEPS), $$($$(dep)_lib_outputs))
+$(1)_link_deps_link_dirs = 
+$(1)_link_deps_link_libs = $$($(1)_link_deps_targets)
 endif
 
 endef	
