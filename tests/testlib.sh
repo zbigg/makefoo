@@ -71,6 +71,12 @@ invoke_test()
     ( "$@" 2>&1 ) | tee stdout
 }
 
+skip_test()
+{
+    echo "$PNAME: skipped ($*)"
+    exit 0
+}
+
 if [ -z $MAKEFOO ] ; then
     MAKEFOO_dir=`pwd`/../
     MAKEFOO=${MAKEFOO_dir}/main.mk
