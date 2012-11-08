@@ -21,7 +21,6 @@
 # assert_grep   some_symbol foo.map
 #
 
-
 PNAME=`basename $0`
 secho() {
     echo "$PNAME: $*" 1>&2
@@ -68,15 +67,15 @@ invoke_make()
 invoke_test()
 {
     last_command="$@"
+    echo "! $@"
     ( "$@" 2>&1 ) | tee stdout
 }
 
 if [ -z $MAKEFOO ] ; then
     MAKEFOO_dir=`pwd`/../
-    MAKEFOO=${MAKEFOO_dir}/main.mk
-    
-    
+    MAKEFOO=${MAKEFOO_dir}/main.mk  
 fi
+
 MAKEFOO_dir=`dirname $MAKEFOO`
 
 export MAKEFOO
