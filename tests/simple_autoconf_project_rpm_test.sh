@@ -2,6 +2,8 @@
 
 . ./testlib.sh
 
+type rpmbuild || skip_test "rpmbuild required for this test case"
+
 rm -rf simple_autoconf_project_rpm_build
 mkdir simple_autoconf_project_rpm_build
 cd simple_autoconf_project_rpm_build

@@ -1,3 +1,5 @@
+#!/bin/sh
+
 . ./testlib.sh
 
 rm -rf test_program_test
@@ -14,17 +16,9 @@ invoke_test ../autoconf_project/configure --with-makefoo-dir=../..
 {
     invoke_make test
     assert_grep "this is bar_test, hello" stdout
-    assert_exists ./libbar/libbar_test_program
-    
-    invoke_make clean
-    
-    invoke_make COVERAGE=1 coverage-test-report
-    assert_grep "this is bar_test, hello" stdout
-    assert_exists ./libbar/libbar_test_program
-    
-    assert_exists ./coverage-test-report/index.html
+    assert_exists ./libbar/libbar_test_program$EXECUTABLE_SUFFIX
 }
 cd ..
-
+sleep 0
 rm -rf test_program_test
 
