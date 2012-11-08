@@ -198,16 +198,15 @@ $(foreach library,$(SHARED_LIBRARIES_sorted), $(eval $(call shared_library,$(lib
 define static_library
 # 1 - component name
 
-$(1)_stlib_output  := $$($(1)_builddir)/lib$$($(1)_name).$$(STATIC_LIBRARY_EXT)
+$(1)_stlib_output  := $$($(1)_builddir)/$$($(1)_name).$$(STATIC_LIBRARY_EXT)
 $(1)_lib_outputs += $$($(1)_stlib_output)
 $(1)_outputs += $$($(1)_stlib_output)
-$(1)_archiver=$(AR)
+$(1)_archiver=lib
 
 $$($(1)_stlib_output): $$($(1)_stlib_objects)
 	@mkdir -p $$($(1)_builddir)
 	$(COMMENT) [$1] creating static library $$@ using $$($(1)_archiver) 
-	$(EXEC) $$($(1)_archiver) rcu $$@ $$^
-	$(EXEC) $$(RANLIB) $$@
+	$(EXEC) $$($(1)_archiver) -nologo -out:$$@ $$^
 
 endef
 

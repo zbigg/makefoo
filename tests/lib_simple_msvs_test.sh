@@ -5,7 +5,7 @@
 set -e
 cd lib_simple
 invoke_make clean
-invoke_make configure
+invoke_make configure TOOLSET=msvs
 
 #  first clean make
 invoke_make
@@ -14,15 +14,17 @@ invoke_make
     assert_grep "creating static library (.*)libx" stdout
     assert_grep "linking program prog" stdout
     
-    assert_exists liblibx.a
-    assert_exists prog$EXECUTABLE_SUFFIX
+    assert_exists libx.lib
+    assert_exists prog.exe
 
 # now remote program and check if it is relinked
 sleep 1
 echo "removed liblibx.a"
-rm liblibx.a
+rm libx.lib
 invoke_make
-    assert_exists prog$EXECUTABLE_SUFFIX
+    assert_exists prog.exe
+    assert_exists libx.lib
+    
     assert_grepv "compiling" stdout
     assert_grep "creating static library (.*)libx" stdout
     assert_grep "linking program prog" stdout
@@ -32,7 +34,9 @@ sleep 1
 echo "touched lib.c"
 touch lib.c
 invoke_make
-    assert_exists prog$EXECUTABLE_SUFFIX
+    assert_exists prog.exe
+    assert_exists libx.lib
+    
     assert_grep "compiling lib.c" stdout
     assert_grep "creating static library (.*)libx" stdout
     assert_grep "linking program prog" stdout
