@@ -11,6 +11,7 @@ if test "x$MAKEFOO_dir" = "x" ; then
         exit 1
     fi
 fi
+
 export MAKEFOO
 export MAKEFOO_dir
 
@@ -19,6 +20,10 @@ set -e
 build_arch=${build_arch-$(sh ${MAKEFOO_dir}/autoconf_helpers/config.guess)}
 target_arch=${target_arch-$build_arch}
 
+exists_in_path()
+{
+    type $1 2>/dev/null >/dev/null 
+}
 #
 # choose architecture tag for various builds
 #
@@ -66,7 +71,18 @@ case "${target_arch}" in
         TARGET_SHARED_LIBRARY_LDFLAGS="-Wl,--enable-auto-import"
         ;;
     *)
-        TOOLSET=gcc
+        if [ -z "$TOOLSET" ] ; then
+            if exists_in_path gcc ; then
+                TOOLSET=gcc
+            elif exists_in_path clang ; then
+                TOOLSET=clang
+            elif exists_in_path cc ; then
+                TOOLSET=unix
+            else
+                echo "configure.sh: unable to find TOOLSET (tried, gcc/G++, clang(++), cc/CC" >&2 
+                exit 1
+            fi
+        fi
         
         STATIC_LIBRARY_EXT=a
         SHARED_LIBRARY_EXT=so
@@ -75,9 +91,21 @@ case "${target_arch}" in
 esac
 
 case "${TOOLSET}" in
+    unix)
+        TOOLSET_CXX=${CXX-CC}
+        TOOLSET_CC=${CC-cc}
+        
+        OBJECT_EXT=o
+        ;;
     gcc)
         TOOLSET_CXX=${CXX-g++}
         TOOLSET_CC=${CC-gcc}
+        
+        OBJECT_EXT=o
+        ;;
+    clang)
+        TOOLSET_CXX=${CXX-clang++}
+        TOOLSET_CC=${CC-clang}
         
         OBJECT_EXT=o
         ;;
