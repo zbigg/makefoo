@@ -13,7 +13,7 @@ top_builddir=@top_builddir@
 prefix=@prefix@
 exec_prefix=@exec_prefix@
 libdir = @libdir@
-datadir = @datadir@
+datarootdir = @datarootdir@
 
 INSTALL = @INSTALL@
 INSTALL_DATA = @INSTALL_DATA@
@@ -48,7 +48,7 @@ makefoo_lib_SCRIPTS = \
         log.sh \
         autoconf_helpers/config.guess
         
-makefoo_lib_INSTALL_DEST=$(libdir)/makefoo
+makefoo_lib_INSTALL_DEST=$(datarootdir)/makefoo
 COMPONENTS += makefoo_lib
 
 #
