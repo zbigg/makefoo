@@ -20,10 +20,12 @@ VERBOSE=0
 endif
 
 ifeq ($(VERBOSE),1)
-COMMENT=@true 
+COMMENT=@true
+COMMENT_SHELL=true
 EXEC=$(LOG)
 else
 COMMENT=@$(LOG) echo 
+COMMENT_SHELL=$(LOG) echo
 EXEC=@$(LOG)
 endif
 

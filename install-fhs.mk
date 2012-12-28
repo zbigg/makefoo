@@ -54,13 +54,19 @@ endif
 #
 
 $(DESTDIR)$(libdir):
-	mkdir -p $@
+	$(COMMENT) create installation folder $@
+	$(EXEC) mkdir -p $@
 
 define install_fhs_libs
 ifdef $(1)_lib_outputs
 
 $(1)_install_lib: $$($(1)_lib_outputs) $$(DESTDIR)$(libdir)
-	$$(INSTALL) $$($(1)_lib_outputs) $$(DESTDIR)$(libdir)
+	$(EXEC) for FILE in $$($(1)_lib_outputs) ; do \
+		dir="$$(DESTDIR)$$(libdir)" ; \
+		file="$$$$(basename $$$$FILE)" ; \
+		$(COMMENT_SHELL) [$(1)] install library $$$$dir/$$$$file ; \
+		$(INSTALL) "$$$$FILE" "$$$$dir" ; done
+
 
 $(1)_install_targets += $(1)_install_lib
 
@@ -72,13 +78,18 @@ endef
 # define X_bin_outputs
 #
 $(DESTDIR)$(bindir):
-	mkdir -p $@
+	$(COMMENT) create installation folder $@
+	$(EXEC) mkdir -p $@
 
 define install_fhs_programs
 ifdef $(1)_bin_outputs
 
 $(1)_install_bin: $$($(1)_bin_outputs) $$(DESTDIR)$(bindir)
-	$$(INSTALL) $$($(1)_bin_outputs) $$(DESTDIR)$(bindir)
+	$(EXEC) for FILE in $$($(1)_bin_outputs) ; do \
+		dir="$$(DESTDIR)$$(bindir)" ; \
+		file="$$$$(basename $$$$FILE)" ; \
+		$(COMMENT_SHELL) [$(1)] install program $$$$dir/$$$$file ; \
+		$(INSTALL) "$$$$FILE" "$$$$dir"; done
 
 $(1)_install_targets += $(1)_install_bin
 endif
@@ -93,8 +104,9 @@ define install_verbatim
 
 ifdef $(1)_FILES
 $(1)_install_files:
-	for FILE in $$($(1)_FILES) ; do \
+	$(EXEC) for FILE in $$($(1)_FILES) ; do \
 		dir="$$(DESTDIR)$$($(1)_INSTALL_DEST)/`dirname $$$$FILE`" ; \
+		$(COMMENT_SHELL) [$(1)] install $$$$dir/$$$$FILE ; \
 		mkdir -pv $$$$dir ; \
 		$(INSTALL_DATA)  "$(srcdir)/$$($(1)_DIR)/$$$$FILE" "$$$$dir" ; done
 
@@ -103,8 +115,9 @@ $(1)_install_targets      += $(1)_install_files
 endif
 ifdef $(1)_SCRIPTS
 $(1)_install_scripts:
-	for FILE in $$($(1)_SCRIPTS) ; do \
+	$(EXEC) for FILE in $$($(1)_SCRIPTS) ; do \
 		dir="$$(DESTDIR)$$($(1)_INSTALL_DEST)/`dirname $$$$FILE`" ; \
+		$(COMMENT_SHELL) [$(1)] install script $$$$dir/$$$$FILE; \
 		mkdir -pv $$$$dir ; \
 		$(INSTALL)  "$(srcdir)/$$($(1)_DIR)/$$$$FILE" "$$$$dir" ; done
 
