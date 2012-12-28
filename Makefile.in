@@ -48,7 +48,7 @@ makefoo_lib_SCRIPTS = \
         log.sh \
         autoconf_helpers/config.guess
         
-makefoo_lib_INSTALL_DEST=$(libdir)/makefoo
+makefoo_lib_INSTALL_DEST=$(datarootdir)/makefoo
 COMPONENTS += makefoo_lib
 
 #
@@ -77,7 +77,7 @@ makefoo_COMPONENTS = \
 PACKAGES += makefoo
 
 PRODUCT=makefoo
-VERSION=0.0.1-dev
+VERSION=0.0.1
 
 #TBD, it shall be EXTRA_DIST_WILDCARD 
 #     realized as in autoconf.mk EXTRA_DIST addition
