@@ -107,7 +107,7 @@ $(1)_install_files:
 	$(EXEC) for FILE in $$($(1)_FILES) ; do \
 		dir="$$(DESTDIR)$$($(1)_INSTALL_DEST)/`dirname $$$$FILE`" ; \
 		$(COMMENT_SHELL) [$(1)] install $$$$dir/$$$$FILE ; \
-		mkdir -pv $$$$dir ; \
+		mkdir -p $$$$dir ; \
 		$(INSTALL_DATA)  "$(srcdir)/$$($(1)_DIR)/$$$$FILE" "$$$$dir" ; done
 
 $(1)_install_targets      += $(1)_install_files
@@ -118,7 +118,7 @@ $(1)_install_scripts:
 	$(EXEC) for FILE in $$($(1)_SCRIPTS) ; do \
 		dir="$$(DESTDIR)$$($(1)_INSTALL_DEST)/`dirname $$$$FILE`" ; \
 		$(COMMENT_SHELL) [$(1)] install script $$$$dir/$$$$FILE; \
-		mkdir -pv $$$$dir ; \
+		mkdir -p $$$$dir ; \
 		$(INSTALL)  "$(srcdir)/$$($(1)_DIR)/$$$$FILE" "$$$$dir" ; done
 
 $(1)_install_targets      += $(1)_install_scripts
