@@ -14,6 +14,7 @@
 #  foo_COMPONENTS = fooctl food libfoo libfoospam
 #  PACKAGES += foo
 #
+#
 # and one, foocli rpm will be created that contain installment of all
 # 4 components
 #
@@ -25,10 +26,27 @@
 #
 # the xxx_COMPONENTS = xxx is an implicit assumption
 #
-# RPM always need release
+# Version
+#  The xxx_VERSION is taken, then VERSION for RPM version.
+#  Version string shall not contain - (dash) as RPM doesn't allow this.
+#  RPM always need release, and it is specified separately using global (now!)
+#  RPM_RELEASE variable.
 #
 # Implementation status. "first level works ;)"
 #
+# TBD:
+#  ability to pass
+#   vendor
+#   group
+#   summary
+#   description
+#   licence
+#   component specific release
+#   postun/post hooks
+#   custom spec file
+#  
+
+# example of current package info. it is r
 # $ rpm -qpi simple_autoconf_project_rpm_build/ddd-dev-1.i386.rpm
 # Name        : ddd                          Relocations: (not relocatable)
 # Version     : dev                               Vendor: (none)
@@ -89,8 +107,9 @@ define rpm_template
 
 # TBD, output to $(1)_objdir
 
-$(1)_version     = dev
-$(1)_rpm_name    =  $(1)-$$($(1)_version)-$$(RPM_RELEASE).$$(RPM_ARCH)
+$(1)_rpm_version = $$(if $$($(1)_VERSION),$$($(1)_VERSION),$$(VERSION))
+$(1)_rpm_release = $(RPM_RELEASE)
+$(1)_rpm_name    =  $(1)-$$($(1)_rpm_version)-$$($(1)_rpm_release).$$(RPM_ARCH)
 $(1)_rpm         := $$($(1)_builddir)/$$($(1)_rpm_name).rpm
 $(1)_rpmbuilddir := $$($(1)_builddir)/.rpmbuild
 $(1)_spec        := $$($(1)_rpmbuilddir)/SPECS/$(1).spec
@@ -109,14 +128,14 @@ endif
 $$($(1)_rpm): $(MAKEFOO_dir)/rpm-spec-template.in
 	@mkdir -p $$($(1)_rpmbuilddir)/SOURCES $$($(1)_rpmbuilddir)/SPECS $$($(1)_rpmbuilddir)/BUILD $$($(1)_rpmbuilddir)/RPMS
 	
-	$(COMMENT) "[$1]/rpm creating spec file"
-	sed -e s/@VERSION@/$$($(1)_version)/ \
-	    -e s/@RELEASE@/$(RPM_RELEASE)/   \
+	$(COMMENT) "[$1] creating rpm spec file $$($(1)_spec)"
+	$(EXEC) sed -e s/@VERSION@/$$($(1)_rpm_version)/ \
+	    -e s/@RELEASE@/$$($(1)_rpm_release)/   \
 	    -e s/@COMPONENT@/$(1)/           \
 	    -e s/@PRODUCT@/$(PRODUCT)/       \
 	    $$(MAKEFOO_dir)/rpm-spec-template.in > $$($(1)_spec)
 	    
-	$(COMMENT) "[$1]/rpm installing in staging area [$$($(1)_rpmbuilddir)/BUILDROOT/$$($(1)_rpm_name)]"
+	$(COMMENT) "[$1] installing in staging area [$$($(1)_rpmbuilddir)/BUILDROOT/$$($(1)_rpm_name)]"
 	@rm -rf $$($(1)_rpmbuilddir)/BUILDROOT/
 	$(EXEC) $(MAKE) $$($(1)_install_targets) DESTDIR=$$($(1)_rpmbuilddir)/BUILDROOT/$$($(1)_rpm_name) \
 		prefix=$(rpm_prefix)           \
@@ -127,7 +146,7 @@ $$($(1)_rpm): $(MAKEFOO_dir)/rpm-spec-template.in
 		datadir=$(rpm_datadir)         \
 		localstatedir=$(rpm_localstatedir) 
 	
-	$(COMMENT) "[$1]/rpm" creating $$($(1)_rpm)
+	$(COMMENT) "[$1] creating rpm package $$($(1)_rpm)"
 	$(EXEC) rpmbuild $(RPMBUILD_FLAGS) --define "_topdir $$(abspath $$($(1)_rpmbuilddir))" -bb $$($(1)_spec)
 	
 	$(EXEC) mv $$($(1)_rpmbuilddir)/RPMS/$(RPM_ARCH)/$$($(1)_rpm_name).rpm $$($(1)_rpm)
