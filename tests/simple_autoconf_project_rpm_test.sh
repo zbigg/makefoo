@@ -23,16 +23,16 @@ invoke_make rpm
     assert_exists libbar/libbar2.$STATIC_LIBRARY_EXT
     
     # check that we have some rpms    
-    assert_exists ddd-dev-1*.rpm
-    assert_exists libfoo/libfoo-dev-1*.rpm
+    assert_exists ddd-1.1-1*.rpm
+    assert_exists libfoo/libfoo-1.2-1*.rpm
     
     # and check their contents
-    rpm2cpio ddd-dev-1*.rpm | cpio -i -t > ddd.list
+    rpm2cpio ddd-1.1-1*.rpm | cpio -i -t > ddd.list
     # ddd should contain $p/bin/x and $p/lib/libbar2
     assert_grep "/usr/bin/baz" ddd.list
     assert_grep "/usr/lib(64)?/libbar2.a" ddd.list
     
-    rpm2cpio libfoo/libfoo-dev-1*.rpm | cpio -i -t > libfoo.list
+    rpm2cpio libfoo/libfoo-1.2-1*.rpm | cpio -i -t > libfoo.list
     # LIBFOO should contain $p/lib/libfoo
     assert_grep "/usr/lib(64)?/libfoo.a" libfoo.list
     assert_grep "/usr/lib(64)?/libfoo.so" libfoo.list

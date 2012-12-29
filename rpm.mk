@@ -107,7 +107,18 @@ define rpm_template
 
 # TBD, output to $(1)_objdir
 
-$(1)_rpm_version = $$(if $$($(1)_VERSION),$$($(1)_VERSION),$$(VERSION))
+ifdef $(1)_VERSION
+$(1)_rpm_version = $$($(1)_VERSION)
+else
+ifdef $(VERSION) 
+$(1)_rpm_version = $$(VERSION)
+else
+ifneq ($(1),)
+$$(error $(1): $(1)_VERSION or VERSION definition required for rpm package creation)
+endif
+endif
+endif
+
 $(1)_rpm_release = $(RPM_RELEASE)
 $(1)_rpm_name    =  $(1)-$$($(1)_rpm_version)-$$($(1)_rpm_release).$$(RPM_ARCH)
 $(1)_rpm         := $$($(1)_builddir)/$$($(1)_rpm_name).rpm

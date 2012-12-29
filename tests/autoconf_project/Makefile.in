@@ -48,6 +48,8 @@ PROGRAMS += baz
 #MAKEFOO=$(top_srcdir)/../../
 ddd_COMPONENTS=baz libbar
 PACKAGES=ddd libfoo
+ddd_VERSION=1.1
+libfoo_VERSION=1.2
 
 MAKEFOO_USE += native
 MAKEFOO_USE += test-program
