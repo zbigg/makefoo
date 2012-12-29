@@ -41,7 +41,9 @@ makefoo_lib_FILES = \
         test-program.mk \
         test-program.pre.mk \
         src-dist.mk \
-        src-dist.post.mk
+        src-dist.post.mk \
+        cppcheck.mk \
+        cppcheck.post.mk
 
 makefoo_lib_SCRIPTS = \
         configure.sh \

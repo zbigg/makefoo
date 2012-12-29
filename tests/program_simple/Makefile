@@ -13,5 +13,7 @@ VERSION=1.2.3-1
 MAKEFOO=$(top_srcdir)/../../main.mk
 MAKEFOO_USE += native
 MAKEFOO_USE += src-dist
+MAKEFOO_USE += cppcheck
+
 include $(MAKEFOO)
 
