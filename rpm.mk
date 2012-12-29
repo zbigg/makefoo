@@ -110,7 +110,7 @@ define rpm_template
 ifdef $(1)_VERSION
 $(1)_rpm_version = $$($(1)_VERSION)
 else
-ifdef $(VERSION) 
+ifdef VERSION 
 $(1)_rpm_version = $$(VERSION)
 else
 ifneq ($(1),)
