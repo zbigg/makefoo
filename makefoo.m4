@@ -15,7 +15,7 @@ AC_DEFUN([AC_MAKEFOO],
             ]
             , makefoo_dir="")
             
-    AC_MSG_CHECKING(for makefoo path)
+    #AC_MSG_CHECKING(for makefoo path)
     
     if test x$makefoo_dir = x ; then
         AC_MSG_CHECKING(for makefoo path with pkg_config)
@@ -29,7 +29,7 @@ AC_DEFUN([AC_MAKEFOO],
     fi
     if test x$makefoo_dir = x ; then
         AC_MSG_CHECKING([for makefoo in predefined folders])
-        for DIR in $srcdir/makefoo /usr/local/lib/makefoo /usr/lib/makefoo $srcdir $srcdir/.. $srcdir/../.. $srcdir/../../.. $HOME/lib/makefoo; do
+        for DIR in $srcdir/makefoo /usr/local/share/makefoo /usr/share/makefoo $srcdir $srcdir/.. $srcdir/../.. $srcdir/../../.. $HOME/share/makefoo; do
             #echo "...trying $DIR" 
             if test -f $DIR/defs.mk ; then
                 makefoo_dir="$DIR"
@@ -48,7 +48,7 @@ AC_DEFUN([AC_MAKEFOO],
     fi
     
     if test x$makefoo_main = x ; then
-        AC_MSG_RESULT([not found])
+        #AC_MSG_RESULT([not found])
         AC_MSG_ERROR([makefoo not found in default locations, please try --with-makefoo-dir=FOLDER option])
     fi
     

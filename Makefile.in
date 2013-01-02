@@ -13,7 +13,7 @@ top_builddir=@top_builddir@
 prefix=@prefix@
 exec_prefix=@exec_prefix@
 libdir = @libdir@
-datarootdir = @datarootdir@
+datadir=@datadir@
 
 INSTALL = @INSTALL@
 INSTALL_DATA = @INSTALL_DATA@
@@ -50,7 +50,7 @@ makefoo_lib_SCRIPTS = \
         log.sh \
         autoconf_helpers/config.guess
         
-makefoo_lib_INSTALL_DEST=$(datarootdir)/makefoo
+makefoo_lib_INSTALL_DEST=$(datadir)/makefoo
 COMPONENTS += makefoo_lib
 
 #
@@ -59,6 +59,9 @@ COMPONENTS += makefoo_lib
 makefoo_doc_FILES = MANUAL.txt README.txt
 makefoo_doc_INSTALL_DEST=$(docdir)/makefoo
 COMPONENTS += makefoo_doc
+
+makefoo.pc: $(srcdir)/makefoo.pc.in
+	./config.status -f makefoo.pc
 
 # gosh, jeez it's not src-dir aware
 makefoo_pkg_config_FILES = makefoo.pc
