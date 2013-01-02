@@ -12,7 +12,7 @@
 #
 
 ifndef MAKEFOO_CPPCHECK_FLAGS 
-MAKEFOO_CPPCHECK_FLAGS=--quiet --enable=all --template=gcc
+MAKEFOO_CPPCHECK_FLAGS=--quiet --enable=all --template gcc
 endif
 
 ifndef CPPCHECK
@@ -36,8 +36,7 @@ $(1)_c_cppcheck_flags=$$(filter -D*, $$($(1)_c_source_flags)) $$(filter -I%, $$(
 $(1)_c_cppcheck:
 	$(COMMENT) "[$1] cppcheck C sources" 
 	$(EXEC) $(CPPCHECK) $(MAKEFOO_CPPCHECK_FLAGS) $$($(1)_c_cppcheck_flags) $$($(1)_c_sources_rel)
-	
-	
+
 $(1)_cppcheck: $(1)_c_cppcheck 
 cppcheck: $(1)_c_cppcheck
 
