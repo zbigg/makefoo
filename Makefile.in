@@ -60,6 +60,9 @@ makefoo_doc_FILES = MANUAL.txt README.txt
 makefoo_doc_INSTALL_DEST=$(docdir)/makefoo
 COMPONENTS += makefoo_doc
 
+makefoo.pc: $(srcdir)/makefoo.pc.in
+	./config.status -f makefoo.pc
+
 # gosh, jeez it's not src-dir aware
 makefoo_pkg_config_FILES = makefoo.pc
 makefoo_pkg_config_INSTALL_DEST=$(libdir)/pkgconfig
