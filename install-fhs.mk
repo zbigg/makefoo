@@ -36,7 +36,7 @@ datarootdir     := ${prefix}/share
 endif
 
 ifndef datadir
-datadir  := ${prefix}/share
+datadir  := ${datarootdir}
 endif
 
 
