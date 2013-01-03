@@ -111,17 +111,14 @@ case "${TOOLSET}" in
 
             TARGET_SHARED_LIBRARY_LDFLAGS="-Wl,--enable-auto-import"
         else
-
             STATIC_LIBRARY_EXT=a
             SHARED_LIBRARY_EXT=so
             SHARED_LIBRARY_MODEL=so
         fi
+        ;;
     unix)
         TOOLSET_CXX=${CXX-CC}
         TOOLSET_CC=${CC-cc}
-        
-        OBJECT_EXT=o
-        ;;
         
         OBJECT_EXT=o
         ;;
