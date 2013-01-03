@@ -35,6 +35,8 @@ makefoo_lib_FILES = \
         defs.mk \
         main.mk \
         native.mk \
+        native-gcc.mk \
+        native-msvs.mk \
         rpm.mk \
         rpm-spec-template.in \
         install-fhs.mk \
