@@ -51,6 +51,7 @@ define makefoo_component_files
 makefoo_dist_files_abs += \
         $$(wildcard $(MAKEFOO_dir)/$(1).pre.mk) \
         $$(wildcard $(MAKEFOO_dir)/$(1).mk) \
+        $$(wildcard $(MAKEFOO_dir)/$(1)-*.mk) \
         $$(wildcard $(MAKEFOO_dir)/$(1).post.mk) \
         $$(patsubst %, $$(MAKEFOO_dir)/%, $$($(1)_MAKEFOO_DIST)) 
 endef
