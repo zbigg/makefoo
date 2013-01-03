@@ -268,11 +268,15 @@ $(1): $$($(1)_outputs)
 $(1)-clean clean-$(1):
 	rm -rf $$($(1)_outputs) $$($(1)_objects) $$($(1)_d_files)
 
-$(1)_d_files  = $$(patsubst %.o, %.d, $$($(1)_objects))
 
 all_objects   += $$($(1)_objects)
 all_outputs   += $$($(1)_outputs)
-all_d_files   += $$($(1)_d_files)
+
+# MSVS cannot generate .d files
+#  unless we follow this: 
+#  http://www.conifersystems.com/2008/10/09/dependencies-from-showincludes/
+#$(1)_d_files  = $$(patsubst %.o, %.d, $$($(1)_objects))
+#all_d_files   += $$($(1)_d_files)
 
 endef
 
