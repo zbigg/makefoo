@@ -6,14 +6,49 @@
 
 MAKEFOO_dir := $(shell dirname $(MAKEFOO))
 
-include $(MAKEFOO_dir)/defs.mk
 
+# each module has up to 4 parts
+# 
+# module.reg.mk -- registration
+#     it shall register components on global components lists
+#     registrations may be public
+#     most important is to register on
+#     COMPONENTS
+#      as example:
+#       - native PROGRAMS, STATIC_LIBRARIES and SHARED_LIBRARIES will
+#            register itself as COMPONENTS
+#       - test-program will register auto-test-programs in 
+#            PROGRAMS and in 
+#            COMPONENTS 
+#      it can or shall generate all pseudo targets
+#
+# then defs.mk is loaded and following definitions are available
+#   $(xxx_builddir) - a folder with output files for component xxx (relative to top_builddir)
+#   $(xxx_srcdir)   - a folder with source files for component xxx (relative to top_builddir)
+#   $(xxx_objdir)   - intermediate files folder (relative to top_builddir)
+#   $(xxx_DIR)      - component folder (relative to srcdir)
+#   $(xxx_name)     - component name xxx or $(xxx_NAME)
+#   
+#  
+# module.pre.mk
+#     preprocessing and updating definitions
+#     
+# module.mk
+#     main functionality of module. it shall emit rules
+#     
+# module.post.mk
+#     
+#
+makefoo_reg_includes = $(patsubst %,$(MAKEFOO_dir)/%.reg.mk,$(MAKEFOO_USE))
 makefoo_pre_includes = $(patsubst %,$(MAKEFOO_dir)/%.pre.mk,$(MAKEFOO_USE))
-#makefoo_main_includes = $(patsubst %,%.main.mk,$(MAKEFOO_USE))
 makefoo_main_includes = $(patsubst %,$(MAKEFOO_dir)/%.mk,$(MAKEFOO_USE))
 makefoo_post_includes = $(patsubst %,$(MAKEFOO_dir)/%.post.mk,$(MAKEFOO_USE))
 
 default: build
+-include $(makefoo_reg_includes)
+
+include $(MAKEFOO_dir)/defs.mk
+
 -include $(makefoo_pre_includes)
 
 include $(makefoo_main_includes)

@@ -172,7 +172,6 @@ endef
 
 RPM_COMPONENTS_sorted := $(sort $(PACKAGES))
 
-$(foreach component,$(RPM_COMPONENTS_sorted),$(eval $(call common_defs,$(component))))
 $(foreach component,$(RPM_COMPONENTS_sorted),$(eval $(call rpm_template,$(component))))
 
 rpm: $(rpm_targets)

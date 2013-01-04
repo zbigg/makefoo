@@ -68,6 +68,11 @@ define common_defs
 # 1 - component name
 # 2 - component type (PROGRAM, SHARED_LIBRARY, STATIC_LIBRARY)
 
+ifndef $(1)_DIR
+$$(warning $(1)_DIR not defined, assuming . relative to srcdir)
+$(1)_DIR=.
+endif
+
 $(1)_builddir := $(top_builddir)/$$($(1)_DIR)
 $(1)_srcdir   := $(top_srcdir)/$$($(1)_DIR)
 $(1)_objdir   := $$($(1)_builddir)/.obj
@@ -77,7 +82,7 @@ endef
 
 COMPONENTS_sorted = $(sort $(COMPONENTS) $(PUBLIC_COMPONENTS))
 
-$(foreach component,$(COMPONENTS_sorted),$(eval $(call common_defs,$(program))))
+$(foreach component,$(COMPONENTS_sorted),$(eval $(call common_defs,$(component))))
 
 # Disable implicit rules to speedup build
 .SUFFIXES:

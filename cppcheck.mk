@@ -1,11 +1,6 @@
 #
 # cppcheck module for makefoo
 #
-# (COMPONENT list have to be filled, so main functionality in cppckeck.post.mk)
-#
-#
-#
-#
 # usage Makefile:
 #
 #   MAKEFOO_USE=cppcheck
@@ -24,7 +19,68 @@
 #
 #   make xxx_cppcheck
 #     cppcheck on C/C++ sources of component xxx
+#
+#
+# MAKEFOO cppcheck defaults convienient for author
+#  - gcc error mode
+#  - enable all errors
+#  - be quiet, show only results 
+#
 
+ifndef MAKEFOO_CPPCHECK_FLAGS 
+MAKEFOO_CPPCHECK_FLAGS=--quiet --enable=all --template=gcc
+endif
+
+ifndef CPPCHECK
+CPPCHECK=cppcheck
+endif
+
+define cppcheck_template
+
+ifdef $(1)_SOURCES
+
+$(1)_c_sources = $$(filter %.c, $$($(1)_SOURCES))
+$(1)_cpp_sources = $$(filter %.cpp, $$($(1)_SOURCES))   
+
+ifneq ($$($(1)_c_sources),)
+
+$(1)_c_sources_rel   = $$(strip $$(patsubst %.c, $$(top_srcdir)/$$($(1)_DIR)/%.c, $$($(1)_c_sources)))
+
+$(1)_c_source_flags=$$($(1)_CFLAGS) $$(CFLAGS)
+$(1)_c_cppcheck_flags=$$(filter -D*, $$($(1)_c_source_flags)) $$(filter -I%, $$($(1)_c_source_flags)) $$($(1)_CPPCHECK_FLAGS) $(CPPCHECK_FLAGS)
+
+$(1)_c_cppcheck:
+	$(COMMENT) "[$1] cppcheck C sources" 
+	$(EXEC) $(CPPCHECK) $(MAKEFOO_CPPCHECK_FLAGS) $$($(1)_c_cppcheck_flags) $$($(1)_c_sources_rel)
+	
+	
+$(1)_cppcheck: $(1)_c_cppcheck 
+cppcheck: $(1)_c_cppcheck
+
+endif # c sources
+
+ifneq ($$($(1)_cpp_sources),)
+
+$(1)_cpp_sources_rel = $$(strip $$(patsubst %.cpp, $$(top_srcdir)/$$($(1)_DIR)/%.cpp, $$($(1)_cpp_sources)))
+
+$(1)_cpp_source_flags=$$($(1)_CXXFLAGS) $$(CXXFLAGS)
+$(1)_cpp_cppcheck_flags=$$(filter -D*, $$($(1)_cpp_source_flags)) $$(filter -I%, $$($(1)_cpp_source_flags)) $$($(1)_CPPCHECK_FLAGS) $(CPPCHECK_FLAGS)
+
+$(1)_cpp_cppcheck:
+	$(COMMENT) "[$1] cppcheck C++ sources"
+	$(EXEC) $(CPPCHECK) $(MAKEFOO_CPPCHECK_FLAGS) $$($(1)_cpp_cppcheck_flags) $$($(1)_cpp_sources_rel)
+
+$(1)_cppcheck: $(1)_cpp_cppcheck	
+cppcheck: $(1)_cpp_cppcheck
+
+endif # cpp sources
+
+endif # $(1)_SOURCES
+endef
+
+CPPCHECK_COMPONENTS_sorted = $(sort $(COMPONENTS))
+
+$(foreach component,$(CPPCHECK_COMPONENTS_sorted),$(eval $(call cppcheck_template,$(component))))
 
 
 # jedit: :tabSize=8:mode=makefile:

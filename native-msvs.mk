@@ -75,9 +75,18 @@ define c_template
 # 3 - target obj sufix prog|shobj|stobj
 #      (note, on most targets static lib obj == prog obj)
 # TBD, output to $(1)_objdir
+
+ifdef $(1)_c_sources_rel
+$(1)_$(3)_c_sources_rel = $$($(1)_c_sources_rel)
+else
 $(1)_$(3)_c_sources = $$(filter %.c, $$($(1)_SOURCES))
 $(1)_$(3)_c_sources_rel = $$(patsubst %.c, $$(top_srcdir)/$$($(1)_DIR)/%.c, $$($(1)_$(3)_c_sources))
+endif
+
+ifndef $(1)_$(3)_c_objects
 $(1)_$(3)_c_objects = $$(patsubst $$(top_srcdir)/$$($(1)_DIR)/%.c, $$($(1)_objdir)/%.$(3).obj, $$($(1)_$(3)_c_sources_rel))
+endif
+
 $(1)_$(3)_objects  += $$($(1)_$(3)_c_objects)
 $(1)_$(3)_cflags    = $$($(1)_CFLAGS) $$($(2)_CFLAGS) $$(CFLAGS) $$(MSVS_COMMON_COMPILE_FLAGS)
 
@@ -113,9 +122,17 @@ define cpp_template
 # 3 - target type object tag
 # TBD, output to $(1)_objdir
 
+ifdef $(1)_cpp_sources_rel
+$(1)_$(3)_cpp_sources_rel = $$($(1)_cpp_sources_rel)
+else
 $(1)_$(3)_cpp_sources = $$(filter %.cpp, $$($(1)_SOURCES))
 $(1)_$(3)_cpp_sources_rel = $$(patsubst %.cpp, $(top_srcdir)/$$($(1)_DIR)/%.cpp, $$($(1)_$(3)_cpp_sources))
+endif
+
+ifndef $(1)_$(3)_cpp_objects
 $(1)_$(3)_cpp_objects = $$(patsubst $(top_srcdir)/$$($(1)_DIR)/%.cpp, $$($(1)_objdir)/%.$(3).obj, $$($(1)_$(3)_cpp_sources_rel))
+endif
+
 $(1)_$(3)_objects    += $$($(1)_$(3)_cpp_objects)
 $(1)_$(3)_cxxflags    = $$($(1)_CXXFLAGS) $$($(2)_CXXFLAGS) $$(CXXFLAGS) $$(MSVS_COMMON_COMPILE_FLAGS)
 
@@ -186,7 +203,6 @@ endef
 SHARED_LIBRARIES_sorted=$(sort $(SHARED_LIBRARIES))
 NATIVE_COMPONENTS += $(SHARED_LIBRARIES_sorted)
 
-$(foreach library,$(SHARED_LIBRARIES_sorted), $(eval $(call common_defs,$(library),SHARED_LIBRARY)))
 $(foreach library,$(SHARED_LIBRARIES_sorted), $(eval $(call c_template,$(library),SHARED_LIBRARY,shlib)))
 $(foreach library,$(SHARED_LIBRARIES_sorted), $(eval $(call cpp_template,$(library),SHARED_LIBRARY,shlib)))
 $(foreach library,$(SHARED_LIBRARIES_sorted), $(eval $(call link_deps,$(library))))
@@ -211,7 +227,6 @@ $$($(1)_stlib_output): $$($(1)_stlib_objects)
 endef
 
 STATIC_LIBRARIES_sorted=$(sort $(STATIC_LIBRARIES))
-$(foreach library,$(STATIC_LIBRARIES_sorted), $(eval $(call common_defs,$(library),STATIC_LIBRARY)))
 $(foreach library,$(STATIC_LIBRARIES_sorted), $(eval $(call c_template,$(library),STATIC_LIBRARY,stlib)))
 $(foreach library,$(STATIC_LIBRARIES_sorted), $(eval $(call cpp_template,$(library),STATIC_LIBRARY,stlib)))
 $(foreach library,$(STATIC_LIBRARIES_sorted), $(eval $(call static_library,$(library))))
@@ -256,7 +271,6 @@ endef
 PROGRAMS_sorted=$(sort $(PROGRAMS))
 NATIVE_COMPONENTS += $(PROGRAMS_sorted)
 
-$(foreach program,$(PROGRAMS_sorted),$(eval $(call common_defs,$(program),PROGRAM)))
 $(foreach program,$(PROGRAMS_sorted),$(eval $(call c_template,$(program),PROGRAM,prog)))
 $(foreach program,$(PROGRAMS_sorted),$(eval $(call cpp_template,$(program),PROGRAM,prog)))
 $(foreach program,$(PROGRAMS_sorted),$(eval $(call link_deps,$(program),PROGRAM,prog)))
