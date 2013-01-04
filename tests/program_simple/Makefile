@@ -2,6 +2,7 @@ srcdir = .
 top_srcdir = .
 top_builddir = .
 
+AAA_DIR=.
 AAA_SOURCES=a.cpp b.c Makefile
 AAA_NAME=program_simple
 
