@@ -101,7 +101,7 @@ case "${TOOLSET}" in
         TOOLSET_CXX=${CXX-g++}
         TOOLSET_CC=${CC-gcc}
         
-        if [ -n "w32_executable_model" ] ; then
+        if [ -n "$w32_executable_model" ] ; then
             EXECUTABLE_EXT=exe
             
             STATIC_LIBRARY_EXT=a
