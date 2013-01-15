@@ -23,6 +23,13 @@ features_CFLAGS   += -pg
 features_LDFLAGS  += -pg
 endif
 
+GCC3_DEPENDENCY_GENERATION=1
+
+ifeq ($(GCC3_DEPENDENCY_GENERATION),1)
+features_CXXFLAGS += -MMD
+features_CFLAGS   += -MMD
+endif
+
 # GNU defaults
 ifndef CC
 CC=$(TOOLSET_CC)
@@ -62,6 +69,18 @@ ifndef RANLIB
 RANLIB=ranlib
 endif
 
+define compile_dep_template
+# 1 - component
+# 2 - target type tag
+# 3 - source file
+
+# create rule
+# $(xxx_objdir)/NAME_type.o: $
+# where NAME is just stripped SOURCE ($3) of folders and extensions
+
+$$(patsubst %, $$($(1)_objdir)/%.$(2).o, $$(notdir $$(basename $(3)))): $(3)
+endef
+
 ## C compilation
 #
 define c_template
@@ -77,16 +96,15 @@ else
 $(1)_$(3)_c_sources_rel = $$(filter %.c, $$($(1)_sources_rel))
 endif
 
-ifndef $(1)_$(3)_c_objects 
 $(1)_$(3)_c_objects = $$(patsubst $$(top_srcdir)/$$($(1)_DIR)/%.c, $$($(1)_objdir)/%.$(3).o, $$($(1)_$(3)_c_sources_rel))
-endif
-
 $(1)_$(3)_objects  += $$($(1)_$(3)_c_objects)
-$(1)_$(3)_cflags    = $$($(1)_CFLAGS) $$($(2)_CFLAGS) $$(CFLAGS)
-
 $(1)_objects    += $$($(1)_$(3)_c_objects)
 
-$$($(1)_$(3)_c_objects): $$($(1)_objdir)/%.$(3).o: $(top_srcdir)/$$($(1)_DIR)/%.c
+$(1)_$(3)_cflags    = $$($(1)_CFLAGS) $$($(2)_CFLAGS) $$(CFLAGS)
+
+$$(foreach source,$$($(1)_$(3)_c_sources_rel),$$(eval $$(call compile_dep_template,$(1),$(3),$$(source))))
+
+$$($(1)_$(3)_c_objects):
 	mkdir -p $$($(1)_objdir)
 	$(COMMENT) "[$1] compiling $$< ($(3))"
 	$(EXEC) $$(CC) $$($(1)_$(3)_cflags) -c -o $$@ $$< 
@@ -99,11 +117,11 @@ endef
 #  - yyy, xxx must be libraries
 define link_deps
 
-dupa=1
 ifdef $(1)_LINK_DEPS
 $(1)_link_deps_targets =   $$(foreach dep, $$($(1)_LINK_DEPS), $$($$(dep)_lib_outputs))
 #$(1)_link_deps_link_dirs = $$(foreach dep, $$($(1)_LINK_DEPS), -L$$($$(dep)_builddir))
-$(1)_link_deps_link_libs = $$($(1)_link_deps_targets)
+#$(1)_link_deps_link_libs = $$($(1)_link_deps_targets)
+$(1)_link_deps_link_libs = $$(foreach dep, $$($(1)_LINK_DEPS), -L$$($$(dep)_builddir) -l$$($$(dep)_name))
 endif
 
 endef	
@@ -123,19 +141,20 @@ else
 $(1)_$(3)_cpp_sources_rel = $$(filter %.cpp, $$($(1)_sources_rel))
 endif
 
-ifndef $(1)_$(3)_cpp_objects 
-$(1)_$(3)_cpp_objects = $$(patsubst $(top_srcdir)/$$($(1)_DIR)/%.cpp, $$($(1)_objdir)/%.$(3).o, $$($(1)_$(3)_cpp_sources_rel))
-endif
+$(1)_$(3)_cpp_objects = $$(patsubst %.cpp, $$($(1)_objdir)/%.$(3).o, $$(notdir $$($(1)_$(3)_cpp_sources_rel)))
+$(1)_$(3)_objects += $$($(1)_$(3)_cpp_objects)
+$(1)_objects      += $$($(1)_$(3)_cpp_objects)
 
-$(1)_$(3)_objects    += $$($(1)_$(3)_cpp_objects)
 $(1)_$(3)_cxxflags    = $$($(1)_CXXFLAGS) $$($(2)_CXXFLAGS) $$(CXXFLAGS)
 
-$(1)_objects    += $$($(1)_$(3)_cpp_objects)
+$$(foreach source,$$($(1)_$(3)_cpp_sources_rel),$$(eval $$(call compile_dep_template,$(1),$(3),$$(source))))
 
-$$($(1)_$(3)_cpp_objects): $$($(1)_objdir)/%.$(3).o: $(top_srcdir)/$$($(1)_DIR)/%.cpp
+$$($(1)_$(3)_cpp_objects):
 	@mkdir -p $$(dir $$(@))
 	$(COMMENT) "[$1] compiling $$< ($(3))"
 	$(EXEC) $$(CXX) $$($(1)_$(3)_cxxflags) -c -o $$@ $$<
+
+
 endef
 
 
