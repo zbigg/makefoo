@@ -35,17 +35,18 @@ makefoo_lib_FILES = \
         defs.mk \
         main.mk \
         native.mk \
+	native.reg.mk \
         native-gcc.mk \
         native-msvs.mk \
         rpm.mk \
+	rpm.reg.mk \
         rpm-spec-template.in \
         install-fhs.mk \
         test-program.mk \
-        test-program.pre.mk \
+        test-program.reg.mk \
         src-dist.mk \
         src-dist.post.mk \
         cppcheck.mk \
-        cppcheck.post.mk \
         amalgamation.mk \
         amalgamation.pre.mk
 
