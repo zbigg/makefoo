@@ -173,8 +173,8 @@ $(1)_outputs += $$($(1)_shlib_output)
 
 $(1)_ldflags := $$($(1)_LDFLAGS) \
 	$$(LDFLAGS) \
-	$$($(1)_LIBS) \
 	$$(sort $$($(1)_link_deps_link_dirs)) $$($(1)_link_deps_link_libs) \
+	$$($(1)_LIBS) \
 	$$(LIBS)
 
 # link with CXX if there are any C++ sources in
@@ -240,8 +240,8 @@ define program_template
 $(1)_bin_outputs = $$($(1)_builddir)/$$($(1)_name)$(PROGRAM_SUFFIX)
 $(1)_ldflags = $$($(1)_LDFLAGS) \
 	$$(LDFLAGS) \
-	$$($(1)_LIBS) \
 	$$(sort $$($(1)_link_deps_link_dirs)) $$($(1)_link_deps_link_libs) \
+	$$($(1)_LIBS) \
 	$$(LIBS)
 
 # link with CXX if there are any C++ sources in
