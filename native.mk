@@ -12,15 +12,15 @@ build_type_LDFLAGS  = -g
 endif
 
 ifeq ($(COVERAGE),1)
-build_type_CXXFLAGS += -fprofile-arcs -ftest-coverage
-build_type_CFLAGS   += -fprofile-arcs -ftest-coverage
-build_type_LDFLAGS  += -fprofile-arcs -ftest-coverage
+features_CXXFLAGS += -fprofile-arcs -ftest-coverage
+features_CFLAGS   += -fprofile-arcs -ftest-coverage
+features_LDFLAGS  += -fprofile-arcs -ftest-coverage
 endif
 
 ifeq ($(PROFILE),1)
-build_type_CXXFLAGS += -pg
-build_type_CFLAGS   += -pg
-build_type_LDFLAGS  += -pg
+features_CXXFLAGS += -pg
+features_CFLAGS   += -pg
+features_LDFLAGS  += -pg
 endif
 
 # GNU defaults
@@ -42,12 +42,21 @@ AR=ar
 endif
 
 ifndef CXXFLAGS
+CFLAGS = $(build_type_CXXFLAGS)
+endif
+CFLAGS += $(features_CXXFLAGS)
+
+
+ifndef CXXFLAGS
 CXXFLAGS = $(build_type_CXXFLAGS)
 endif
+CXXFLAGS += $(features_CXXFLAGS)
+
 
 ifndef LDFLAGS
 LDFLAGS = $(build_type_LDFLAGS)
 endif
+LDFLAGS += $(features_LDFLAGS)
 
 ifndef RANLIB
 RANLIB=ranlib
@@ -62,13 +71,11 @@ define c_template
 # 3 - target obj sufix prog|shobj|stobj
 #      (note, on most targets static lib obj == prog obj)
 # TBD, output to $(1)_objdir
-$(1)_$(3)_c_sources = $$(filter %.c, $$($(1)_SOURCES))
-$(1)_$(3)_c_sources_rel = $$(patsubst %.c, $$(top_srcdir)/$$($(1)_DIR)/%.c, $$($(1)_$(3)_c_sources))
+$(1)_$(3)_c_sources_rel = $$(filter %.c, $$($(1)_sources_rel))
 $(1)_$(3)_c_objects = $$(patsubst $$(top_srcdir)/$$($(1)_DIR)/%.c, $$($(1)_objdir)/%.$(3).o, $$($(1)_$(3)_c_sources_rel))
 $(1)_$(3)_objects  += $$($(1)_$(3)_c_objects)
 $(1)_$(3)_cflags    = $$($(1)_CFLAGS) $$($(2)_CFLAGS) $$(CFLAGS)
 
-$(1)_sources_rel += $$($(1)_$(3)_c_sources_rel) 
 $(1)_objects    += $$($(1)_$(3)_c_objects)
 
 $$($(1)_$(3)_c_objects): $$($(1)_objdir)/%.$(3).o: $(top_srcdir)/$$($(1)_DIR)/%.c
@@ -102,14 +109,12 @@ define cpp_template
 # 3 - target type object tag
 # TBD, output to $(1)_objdir
 
-$(1)_$(3)_cpp_sources = $$(filter %.cpp, $$($(1)_SOURCES))
-$(1)_$(3)_cpp_sources_rel = $$(patsubst %.cpp, $(top_srcdir)/$$($(1)_DIR)/%.cpp, $$($(1)_$(3)_cpp_sources))
+$(1)_$(3)_cpp_sources_rel = $$(filter %.cpp, $$($(1)_sources_rel))
 $(1)_$(3)_cpp_objects = $$(patsubst $(top_srcdir)/$$($(1)_DIR)/%.cpp, $$($(1)_objdir)/%.$(3).o, $$($(1)_$(3)_cpp_sources_rel))
 $(1)_$(3)_objects    += $$($(1)_$(3)_cpp_objects)
 $(1)_$(3)_cxxflags    = $$($(1)_CXXFLAGS) $$($(2)_CXXFLAGS) $$(CXXFLAGS)
 
 $(1)_objects    += $$($(1)_$(3)_cpp_objects)
-$(1)_sources_rel += $$($(1)_$(3)_cpp_sources_rel)
 
 $$($(1)_$(3)_cpp_objects): $$($(1)_objdir)/%.$(3).o: $(top_srcdir)/$$($(1)_DIR)/%.cpp
 	@mkdir -p $$(dir $$(@))
