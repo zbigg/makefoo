@@ -21,6 +21,7 @@ STATIC_LIBRARIES += libfoo
 # libbar definiions (should be in libbar/component_defs.mk)
 libbar_SOURCES = bar.cpp bar_ex.cpp
 libbar_NAME    = bar2
+libbar_ENABLE_AMALGAMATION = 1
 STATIC_LIBRARIES += libbar
 
 libbar_TEST_SOURCES = bar_test.cpp
@@ -53,6 +54,7 @@ ddd_VERSION=1.1
 libfoo_VERSION=1.2
 
 MAKEFOO_USE += native
+MAKEFOO_USE += amalgamation
 MAKEFOO_USE += test-program
 MAKEFOO_USE += install-fhs
 MAKEFOO_USE += rpm
