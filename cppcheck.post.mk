@@ -23,12 +23,10 @@ define cppcheck_template
 
 ifdef $(1)_SOURCES
 
-$(1)_c_sources = $$(filter %.c, $$($(1)_SOURCES))
-$(1)_cpp_sources = $$(filter %.cpp, $$($(1)_SOURCES))   
+$(1)_c_sources_rel = $$(filter %.c, $$($(1)_sources_rel))
+$(1)_cpp_sources_rel = $$(filter %.cpp, $$($(1)_sources_rel))   
 
-ifneq ($$($(1)_c_sources),)
-
-$(1)_c_sources_rel   = $$(strip $$(patsubst %.c, $$(top_srcdir)/$$($(1)_DIR)/%.c, $$($(1)_c_sources)))
+ifneq ($$($(1)_c_sources_rel),)
 
 $(1)_c_source_flags=$$($(1)_CFLAGS) $$(CFLAGS)
 $(1)_c_cppcheck_flags=$$(filter -D*, $$($(1)_c_source_flags)) $$(filter -I%, $$($(1)_c_source_flags)) $$($(1)_CPPCHECK_FLAGS) $(CPPCHECK_FLAGS)
@@ -42,9 +40,7 @@ cppcheck: $(1)_c_cppcheck
 
 endif # c sources
 
-ifneq ($$($(1)_cpp_sources),)
-
-$(1)_cpp_sources_rel = $$(strip $$(patsubst %.cpp, $$(top_srcdir)/$$($(1)_DIR)/%.cpp, $$($(1)_cpp_sources)))
+ifneq ($$($(1)_cpp_sources_rel),)
 
 $(1)_cpp_source_flags=$$($(1)_CXXFLAGS) $$(CXXFLAGS)
 $(1)_cpp_cppcheck_flags=$$(filter -D*, $$($(1)_cpp_source_flags)) $$(filter -I%, $$($(1)_cpp_source_flags)) $$($(1)_CPPCHECK_FLAGS) $(CPPCHECK_FLAGS)
