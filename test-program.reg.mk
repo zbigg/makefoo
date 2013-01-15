@@ -13,27 +13,29 @@
 #       will run this program
 #
 
-define test_shortcut_program_template
+define test_shortcut_program_register_template
 # 1 - component name
 ifdef $(1)_TEST_SOURCES
-$(1)_test_program_SOURCES := $$($(1)_TEST_SOURCES)
-$(1)_test_program_DIR     := $$($(1)_DIR)
 $(1)_test_program_TESTED_COMPONENT := $1
+$(1)_test_program_SOURCES := $$($(1)_TEST_SOURCES)
 
-PROGRAMS      += $(1)_test_program
+ifdef $(1)_DIR
+$(1)_test_program_DIR     := $$($(1)_DIR)
+else
+$(1)_test_program_DIR     := .
+endif
+
 TEST_PROGRAMS += $(1)_test_program
 
 endif
 endef
 
 test_shortcut_COMPONENTS=$(sort $(COMPONENTS) $(PROGRAMS) $(STATIC_LIBRARIES) $(SHARED_LIBRARIES))
-$(foreach component,$(test_shortcut_COMPONENTS) ,$(eval $(call test_shortcut_program_template,$(component))))
+$(foreach component,$(test_shortcut_COMPONENTS) ,$(eval $(call test_shortcut_program_register_template,$(component))))
 
 TEST_PROGRAMS_sorted := $(sort $(TEST_PROGRAMS))
-PROGRAMS += $(TEST_PROGRAMS_sorted)
-
-#$(foreach test_program,$(TEST_PROGRAMS_sorted),$(eval $(call common_defs,$(test_program))))
-
+PROGRAMS   += $(TEST_PROGRAMS_sorted)
+COMPONENTS += $(TEST_PROGRAMS_sorted)
 
 # jedit: :tabSize=8:mode=makefile:
 

@@ -35,6 +35,8 @@ makefoo_lib_FILES = \
         defs.mk \
         main.mk \
         native.mk \
+        native-gcc.mk \
+        native-msvs.mk \
         rpm.mk \
         rpm-spec-template.in \
         install-fhs.mk \
@@ -43,7 +45,9 @@ makefoo_lib_FILES = \
         src-dist.mk \
         src-dist.post.mk \
         cppcheck.mk \
-        cppcheck.post.mk
+        cppcheck.post.mk \
+        amalgamation.mk \
+        amalgamation.pre.mk
 
 makefoo_lib_SCRIPTS = \
         configure.sh \
@@ -56,6 +60,7 @@ COMPONENTS += makefoo_lib
 #
 # makefoo documentation > docdir (prefix/share/doc/makefoo)
 #
+makefoo_doc_DIR=.
 makefoo_doc_FILES = MANUAL.txt README.txt
 makefoo_doc_INSTALL_DEST=$(docdir)/makefoo
 COMPONENTS += makefoo_doc
@@ -64,16 +69,19 @@ makefoo.pc: $(srcdir)/makefoo.pc.in
 	./config.status -f makefoo.pc
 
 # gosh, jeez it's not src-dir aware
+makefoo_pkg_config_DIR=.
 makefoo_pkg_config_FILES = makefoo.pc
 makefoo_pkg_config_INSTALL_DEST=$(libdir)/pkgconfig
 COMPONENTS += makefoo_pkg_config
 
+makefoo_aclocal_DIR=.
 makefoo_aclocal_FILES = makefoo.m4
 makefoo_aclocal_INSTALL_DEST=$(datarootdir)/aclocal
 
 COMPONENTS += makefoo_aclocal
 PUBLIC_COMPONENTS += $(COMPONENTS)
 
+makefoo_DIR=.
 makefoo_COMPONENTS = \
 	makefoo_lib \
 	makefoo_pkg_config \

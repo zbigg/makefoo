@@ -19,6 +19,6 @@ invoke_test ../autoconf_project/configure --with-makefoo-dir=../..
     assert_exists ./libbar/libbar_test_program$EXECUTABLE_SUFFIX
 }
 cd ..
-sleep 0
+sleep 0.1
 rm -rf test_program_test
 

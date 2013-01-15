@@ -16,6 +16,7 @@ export MAKEFOO
 export MAKEFOO_dir
 
 set -e
+#set -x
 
 build_arch=${build_arch-$(sh ${MAKEFOO_dir}/autoconf_helpers/config.guess)}
 target_arch=${target_arch-$build_arch}
@@ -48,72 +49,94 @@ case "${build_arch}" in
 	;;
 esac
 
+#
+# target_arch specific settings
+#
 case "${target_arch}" in
-    *msvc*|*msvs*)
-        TOOLSET=${TOOLSET-msvs}
-
-        EXECUTABLE_EXT=exe
-        STATIC_LIBRARY_EXT=lib
-        SHARED_LIBRARY_EXT=dll
-        IMPORT_LIBRARY_EXT=dll.lib
-        SHARED_LIBRARY_MODEL=dll
+    *msvc*|*msvs|*mingw*)
+        w32_executable_model=1
+        target_is_x86_32=1
         ;;
-    *mingw*)
-        TOOLSET=${TOOLSET-gcc}
-
-        EXECUTABLE_EXT=exe
-        
-        STATIC_LIBRARY_EXT=a
-        SHARED_LIBRARY_EXT=dll
-        IMPORT_LIBRARY_EXT=dll.a
-        SHARED_LIBRARY_MODEL=dll
-
-        TARGET_SHARED_LIBRARY_LDFLAGS="-Wl,--enable-auto-import"
+    *x86_64*|*amd64*)
+        target_is_x86_64=1
         ;;
-    *)
-        if [ -z "$TOOLSET" ] ; then
-            if exists_in_path gcc ; then
-                TOOLSET=gcc
-            elif exists_in_path clang ; then
-                TOOLSET=clang
-            elif exists_in_path cc ; then
-                TOOLSET=unix
-            else
-                echo "configure.sh: unable to find TOOLSET (tried, gcc/G++, clang(++), cc/CC" >&2 
-                exit 1
-            fi
-        fi
-        
-        STATIC_LIBRARY_EXT=a
-        SHARED_LIBRARY_EXT=so
-        SHARED_LIBRARY_MODEL=so
+    *i*86*)
+        target_is_x86_32=1
         ;;
 esac
 
+#
+# detect the toolset
+#
+if [ -z "$TOOLSET" ] ; then
+    case "${target_arch}" in
+        *msvc*|*msvs*)
+            default_TOOLSET=msvs
+            ;;
+        *mingw*)
+            default_TOOLSET=gcc
+            ;;
+        *)
+            if [ -z "$TOOLSET" ] ; then
+                if exists_in_path cl ; then
+                    default_TOOLSET=msvs
+                elif exists_in_path gcc ; then
+                    default_TOOLSET=gcc
+                elif exists_in_path clang ; then
+                    default_TOOLSET=clang
+                elif exists_in_path cc ; then
+                    default_TOOLSET=unix
+                else
+                    echo "configure.sh: unable to find TOOLSET (tried, gcc/G++, clang(++), cc/CC" >&2 
+                    exit 1
+                fi
+            fi
+            ;;
+    esac
+    TOOLSET="${default_TOOLSET}"
+fi
+
 case "${TOOLSET}" in
+    gcc)
+        TOOLSET_CXX=${CXX-g++}
+        TOOLSET_CC=${CC-gcc}
+        
+        if [ -n "w32_executable_model" ] ; then
+            EXECUTABLE_EXT=exe
+            
+            STATIC_LIBRARY_EXT=a
+            SHARED_LIBRARY_EXT=dll
+            IMPORT_LIBRARY_EXT=dll.a
+            SHARED_LIBRARY_MODEL=dll
+
+            TARGET_SHARED_LIBRARY_LDFLAGS="-Wl,--enable-auto-import"
+        else
+            STATIC_LIBRARY_EXT=a
+            SHARED_LIBRARY_EXT=so
+            SHARED_LIBRARY_MODEL=so
+        fi
+        ;;
     unix)
         TOOLSET_CXX=${CXX-CC}
         TOOLSET_CC=${CC-cc}
         
         OBJECT_EXT=o
         ;;
-    gcc)
-        TOOLSET_CXX=${CXX-g++}
-        TOOLSET_CC=${CC-gcc}
-        
-        OBJECT_EXT=o
-        ;;
     clang)
         TOOLSET_CXX=${CXX-clang++}
         TOOLSET_CC=${CC-clang}
-        
         OBJECT_EXT=o
         ;;
-    msvs)
-        
+    msvs)        
         TOOLSET_CXX=${CXX-cl.exe}
         TOOLSET_CC=${CC-cl.exe}
         TOOLSET_LINKER=${LINKER-link.exe}
+        
+        EXECUTABLE_EXT=exe
+        STATIC_LIBRARY_EXT=lib
+        SHARED_LIBRARY_EXT=dll
+        IMPORT_LIBRARY_EXT=dll.lib
+        SHARED_LIBRARY_MODEL=dll
         
         OBJECT_EXT=obj
         ;;
