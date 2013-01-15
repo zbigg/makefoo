@@ -10,8 +10,8 @@
 define c_unity_template
 # 1 - component name
 ifdef $(1)_SOURCES
-$(1)_unity_c_sources     := $$(filter %.c, $$($(1)_SOURCES))
-$(1)_unity_c_sources_rel := $$(patsubst %.c, $$(top_srcdir)/$$($(1)_DIR)/%.c, $$($(1)_unity_c_sources))
+ 
+$(1)_unity_c_sources_rel := $$(filter %.c, $$($(1)_sources_rel))
 $(1)_unity_c_source_file = $$($(1)_objdir)/$(1)_amalgamation_c.c
 
  
@@ -30,7 +30,7 @@ define cpp_unity_template
 # 1 - component name
 ifdef $(1)_SOURCES
 $(1)_unity_cpp_sources     := $$(filter %.cpp, $$($(1)_SOURCES))
-$(1)_unity_cpp_sources_rel := $$(patsubst %.cpp, $$(top_srcdir)/$$($(1)_DIR)/%.cpp, $$($(1)_unity_cpp_sources))
+$(1)_unity_cpp_sources_rel := $$(filter %.cpp, $$($(1)_sources_rel))
 $(1)_unity_cpp_source_file = $$($(1)_objdir)/$(1)_amalgamation_cpp.cpp
 
  
