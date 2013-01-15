@@ -290,6 +290,9 @@ $(foreach program,$(PROGRAMS_sorted),$(eval $(call link_deps,$(program),PROGRAM,
 $(foreach program,$(PROGRAMS_sorted),$(eval $(call program_template,$(program))))
 
 define native_common
+# TBD: this is responsible for
+#  make: Circular tinfra_test_program <- tinfra_test_program dependency dropped.
+#
 $(1): $$($(1)_outputs)
 
 $(1)-clean clean-$(1):
