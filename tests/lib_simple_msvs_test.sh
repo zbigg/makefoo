@@ -2,6 +2,8 @@
 
 . ./testlib.sh
 
+type cl.exe || skip_test "cl.exe required for this test case"
+
 set -e
 cd lib_simple
 invoke_make clean
