@@ -5,10 +5,9 @@ includedir=@includedir@
 datadir=@datadir@
 MAKEFOO_dir=${datadir}/makefoo
 
-Name: @PACKAGE_NAME@
+Name: makefoo
 Description: declarative Makefile helper library
 Version: @PACKAGE_VERSION@
-Libs: @LDFLAGS@ -L${libdir} -ltinfra @LIBS@
-Cflags: @CLIENT_CXXFLAGS@ -I${includedir}
+Libs: @LDFLAGS@
 Requires:
 
