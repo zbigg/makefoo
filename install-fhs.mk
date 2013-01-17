@@ -106,7 +106,7 @@ ifdef $(1)_FILES
 $(1)_install_files:
 	$(EXEC) for FILE in $$($(1)_FILES) ; do \
 		dir="$$(DESTDIR)$$($(1)_INSTALL_DEST)/`dirname $$$$FILE`" ; \
-		$(COMMENT_SHELL) [$(1)] install $$$$dir/$$$$FILE ; \
+		$(COMMENT_SHELL) [$(1)] install $$(DESTDIR)$$($(1)_INSTALL_DEST)/$$$$FILE ; \
 		mkdir -p $$$$dir ; \
 		$(INSTALL_DATA)  "$(srcdir)/$$($(1)_DIR)/$$$$FILE" "$$$$dir" ; done
 
@@ -117,7 +117,7 @@ ifdef $(1)_SCRIPTS
 $(1)_install_scripts:
 	$(EXEC) for FILE in $$($(1)_SCRIPTS) ; do \
 		dir="$$(DESTDIR)$$($(1)_INSTALL_DEST)/`dirname $$$$FILE`" ; \
-		$(COMMENT_SHELL) [$(1)] install script $$$$dir/$$$$FILE; \
+		$(COMMENT_SHELL) [$(1)] install script $$(DESTDIR)$$($(1)_INSTALL_DEST)/$$$$FILE; \
 		mkdir -p $$$$dir ; \
 		$(INSTALL)  "$(srcdir)/$$($(1)_DIR)/$$$$FILE" "$$$$dir" ; done
 
