@@ -38,8 +38,7 @@ $(1)-coverage-test: $$($(1)_outputs)
 	$(EXEC) lcov $(LCOV_QUIET) --test-name=$(1) --directory $$($(1)_tested_component_builddir) -b . --capture --output-file $$($(1)_coverage_test_result)
 	$(EXEC) lcov $(LCOV_QUIET) --extract $$($(1)_coverage_test_result) $$($(1)_tested_component_sources) -o $$($(1)_coverage_test_result)
 	$(EXEC) lcov $(LCOV_QUIET) --list $$($(1)_coverage_test_result)
-#	$(EXEC) lcov --remove $$($(1)_coverage_test_result) "/usr/*" -o $$($(1)_coverage_test_result) 
-	
+
 
 coverage_trace_files += $$($(1)_coverage_test_result)
 test: $(1)-test
@@ -47,7 +46,7 @@ coverage-test: $(1)-coverage-test
 endef
 
 coverage-test-report: coverage-test
-	$(COMMENT) generating coverage test report in 'coverage-test-report' 
+	$(COMMENT) generating coverage test report in 'coverage-test-report'
 	$(EXEC) genhtml -o coverage-test-report $(coverage_trace_files)
 
 TEST_PROGRAMS_sorted := $(sort $(TEST_PROGRAMS))
