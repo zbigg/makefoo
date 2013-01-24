@@ -23,11 +23,12 @@ features_CFLAGS   += -pg
 features_LDFLAGS  += -pg
 endif
 
-GCC3_DEPENDENCY_GENERATION=1
+GCC3_DEPENDENCY_GENERATION ?= 1
 
 ifeq ($(GCC3_DEPENDENCY_GENERATION),1)
 features_CXXFLAGS += -MMD
 features_CFLAGS   += -MMD
+USE_D_FILES=1
 endif
 
 # GNU defaults
@@ -295,19 +296,24 @@ define native_common
 #
 $(1): $$($(1)_outputs)
 
-$(1)-clean clean-$(1):
-	rm -rf $$($(1)_outputs) $$($(1)_objects) $$($(1)_d_files)
-
-$(1)_d_files  = $$(patsubst %.o, %.d, $$($(1)_objects))
-
+ifdef USE_D_FILES
+$(1)_d_files  = $$(patsubst %.o, %.d, $$($(1)_cpp_objects) $$($(1)_c_objects))
 all_objects   += $$($(1)_objects)
 all_outputs   += $$($(1)_outputs)
 all_d_files   += $$($(1)_d_files)
+endif
+
+$(1)-clean clean-$(1):
+	rm -rf $$($(1)_outputs) $$($(1)_objects) $$($(1)_d_files)
 
 endef
 
 NATIVE_COMPONENTS_sorted = $(sort $(NATIVE_COMPONENTS))
 $(foreach component,$(NATIVE_COMPONENTS_sorted),$(eval $(call native_common,$(component))))
+
+ifdef USE_D_FILES
+-include $(all_d_files)
+endif
 
 DEFAULT_COMPONENTS += $(NATIVE_COMPONENTS_sorted)
 COMPONENTS += $(NATIVE_COMPONENTS_sorted)
