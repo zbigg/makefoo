@@ -125,6 +125,7 @@ $(1)_rpm         := $$($(1)_builddir)/$$($(1)_rpm_name).rpm
 $(1)_rpmbuilddir := $$($(1)_builddir)/.rpmbuild
 $(1)_spec        := $$($(1)_rpmbuilddir)/SPECS/$(1).spec
 
+$(1)_debug_vars += $(1)_rpm
 #
 # if we have xxxx_COMPONENTS then use them, else just build
 # rpm from xxxx

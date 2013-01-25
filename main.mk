@@ -59,12 +59,12 @@ build: $(DEFAULT_COMPONENTS)
 clean:
 	rm -rf $(all_objects) $(all_outputs)
 
-show:
-	@echo $($(NAME))
 
 $(top_builddir)/makefoo_configured_defs.mk: $(MAKEFOO_dir)/configure.sh
 	@mkdir -p $(top_builddir)
 	MAKEFOO_dir=$(MAKEFOO_dir) $(MAKEFOO_dir)/configure.sh > $@
+
+include $(MAKEFOO_dir)/debug.mk
 
 ifndef MAKEFOO_USE_AUTOCONF
 

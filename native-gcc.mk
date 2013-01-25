@@ -96,12 +96,15 @@ $(1)_$(3)_c_sources_rel = $$($(1)_c_sources_rel)
 else
 $(1)_$(3)_c_sources_rel = $$(filter %.c, $$($(1)_sources_rel))
 endif
+$(1)_debug_vars += $(1)_$(3)_c_sources_rel
 
 $(1)_$(3)_c_objects = $$(patsubst $$(top_srcdir)/$$($(1)_DIR)/%.c, $$($(1)_objdir)/%.$(3).o, $$($(1)_$(3)_c_sources_rel))
 $(1)_$(3)_objects  += $$($(1)_$(3)_c_objects)
 $(1)_objects    += $$($(1)_$(3)_c_objects)
 
 $(1)_$(3)_cflags    = $$($(1)_CFLAGS) $$($(2)_CFLAGS) $$(CFLAGS)
+
+$(1)_debug_vars += $(1)_$(3)_cflags
 
 $$(foreach source,$$($(1)_$(3)_c_sources_rel),$$(eval $$(call compile_dep_template,$(1),$(3),$$(source))))
 
@@ -123,6 +126,8 @@ $(1)_link_deps_targets =   $$(foreach dep, $$($(1)_LINK_DEPS), $$($$(dep)_lib_ou
 #$(1)_link_deps_link_dirs = $$(foreach dep, $$($(1)_LINK_DEPS), -L$$($$(dep)_builddir))
 #$(1)_link_deps_link_libs = $$($(1)_link_deps_targets)
 $(1)_link_deps_link_libs = $$(foreach dep, $$($(1)_LINK_DEPS), -L$$($$(dep)_builddir) -l$$($$(dep)_name))
+
+$(1)_debug_vars += $(1)_link_deps_targets $(1)_link_deps_link_libs 
 endif
 
 endef	
@@ -142,11 +147,15 @@ else
 $(1)_$(3)_cpp_sources_rel = $$(filter %.cpp, $$($(1)_sources_rel))
 endif
 
+$(1)_debug_vars += $(1)_$(3)_cpp_sources_rel
+
+
 $(1)_$(3)_cpp_objects = $$(patsubst %.cpp, $$($(1)_objdir)/%.$(3).o, $$(notdir $$($(1)_$(3)_cpp_sources_rel)))
 $(1)_$(3)_objects += $$($(1)_$(3)_cpp_objects)
 $(1)_objects      += $$($(1)_$(3)_cpp_objects)
 
 $(1)_$(3)_cxxflags    = $$($(1)_CXXFLAGS) $$($(2)_CXXFLAGS) $$(CXXFLAGS)
+$(1)_debug_vars += $(1)_$(3)_cxxflags
 
 $$(foreach source,$$($(1)_$(3)_cpp_sources_rel),$$(eval $$(call compile_dep_template,$(1),$(3),$$(source))))
 
@@ -197,6 +206,8 @@ $(1)_ldflags := $$($(1)_LDFLAGS) \
 	$$($(1)_LIBS) \
 	$$(LIBS)
 
+tinfra_ldflags += $(1)_ldflags
+
 # link with CXX if there are any C++ sources in
 
 ifneq ($$($(1)_shlib_cpp_objects),)
@@ -204,6 +215,7 @@ $(1)_linker=$$(CXX)
 else
 $(1)_linker=$$(CC)
 endif
+$(1)_debug_vars += $(1)_linker
 
 $$($(1)_shlib_output): $$($(1)_link_deps_targets)
 $$($(1)_shlib_output): $$($(1)_shlib_objects)
@@ -231,6 +243,9 @@ $(1)_stlib_output  := $$($(1)_builddir)/lib$$($(1)_name).$$(STATIC_LIBRARY_EXT)
 $(1)_lib_outputs += $$($(1)_stlib_output)
 $(1)_outputs += $$($(1)_stlib_output)
 $(1)_archiver=$(AR)
+
+$(1)_debug_vars += $(1)_lib_outputs
+$(1)_debug_vars += $(1)_archiver
 
 $$($(1)_stlib_output): $$($(1)_stlib_objects)
 	@mkdir -p $$($(1)_builddir)
@@ -264,6 +279,8 @@ $(1)_ldflags = $$($(1)_LDFLAGS) \
 	$$($(1)_LIBS) \
 	$$(LIBS)
 
+$(1)_debug_vars += $(1)_bin_outputs
+$(1)_debug_vars += $(1)_ldflags
 # link with CXX if there are any C++ sources in
 
 ifneq ($$($(1)_prog_cpp_objects),)
@@ -271,6 +288,7 @@ $(1)_linker=$$(CXX)
 else
 $(1)_linker=$$(CC)
 endif
+$(1)_debug_vars += $(1)_linker
 
 $$($(1)_bin_outputs): $$($(1)_link_deps_targets)
 $$($(1)_bin_outputs): $$($(1)_objects)
@@ -279,7 +297,6 @@ $$($(1)_bin_outputs): $$($(1)_objects)
 	$(EXEC) $$($(1)_linker) -o $$@ $$($(1)_objects) $$($(1)_ldflags)
 
 $(1)_outputs += $$($(1)_bin_outputs)
-
 endef
 
 PROGRAMS_sorted=$(sort $(PROGRAMS))
@@ -306,6 +323,8 @@ endif
 $(1)-clean clean-$(1):
 	rm -rf $$($(1)_outputs) $$($(1)_objects) $$($(1)_d_files)
 
+$(1)_debug_vars += $(1)_objects $(1)_d_files
+$(1)_debug_vars += $(1)_outputs
 endef
 
 NATIVE_COMPONENTS_sorted = $(sort $(NATIVE_COMPONENTS))

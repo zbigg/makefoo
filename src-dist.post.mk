@@ -9,8 +9,11 @@ endif
 
 src_dist_name=$(PRODUCT)-$(VERSION)
 
+
 src_dist_tgz_name=$(src_dist_name).tar.gz
 src_dist_zip_name=$(src_dist_name).zip
+
+debug_vars += src_dist_tgz_name
 
 src_dist_folder=$(top_builddir)/$(src_dist_name)
 

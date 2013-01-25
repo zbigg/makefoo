@@ -47,6 +47,7 @@ ifneq ($$($(1)_c_sources_rel),)
 $(1)_c_source_flags=$$($(1)_CFLAGS) $$(CFLAGS)
 $(1)_c_cppcheck_flags=$$(filter -D*, $$($(1)_c_source_flags)) $$(filter -I%, $$($(1)_c_source_flags)) $$($(1)_CPPCHECK_FLAGS) $(CPPCHECK_FLAGS)
 
+$(1)_debug_vars += $(1)_c_cppcheck_flags
 $(1)_c_cppcheck:
 	$(COMMENT) "[$1] cppcheck C sources" 
 	$(EXEC) $(CPPCHECK) $(MAKEFOO_CPPCHECK_FLAGS) $$($(1)_c_cppcheck_flags) $$($(1)_c_sources_rel)
@@ -60,6 +61,8 @@ ifneq ($$($(1)_cpp_sources_rel),)
 
 $(1)_cpp_source_flags=$$($(1)_CXXFLAGS) $$(CXXFLAGS)
 $(1)_cpp_cppcheck_flags=$$(filter -D*, $$($(1)_cpp_source_flags)) $$(filter -I%, $$($(1)_cpp_source_flags)) $$($(1)_CPPCHECK_FLAGS) $(CPPCHECK_FLAGS)
+
+$(1)_debug_vars += $(1)_cpp_cppcheck_flags
 
 $(1)_cpp_cppcheck:
 	$(COMMENT) "[$1] cppcheck C++ sources"

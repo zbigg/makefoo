@@ -1,6 +1,11 @@
+YYYY-MM-DD, release 0.0.2
+
+    * Makefile debug module added (show-defs and show-outputs targets)
+    * makefoo.m4 downloads makefoo if needed (not yet ready)
+
 2013-01-25, release 0.0.1
 
-    Firrst tagge release, contains following functions:
+    First tagge release, contains following functions:
       * gcc/clang/msvs build for programs, static and shared libraries of
         C/C++ programs
       * autoconf & out-of-source build integration
