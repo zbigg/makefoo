@@ -12,6 +12,7 @@ AC_DEFUN([AC_MAKEFOO],
             [
                 makefoo_dir="$withval"
                 makefoo_main="$withval"/main.mk
+                AC_MSG_NOTICE([using custom makefoo $makefoo_main ])
             ]
             , makefoo_dir="")
             
