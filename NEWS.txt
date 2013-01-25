@@ -1,0 +1,16 @@
+2013-01-25, release 0.0.1
+
+    Firrst tagge release, contains following functions:
+      * gcc/clang/msvs build for programs, static and shared libraries of
+        C/C++ programs
+      * autoconf & out-of-source build integration
+      * cppcheck integration
+      * installation in "unix-like" tree
+      * "basic" rpm package builder
+      * source distribution builder
+      * test runner
+      * coverage test runner and report (lcov based)
+      * amalgamation support
+
+    Doc is missing.
+
