@@ -13,14 +13,20 @@
 
 MAKEFOO_USE_AUTOCONF:=1
 
+
 $(top_srcdir)/configure: $(top_srcdir)/configure.ac
-	(cd $(srcdir); autoconf ; )
+	$(COMMENT) recreating configure
+	$(EXEC) (cd $(srcdir); autoconf ; )
 
 config.status : $(top_srcdir)/configure
-	./config.status --recheck 
-	
-Makefile: $(srcdir)/Makefile.in config.status
-	./config.status
+	$(COMMENT) reconfiguring
+	$(EXEC) ./config.status --recheck 
+
+AUTOCONF_GENERATED_FILES += Makefile
+
+$(AUTOCONF_GENERATED_FILES): %: $(srcdir)/%.in | config.status
+	$(COMMENT) recreating $@
+	$(EXEC) ./config.status --quiet --file=$@
 
 ifndef AUTOCONF_AUX_DIR
 AUTOCONF_AUX_DIR=.
