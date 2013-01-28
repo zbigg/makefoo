@@ -11,6 +11,11 @@ ifndef INSTALL_DATA
 INSTALL_DATA     := $(INSTALL)
 endif
 
+INSTALL.file    = $(INSTALL_DATA)
+INSTALL.program = $(INSTALL)
+INSTALL.script  = $(INSTALL)
+INSTALL.library = $(INSTALL_DATA)
+
 ifndef prefix
 prefix      := /usr/local
 endif
@@ -48,6 +53,32 @@ ifndef docdir
 docdir            := $(datadir)/doc
 endif
 
+# $(call makefoo.install.XXXX,component,type,install_dir,files)
+#   1 - component
+#   2 - type file|executable|library|script
+#   3 - install_dir
+#   4 - files
+#   5 - src-dir-prefix (if files are really in other dir, then append it)
+#   
+# makefoo.install.tree - respect original files tree
+# makefoo.install.flat - flatten the tree
+define makefoo.install.tree
+$(EXEC) for FILE in $(4) ; do \
+	dir="$(DESTDIR)$(3)/`dirname $$FILE`" ; \
+	$(COMMENT_SHELL) [$(1)] install $(2) $(DESTDIR)$(3)/$$FILE ; \
+	mkdir -p $$dir ; \
+	$(INSTALL.$(2))  $(5)/$$FILE "$$dir" ; done
+endef
+
+define makefoo.install.flat
+$(EXEC) for FILE in $(4) ; do \
+	dir="$(DESTDIR)$(3)" ; \
+	file="$$(basename $$FILE)" ; \
+	$(COMMENT_SHELL) [$(1)] install $(2) $($(DESTDIR)$(3))/$$file ; \
+	mkdir -p $$dir ; \
+	$(INSTALL.$(2))  $(5)/$$FILE "$$dir" ; done
+endef
+
 #
 # install script for all targets that
 # define X_lib_outputs
@@ -61,12 +92,7 @@ define install_fhs_libs
 ifdef $(1)_lib_outputs
 
 $(1)_install_lib: $$($(1)_lib_outputs) $$(DESTDIR)$(libdir)
-	$(EXEC) for FILE in $$($(1)_lib_outputs) ; do \
-		dir="$$(DESTDIR)$$(libdir)" ; \
-		file="$$$$(basename $$$$FILE)" ; \
-		$(COMMENT_SHELL) [$(1)] install library $$$$dir/$$$$file ; \
-		$(INSTALL) "$$$$FILE" "$$$$dir" ; done
-
+	$$(call makefoo.install.flat,$(1),library,$(libdir),$$($(1)_lib_outputs),.) 
 
 $(1)_install_targets += $(1)_install_lib
 
@@ -85,15 +111,14 @@ define install_fhs_programs
 ifdef $(1)_bin_outputs
 
 $(1)_install_bin: $$($(1)_bin_outputs) $$(DESTDIR)$(bindir)
-	$(EXEC) for FILE in $$($(1)_bin_outputs) ; do \
-		dir="$$(DESTDIR)$$(bindir)" ; \
-		file="$$$$(basename $$$$FILE)" ; \
-		$(COMMENT_SHELL) [$(1)] install program $$$$dir/$$$$file ; \
-		$(INSTALL) "$$$$FILE" "$$$$dir"; done
+	$$(call makefoo.install.flat,$(1),program,$(bindir),$$($(1)_bin_outputs),.) 
 
 $(1)_install_targets += $(1)_install_bin
+
 endif
 endef
+
+
 
 #
 # install script for all targets that
@@ -103,25 +128,23 @@ endef
 define install_verbatim
 
 ifdef $(1)_FILES
-$(1)_install_files:
-	$(EXEC) for FILE in $$($(1)_FILES) ; do \
-		dir="$$(DESTDIR)$$($(1)_INSTALL_DEST)/`dirname $$$$FILE`" ; \
-		$(COMMENT_SHELL) [$(1)] install $$(DESTDIR)$$($(1)_INSTALL_DEST)/$$$$FILE ; \
-		mkdir -p $$$$dir ; \
-		$(INSTALL_DATA)  "$(srcdir)/$$($(1)_DIR)/$$$$FILE" "$$$$dir" ; done
+$(1)_install_files_src:  $$(call makefoo.static_files_rel,$(1),$$($(1)_FILES))
+	$$(call makefoo.install.tree,$(1),file,$$($(1)_INSTALL_DEST), $$(call makefoo.static_files,$(1),$$($(1)_FILES)),$$($(1)_srcdir)) 
 
-$(1)_install_targets      += $(1)_install_files
+$(1)_install_files_generated: $$(call makefoo.generated_files,$(1),$$($(1)_FILES))
+	$$(call makefoo.install.tree,$(1),file,$$($(1)_INSTALL_DEST),$$^,.) 
 
+$(1)_install_targets      += $(1)_install_files_src $(1)_install_files_generated
 endif
-ifdef $(1)_SCRIPTS
-$(1)_install_scripts:
-	$(EXEC) for FILE in $$($(1)_SCRIPTS) ; do \
-		dir="$$(DESTDIR)$$($(1)_INSTALL_DEST)/`dirname $$$$FILE`" ; \
-		$(COMMENT_SHELL) [$(1)] install script $$(DESTDIR)$$($(1)_INSTALL_DEST)/$$$$FILE; \
-		mkdir -p $$$$dir ; \
-		$(INSTALL)  "$(srcdir)/$$($(1)_DIR)/$$$$FILE" "$$$$dir" ; done
 
-$(1)_install_targets      += $(1)_install_scripts
+ifdef $(1)_SCRIPTS
+$(1)_install_scripts_src:  $$(call makefoo.static_files_rel,$(1),$$($(1)_SCRIPTS))
+	$$(call makefoo.install.tree,$(1),script,$$($(1)_INSTALL_DEST), $$(call makefoo.static_files,$(1),$$($(1)_SCRIPTS)),$$($(1)_srcdir)) 
+
+$(1)_install_scripts_generated: $$(call makefoo.generated_files,$(1),$$($(1)_SCRIPTS))
+	$$(call makefoo.install.tree,$(1),script,$$($(1)_INSTALL_DEST),$$^,.) 
+
+$(1)_install_targets      += $(1)_install_scripts_src $(1)_install_scripts_generated
 endif
 endef
 

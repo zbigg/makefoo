@@ -1,6 +1,11 @@
 srcdir = @srcdir@
 top_srcdir = @top_srcdir@
+datadir=@datadir@
+
 top_builddir = .
+
+INSTALL = @INSTALL@
+INSTALL_DATA = @INSTALL_DATA@
 
 MAKEFOO=@MAKEFOO@
 CC=@CC@
@@ -27,6 +32,19 @@ STATIC_LIBRARIES += libbar
 libbar_TEST_SOURCES = bar_test.cpp
 libbar_test_program_LINK_DEPS = libbar libfoo
 
+# libbar provides fake, autoconf generated
+#  libbar-config in PATH
+libbar-config_SCRIPTS = libbar-config
+libbar-config_INSTALL_DEST = $(bindir)
+AUTOCONF_GENERATED_FILES += libbar-config
+
+#  libbar descriptor for pkg-config
+libbar_pkg_config_FILES = libbar.pc
+libbar_pkg_config_INSTALL_DEST = $(libdir)/pkgconfig
+AUTOCONF_GENERATED_FILES += libbar.pc
+
+COMPONENTS += libbar-config libbar_pkg_config
+
 #libbar_unittests_SOURCES   = bar_test.cpp
 #libbar_unittests_DIR       = libbar
 #libbar_unittests_LINK_DEPS = bar2
@@ -39,6 +57,13 @@ libbar_test_program_LINK_DEPS = libbar libfoo
 baz_NAME    = baz
 baz_SOURCES = baz.cpp
 baz_DEPS    = libbar libfoo
+
+baz_doc_FILES = baz.txt
+baz_doc_INSTALL_DEST = $(docdir)/baz
+
+COMPONENTS += baz_doc
+
+PUBLIC_COMPONENTS += $(COMPONENTS)
 
 PROGRAMS += baz
 

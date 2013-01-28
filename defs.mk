@@ -77,9 +77,24 @@ $(1)_builddir := $(top_builddir)/$$($(1)_DIR)
 $(1)_srcdir   := $(top_srcdir)/$$($(1)_DIR)
 $(1)_objdir   := $$($(1)_builddir)/.obj
 $(1)_name     := $$(if $$($(1)_NAME),$$($(1)_NAME),$(1))
-$(1)_sources_rel := $$(patsubst %, $$(top_srcdir)/$$($(1)_DIR)/%, $$($(1)_SOURCES))
-
+$(1)_generated_files := $$(sort $$($(1)_GENERATED_SOURCES) $$($(1)_GENERATED_FILES) $(GENERATED_FILES))
+$(1)_sources_rel := $$(call makefoo.relativize,$(1),$$($(1)_SOURCES) $$($(1)_FILES) $$($(1)_SCRIPTS))
 endef
+
+# $(call makefoo.static_files,component,file-list)
+# $(call makefoo.generated_files,component,file-list)
+#   get file list that is either "source" or "generated"
+makefoo.static_files  = $(filter-out $($(1)_generated_files),$(2))
+makefoo.generated_files = $(filter     $($(1)_generated_files),$(2))
+
+# $(call makefoo.relativize,component,files)
+#   convert paths of files in component dir
+#   to build-dir relative
+makefoo.relativize = \
+	$(patsubst %, $($(1)_srcdir)/%, $(call makefoo.static_files,$(1), $(2))) \
+	$(call makefoo.generated_files,$(1),$(2))
+
+makefoo.static_files_rel = $(patsubst %, $($(1)_srcdir)/%, $(call makefoo.static_files_f,$(1), $(2)))
 
 COMPONENTS_sorted = $(sort $(COMPONENTS) $(PUBLIC_COMPONENTS))
 
