@@ -1,5 +1,5 @@
 #
-# omsbuild/autoconf.mk
+# makefoo/autoconf.mk
 #
 #     rules to handle autoconf related artifacts up-to-date
 #
@@ -21,8 +21,6 @@ $(top_srcdir)/configure: $(top_srcdir)/configure.ac
 config.status : $(top_srcdir)/configure
 	$(COMMENT) reconfiguring
 	$(EXEC) ./config.status --recheck 
-
-AUTOCONF_GENERATED_FILES += Makefile
 
 $(AUTOCONF_GENERATED_FILES): %: $(srcdir)/%.in | config.status
 	$(COMMENT) recreating $@
