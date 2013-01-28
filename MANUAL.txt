@@ -1,41 +1,60 @@
-MAKEFOO
+Makefoo Manual
+===============
+Zbigniew Zagórski <z.zagorski@gmail.com>
 
-This is the makefoo manual. 
+This is very preeliminary version the `makefoo` Manual.
 
-Table of contents:
- - Installation
-    easy_install URL
-    
-    wget URL & configure & make install
-    
- - Usage in projects
- 
-    Write makefile as declarations.
-    Include $(MAKEFOO)/files.mk.
-    
-    
- - Distribution with project
- 
-Definable symbols:
 
-compilation:
-    PROGRAMS += component
-    SHARED_LIBRARIES += component
-    STATIC_LIBRARIES += componene
+Installation
+------------
 
-test:
-    TEST_PROGRAMS += component
-    implies build of program 
-        but not installale
-        but not built by default
-    
-        
-packaging:
-    PACKAGES += package
-    package_COMPONENTS += all components that are not named 'package'
+TBD, write how to obtain and install.
 
-    component_FILES        installed normal files
-    component_SCRIPTS      installed script files
-    component_INSTALL_DEST where is installed ?  
-    
-PACKAGES
+Getting started
+---------------
+
+TBD, write how write first Makefile which uses makefoo.
+
+
+Reference
+---------
+
+Hello.
+
+Basic rules
+~~~~~~~~~~~
+
+TBD, write about concatenating definitions
+
+Native Programs
+~~~~~~~~~~~~~~~
+
+TBD, write about `PROGRAMS`
+
+
+Libraries Programs
+~~~~~~~~~~~~~~~~~~
+
+TBD, write about `STATIC_LIBRARIES` and `SHARED_LIBRARIES`
+
+Installation
+~~~~~~~~~~~~
+
+TBD, write about `COMPONENTS` and `PUBLIC_COMPONENTS`
+
+
+
+Packaging
+~~~~~~~~~
+
+TBD, write about `PACKAGE` and 
+
+
+Distribution with project
+---------------------------
+
+TBD, write about options for distribution.
+Not sure how,but we have option for:
+ - ditributing aclocal & compiled configure
+ - distributing makefoo in .makefoo or makefoo subdir
+

@@ -67,6 +67,11 @@ makefoo_doc_FILES = MANUAL.txt README.txt
 makefoo_doc_INSTALL_DEST=$(docdir)/makefoo
 COMPONENTS += makefoo_doc
 
+#makefoo_doc_FILES += MANUAL.html
+#GENERATED_FILES += MANUAL.html
+MANUAL.html: $(srcdir)/MANUAL.txt
+	asciidoc --backend=html4 -o $@ $< 
+
 # gosh, jeez it's not src-dir aware
 makefoo_pkg_config_DIR=.
 makefoo_pkg_config_FILES = makefoo.pc

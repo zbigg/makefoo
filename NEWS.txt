@@ -2,6 +2,9 @@ YYYY-MM-DD, release 0.0.2
 
     * Makefile debug module added (show-defs and show-outputs targets)
     * makefoo.m4 downloads makefoo if needed (not yet ready)
+    * GENERATED_FILES works for installed files
+    * AUTOCONF_GENERATED_FILES setting added for marking files that
+       are generated using config.status foo:$(srcdir)/foo.in
 
 2013-01-25, release 0.0.1
 
