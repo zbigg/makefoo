@@ -32,6 +32,7 @@ makefoo_lib_DIR=.
 
 makefoo_lib_FILES = \
         autoconf.mk \
+        autoconf.reg.mk \
         defs.mk \
         main.mk \
 	debug.mk \
