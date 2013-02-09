@@ -66,39 +66,25 @@ makefoo.autolib.resolve-tsorted-dep-libs = \
 # $(call makefoo.autolib.custom_flags,FLAGTYPE,$libs 
 makefoo.autolib.custom_flags = \
 	$(forach lib,$(1),$(if $($(lib)_$(2)), $($(lib)_$(2))))
+	
+#
 makefoo.pkg-config = $(if $(2),$(shell pkg-config $(1) $(2)),)
 makefoo.autolib.filter-pkg-config = $(filter $(makefoo.autolib.pkg-config-libs),$(1))
+makefoo.autolib.filter-no-pkg-config = $(filter-out $(makefoo.autolib.pkg-config-libs),$(1))
 
-#
-# to be directly used to add linking flags
-#
-# 1 - link type: dynamic|static
-# 2 - library list
-#     shall be topologically sorted
-makefoo.autolib.cxxflags = \
-	$(call makefoo.pkg-config,--cflags,$(call makefoo.autolib.filter-pkg-config,$(2))) \
-	$(call makefoo.autolib.custom_flags,CXXFLAGS,$(1))
 
-makefoo.autolib.cflags = \
-	$(call makefoo.pkg-config,--cflags,$(call makefoo.autolib.filter-pkg-config,$(2))) \
-	$(call makefoo.autolib.custom_flags,CFLAGS,$(2))
+# TBD, for each non-pkg-config library
+#  find library folder, add explicit linking path: DIR/libFOO.a
+makefoo.autolib.make_lib_flags-static = 
+# same as above more or less, but with -L and -lfoo
+makefoo.autolib.make_lib_flags-dynamic = 
 
-makefoo.autolib.ldflags = \
-	$(call makefoo.autolib.custom_flags,LDFLAGS,$(2))
+makefoo.autolib.all-libs = \
+	$(pkg-config_EXT_LIBS) \
+	$(system_EXT_LIBS) \
+	$(other_EXT_LIBS)
 
-makefoo.autolib.libs-dynamic = \
-	$(call makefoo.pkg-config,--libs,$(call makefoo.autolib.filter-pkg-config,$(2))) \
-	$(call makefoo.autolib.custom_flags,LIBS,$(2)) \
-	$(call makefoo.autolib.custom_flags,LDLIBS,$(2))
-
-makefoo.autolib.libs-static = \
-	$(call makefoo.pkg-config,--libs,$(call makefoo.autolib.filter-pkg-config,$(2))) \
-	$(call makefoo.autolib.custom_flags,LIBS,$(2)) \
-	$(call makefoo.autolib.custom_flags,LDLIBS,$(2))
-
-# dispatch to static-dynamic version
-makefoo.autolib.libs = \
-	$(call makefoo.autolib.libs-$(1),$(2))
+makefoo.autolib.pkg-config-libs = $(pkg-config_EXT_LIBS)
 
 define makefoo.autolib.gather
 makefoo.autolib.all-libs += $$($(1)_DEP_LIBS)
@@ -117,12 +103,25 @@ define makefoo.autolib.update_flags
 ifdef $(1)_DEP_LIBS
 
 $(1)_makefoo_autolibs_tsorted := $$(call makefoo.autolib.resolve-tsorted-dep-libs, $$($(1)_DEP_LIBS))
+$(1)_makefoo_autolibs_pkg-config := $$(call makefoo.autolib.filter-pkg-config,$$($(1)_makefoo_autolibs_tsorted))
+$(1)_makefoo_autolibs_other := $$(call makefoo.autolib.filter-other,$$($(1)_makefoo_autolibs_tsorted))
+
 $(1)_makefoo_autolib_link_type := $$(if $$($(1)_LINK_TYPE),$$($(1)_LINK_TYPE),dynamic)
 
-$(1)_CXXFLAGS += $$(call makefoo.autolib.cxxflags,$$($(1)_makefoo_autolib_link_type),$$($(1)_makefoo_autolibs_tsorted))
-$(1)_CFLAGS   += $$(call makefoo.autolib.cflags,$$($(1)_makefoo_autolib_link_type),$$($(1)_makefoo_autolibs_tsorted))
-$(1)_LDFLAGS  += $$(call makefoo.autolib.ldflags,$$($(1)_makefoo_autolib_link_type),$$($(1)_makefoo_autolibs_tsorted))
-$(1)_LIBS     += $$(call makefoo.autolib.libs,$$($(1)_makefoo_autolib_link_type),$$($(1)_makefoo_autolibs_tsorted))
+$(1)_CXXFLAGS += \
+	$$(call makefoo.pkg-config,--cflags,$$($(1)_makefoo_autolibs_pkg-config)) \
+	$$(call makefoo.autolib.custom_flags,CXXFLAGS,$$($(1)_makefoo_autolibs_other))
+	
+$(1)_CFLAGS += \
+	$$(call makefoo.pkg-config,--cflags,$$($(1)_makefoo_autolibs_pkg-config)) \
+	$$(call makefoo.autolib.custom_flags,CFLAGS,$$($(1)_makefoo_autolibs_other))
+
+$(1)_LDFLAGS += \
+	$$(call makefoo.autolib.custom_flags,LDFLAGS,$$($(1)_makefoo_autolibs_other))
+	
+$(1)_LIBS    += \
+	$$(call makefoo.pkg-config,--libs,$$($(1)_makefoo_autolibs_pkg-config)) \
+	$$(call makefoo.autolib.make_lib_flags-$$($(1)_makefoo_autolib_link_type),$$($(1)_makefoo_autolibs_other))
 
 endif
 endef
