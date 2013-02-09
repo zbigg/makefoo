@@ -50,23 +50,46 @@ case "${build_arch}" in
 esac
 
 #
-# target_arch specific settings
+# target variables 
+#
+# 
+# machine/architecture 
 #
 case "${target_arch}" in
-    *msvc*|*msvs|*mingw*)
-        w32_executable_model=1
+    *msvc*|*msvs|*mingw*|*i*86*)
         target_is_x86_32=1
+        TARGET_X86_32=1
         ;;
     *x86_64*|*amd64*)
         target_is_x86_64=1
-        ;;
-    *i*86*)
-        target_is_x86_32=1
+        TARGET_X86_64=1
         ;;
 esac
 
 #
-# detect the toolset
+# os type
+#
+case "${target_arch}" in
+    *linux*|*Linux*)
+        TARGET_LINUX=1
+        TARGET_POSIX=1
+        ;;
+    *darwin*|*Darwin*)
+        TARGET_MACOSX=1
+        TARGET_POSIX=1
+        ;;
+    *freebsd*)
+        TARGET_FREEBSD=1
+        TARGET_POSIX=1
+        ;;
+    *msvc*|*msvs|*mingw*)
+        w32_executable_model=1
+        TARGET_W32=1
+        ;;
+esac
+
+#
+# detect the toolset if not defined yet
 #
 if [ -z "$TOOLSET" ] ; then
     case "${target_arch}" in
@@ -112,9 +135,14 @@ case "${TOOLSET}" in
             TARGET_SHARED_LIBRARY_LDFLAGS="-Wl,--enable-auto-import"
         else
             STATIC_LIBRARY_EXT=a
-            SHARED_LIBRARY_EXT=so
+            if [ -n "$TARGET_MACOSX" ] ; then
+                SHARED_LIBRARY_EXT=dylib
+            else
+                SHARED_LIBRARY_EXT=so
+            fi
             SHARED_LIBRARY_MODEL=so
         fi
+        COMPILER_GCC=1
         ;;
     unix)
         TOOLSET_CXX=${CXX-CC}
@@ -126,11 +154,13 @@ case "${TOOLSET}" in
         TOOLSET_CXX=${CXX-clang++}
         TOOLSET_CC=${CC-clang}
         OBJECT_EXT=o
+        COMPILER_CLANG=1
         ;;
     msvs)        
         TOOLSET_CXX=${CXX-cl.exe}
         TOOLSET_CC=${CC-cl.exe}
         TOOLSET_LINKER=${LINKER-link.exe}
+        COMPILER_MSVC=1
         
         EXECUTABLE_EXT=exe
         STATIC_LIBRARY_EXT=lib
@@ -163,6 +193,20 @@ TARGET_ARCH="${target_arch}"
 
 emit MAKEFOO_MAKE
 emit TARGET_ARCH
+
+emit TARGET_X86_32 TARGET_X86_64
+
+emit TARGET_POSIX
+emit TARGET_MACOSX
+emit TARGET_LINUX
+emit TARGET_FREEBSD
+emit TARGET_W32
+
+emit COMPILER_GCC
+emit COMPILER_CLANG
+emit COMPILER_MINGW32
+emit COMPILER_MSVC
+
 emit TOOLSET TOOLSET_CC TOOLSET_CXX TOOLSET_LINKER
 emit EXECUTABLE_EXT
 emit SHARED_LIBRARY_EXT SHARED_LIBRARY_MODEL
