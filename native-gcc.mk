@@ -79,7 +79,7 @@ define compile_dep_template
 # $(xxx_objdir)/NAME_type.o: $
 # where NAME is just stripped SOURCE ($3) of folders and extensions
 
-$$(patsubst %, $$($(1)_objdir)/%.$(2).o, $$(notdir $$(basename $(3)))): $(3)
+$$(patsubst %, $$($(1)_objdir)/%.$(2).o, $$(notdir $$(basename $(3)))): $(3) | $$($(1)_generated_files)
 endef
 
 ## C compilation
@@ -125,7 +125,7 @@ ifdef $(1)_LINK_DEPS
 $(1)_link_deps_targets =   $$(foreach dep, $$($(1)_LINK_DEPS), $$($$(dep)_lib_outputs))
 #$(1)_link_deps_link_dirs = $$(foreach dep, $$($(1)_LINK_DEPS), -L$$($$(dep)_builddir))
 #$(1)_link_deps_link_libs = $$($(1)_link_deps_targets)
-$(1)_link_deps_link_libs = $$(foreach dep, $$($(1)_LINK_DEPS), -L$$($$(dep)_builddir) -l$$($$(dep)_name))
+$(1)_link_deps_link_libs = $$(foreach dep, $$($(1)_LINK_DEPS), -L$$($$(dep)_destdir) -l$$($$(dep)_name))
 
 $(1)_debug_vars += $(1)_link_deps_targets $(1)_link_deps_link_libs 
 endif
@@ -196,7 +196,7 @@ endif
 define shared_library
 # 1 - component name
 
-$(1)_shlib_output = $$($(1)_builddir)/lib$$($(1)_name).$$(SHARED_LIBRARY_EXT)
+$(1)_shlib_output = $$($(1)_destdir)/lib$$($(1)_name).$$(SHARED_LIBRARY_EXT)
 $(1)_lib_outputs += $$($(1)_shlib_output)
 $(1)_outputs += $$($(1)_shlib_output)
 
@@ -219,7 +219,7 @@ $(1)_debug_vars += $(1)_linker
 
 $$($(1)_shlib_output): $$($(1)_link_deps_targets)
 $$($(1)_shlib_output): $$($(1)_shlib_objects)
-	@mkdir -p $$($(1)_builddir)
+	@mkdir -p $$($(1)_destdir)
 	$(COMMENT) [$1] linking shared library $$@ using $$($(1)_linker) 
 	$(EXEC) $$($(1)_linker) -shared  -o $$@ $$($(1)_shlib_objects) $$($(1)_ldflags)
 
@@ -239,7 +239,7 @@ $(foreach library,$(SHARED_LIBRARIES_sorted), $(eval $(call shared_library,$(lib
 define static_library
 # 1 - component name
 
-$(1)_stlib_output  := $$($(1)_builddir)/lib$$($(1)_name).$$(STATIC_LIBRARY_EXT)
+$(1)_stlib_output  := $$($(1)_destdir)/lib$$($(1)_name).$$(STATIC_LIBRARY_EXT)
 $(1)_lib_outputs += $$($(1)_stlib_output)
 $(1)_outputs += $$($(1)_stlib_output)
 $(1)_archiver=$(AR)
@@ -248,7 +248,7 @@ $(1)_debug_vars += $(1)_lib_outputs
 $(1)_debug_vars += $(1)_archiver
 
 $$($(1)_stlib_output): $$($(1)_stlib_objects)
-	@mkdir -p $$($(1)_builddir)
+	@mkdir -p $$($(1)_destdir)
 	$(COMMENT) [$1] creating static library $$@ using $$($(1)_archiver) 
 	$(EXEC) $$($(1)_archiver) rcu $$@ $$^
 	$(EXEC) $$(RANLIB) $$@
@@ -272,7 +272,7 @@ endif
 define program_template
 # 1 - component name
 
-$(1)_bin_outputs = $$($(1)_builddir)/$$($(1)_name)$(PROGRAM_SUFFIX)
+$(1)_bin_outputs = $$($(1)_destdir)/$$($(1)_name)$(PROGRAM_SUFFIX)
 $(1)_ldflags = $$($(1)_LDFLAGS) \
 	$$(LDFLAGS) \
 	$$(sort $$($(1)_link_deps_link_dirs)) $$($(1)_link_deps_link_libs) \
@@ -292,7 +292,7 @@ $(1)_debug_vars += $(1)_linker
 
 $$($(1)_bin_outputs): $$($(1)_link_deps_targets)
 $$($(1)_bin_outputs): $$($(1)_objects)
-	@mkdir -p $$($(1)_builddir)
+	@mkdir -p $$($(1)_destdir)
 	$(COMMENT) [$1] linking program $$@ using $$($(1)_linker) 
 	$(EXEC) $$($(1)_linker) -o $$@ $$($(1)_objects) $$($(1)_ldflags)
 

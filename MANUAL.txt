@@ -58,3 +58,11 @@ Not sure how,but we have option for:
  - ditributing aclocal & compiled configure
  - distributing makefoo in .makefoo or makefoo subdir
 
+TBD, document
+* MAKEFOO_NAMED_OBJDIR
+* MAKEFOO_NAMED_BUILDDIR
+* xxx_DEST
+* xxx_NAME
+* xxx_DIR
+* xxx_INSTALL_DEST
+

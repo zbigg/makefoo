@@ -54,11 +54,12 @@ include $(MAKEFOO_dir)/defs.mk
 include $(makefoo_main_includes)
 -include $(makefoo_post_includes)
 
-build: $(DEFAULT_COMPONENTS)
+makefoo.build: $(DEFAULT_COMPONENTS)
+build: makefoo.build
 
-clean:
+makefoo.clean:
 	rm -rf $(all_objects) $(all_outputs)
-
+clean: makefoo.clean
 
 $(top_builddir)/makefoo_configured_defs.mk: $(MAKEFOO_dir)/configure.sh
 	@mkdir -p $(top_builddir)

@@ -62,21 +62,37 @@ ifndef top_builddir
 top_builddir = $(top_srcdir)/$(build_name)
 endif
 
-all: build
+all: makefoo.all
+makefoo.all: makefoo.build
 
 define common_defs
 # 1 - component name
 # 2 - component type (PROGRAM, SHARED_LIBRARY, STATIC_LIBRARY)
 
 ifndef $(1)_DIR
-$$(warning $(1)_DIR not defined, assuming . relative to srcdir)
+#$$(warning $(1)_DIR not defined, assuming . relative to srcdir)
 $(1)_DIR=.
 endif
 
-$(1)_builddir := $(top_builddir)/$$($(1)_DIR)
-$(1)_srcdir   := $(top_srcdir)/$$($(1)_DIR)
-$(1)_objdir   := $$($(1)_builddir)/.obj
+ifndef $(1)_DEST
+$(1)_DEST=$$($(1)_DIR)
+endif
+
 $(1)_name     := $$(if $$($(1)_NAME),$$($(1)_NAME),$(1))
+ifdef MAKEFOO_NAMED_BUILDDIR
+$(1)_builddir := $(top_builddir)/$$($(1)_DIR)/$$($(1)_name)
+else
+$(1)_builddir := $(top_builddir)/$$($(1)_DIR)
+endif
+
+$(1)_destdir  := $(top_builddir)/$$($(1)_DEST)
+$(1)_srcdir   := $(top_srcdir)/$$($(1)_DIR)
+ifdef MAKEFOO_NAMED_OBJDIR
+$(1)_objdir   := $$($(1)_builddir)/.obj/$$($(1)_name)
+else
+$(1)_objdir   := $$($(1)_builddir)/.obj
+endif
+
 $(1)_generated_files := $$(sort $$($(1)_GENERATED_SOURCES) $$($(1)_GENERATED_FILES) $(GENERATED_FILES))
 $(1)_sources_rel := $$(call makefoo.relativize,$(1),$$($(1)_SOURCES) $$($(1)_FILES) $$($(1)_SCRIPTS))
 endef

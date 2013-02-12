@@ -1,14 +1,119 @@
-TODO:
-    features:
-      general install target design
-        (general fuckup)
-      general install target implementation
-        (some proof of concept ready)
-      rpm package for all files based on install
-        (in progress)
-      deb package for all files based on install
-      manual (in asciidoc format?)
-    small things:
-      $(EXEC) and $(COMMENT)
-        shall be makefoo functions, not dependent on true execution
-      VERBOSE & QUIET shall obey MAKEOPTS -s and/or --quiet
+
+  TODO for makefoo
+
+done:
+    * build tree definition (done, xxx_DEST)
+    * separate build/obj dirs if there are common objects MAKEFOO_NAMED_(BUILD/OBJ)DIR
+priority:
+    * allow shared objects
+    * allow custom "common targets"
+    * dist-check
+    * automake
+
+
+build tree definition
+==============================
+currently all articats are created in ${top_builddir} which defaults to .
+
+objects land in    ${top_builddir}/${x_DIR}/.obj
+artifacts land in  ${top_builddir}/${x_DIR} (which defaults to $(top_srcdir))
+
+artifact_DEST shall redefine where it lands
+
+validation of definitions
+==============================
+
+native:
+    * error  shall be generated for PROGRAMS, LIBRARIES when
+      no sources are defined
+
+
+allow shared objects
+===============================
+
+now each target has it's own namespace(folder) for object files
+in case of some projects object files may be shared by libraries, programs
+
+define
+    MAKEFOO_USE_SHARED_OBJECTS=1
+which says that .obj files for 
+* prog 
+* static libraries
+* shared libraries (on w32 only!)
+libraries land in same namespace, so objects can be reused
+
+
+automake like FHS prefix for build artifacts
+===============================
+
+bin_PROGRAMS      -> installs in $(bindir)
+check_PROGRAMS    -> doesn't install but run in test suite 
+lib_LIBRARIES     -> installs into $(libdir)
+nodist_FOO        -> not installed
+
+custom:
+    priv_lib_LIBRARIS -> installs into $(priv_libdir)
+    MAKEFOO_INSTALL_PREFIXES += priv_lib
+
+compatibility:
+    PROGRAMS are implicitly installed in $(bindir)
+    STATIC_LIBRARIES $(libdir) 
+    SHARED_LIBRARIES in $(libdir) or $(bindir) + $(libdir) on w32
+
+make dist-check
+===============================
+
+  make src-dist
+  mkdir /tmp/foo
+  tar zxvf /tmp/foo/src
+  (
+    cd /tmp/foo/src)
+    autoreconf -i
+    ./configure
+    make check ???
+    make install DESTDIR=/tmp/foo/staging
+    make check-staging DESTDIR=/tmp/foo/staging
+  )
+
+introduct 'check-staging' concept
+===============================
+
+which installs product in fake staging area and performs
+'in-staging-area' tests
+
+consider automagic distribution of aclocal
+===============================
+
+m4 macros is kinda dll-hell, but make dep hell
+aclocal.m4 shall be distributed by default
+
+put all variables into namespace 'makefoo'
+===============================
+
+as in quagmire and/or ShakeMake!, prefix everything with:
+- makefoo. (preferred)
+- makefoo/
+
+
+allow custom "common targets"
+===============================
+
+all "commoo" targets like clean, install, all etc shall be created without recipes and only depend on
+
+makefoo.all: makefoo.build
+
+all: makefoo.all
+clean: makefoo.clean
+build: makefoo.build
+install: makefoo.install
+clean: makefoo.clean
+check: makefoo.check
+
+then one can easily add it's custom eg 'install target':
+install:
+    cp $(srcdir)/foo.sh $(bindir)
+    
+without interferring with rest of makefoo generated ruleset.
+
+
+
