@@ -1,0 +1,20 @@
+#
+# travis (http://travis-ci.org/)
+#  build description 
+#   for makefoo (https://github.com/zbigg/makefoo)
+#
+
+#install: make autoconf aclocal
+#language: cpp
+
+#compiler:
+#  - clang
+#  - gcc
+
+before_script:
+  - autoconf
+  - ./configure
+
+script:
+  - make check
+
