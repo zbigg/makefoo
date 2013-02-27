@@ -177,5 +177,17 @@ install-fhs: $(install_targets)
 install: install-fhs
 .PHONY: install-fhs install
 
+#
+# distcheck integration (src-dist.post.mk)
+#
+#  when doing distcheck, check that package bootstraped from
+#  source distribution can be successfully installed
+#
+makefoo.install-distcheck: $(all_outputs) $(GENERATED_FILES)
+makefoo.install-distcheck: DESTDIR=$(abspath $(makefoo_distcheck_dir)/install-test)
+makefoo.install-distcheck: install
+
+makefoo.default_distcheck_targets += makefoo.install-distcheck
+
 # jedit: :tabSize=8:mode=makefile:
 

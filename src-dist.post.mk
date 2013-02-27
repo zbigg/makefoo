@@ -87,7 +87,8 @@ ifneq ($(src_dist_all_files),)
 src_dist_all_files_rel = $(patsubst %, $(top_srcdir)/%, $(sort $(src_dist_all_files)))
 
 
-src-dist: $(src_dist_folder) $(src_dist_all_files_rel) src-dist-makefoo	
+src-dist: $(src_dist_tgz_name)
+$(src_dist_tgz_name): $(src_dist_folder) $(src_dist_all_files_rel) src-dist-makefoo
 	$(COMMENT) copying $(PRODUCT) files to distribution folder $(src_dist_folder)
 	$(EXEC) for file in $(src_dist_all_files) ; do \
 		   dir="$(src_dist_folder)/`dirname $$file`" ; \
@@ -99,6 +100,37 @@ src-dist: $(src_dist_folder) $(src_dist_all_files_rel) src-dist-makefoo
 	$(EXEC) rm -rf $(src_dist_folder)	
 endif
 
+#
+# makefoo.distcheck
+#    check that distribution source passed checks
+#
+# TBD
+#  autoconf & configure steps (aka pre-check steps)
+#  shall be configured somehow
+#
+makefoo_distcheck_dir=.makefoo.distcheck
+
+makefoo.distcheck: $(src_dist_tgz_name)
+	rm -rf $(makefoo_distcheck_dir)
+	mkdir $(makefoo_distcheck_dir)
+	
+	$(COMMENT) unpacking $(src_dist_tgz_name) in $(makefoo_distcheck_dir)
+	
+	( cd $(makefoo_distcheck_dir) ; tar zxf ../$(src_dist_tgz_name) )
+	
+	$(COMMENT) "running autoconf & configuring if needed"
+	( cd $(makefoo_distcheck_dir)/$(src_dist_folder) ; [ -f configure.ac ] && autoreconf -v -i )	
+	( cd $(makefoo_distcheck_dir)/$(src_dist_folder) ; [ -f Makefile.in ] && ./configure )
+
+	$(COMMENT) "invoking testing targets: $(makefoo.default_distcheck_targets) $(MAKEFOO_DISTCHECK_TARGETS)" ; \
+	$(MAKE) -C $(makefoo_distcheck_dir)/$(src_dist_folder) makefoo_distcheck_dir=$(abspath $(makefoo_distcheck_dir)) makefoo.distcheck.internal
+	
+	#rm -rf $(makefoo_distcheck_dir)
+
+# invoked in sub-make
+makefoo.distcheck.internal: $(makefoo.default_distcheck_targets) $(MAKEFOO_DISTCHECK_TARGETS)
+
+distcheck: makefoo.distcheck
 
 # jedit: :tabSize=8:mode=makefile:
 

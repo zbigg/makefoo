@@ -7,6 +7,7 @@
 #
 #   invocation:
 #     make src-dist
+#     make distcheck
 #
 # creates $(PRODUCT)-$(VERSION).tar.gz containing bundled
 # source distribution in same layout as components in view
@@ -22,6 +23,10 @@
 #   
 #   EXTRA_DIST - bundle also these (remap to $(top_srcdir))
 #
+#   MAKEFOO_DISTCHECK_TARGETS 
+#     these targets are executed when running distcheck targers
+#     NOTE: test and install are default distcheck targets if used
+#
 # NOTE:
 #   By default 'makefoo' used files are bundled in makefoo subdir of source
 #   distribution.
@@ -30,5 +35,6 @@
 #
 # impl note: main implementation in src-dist.post.mk
 #
+#  
 
 

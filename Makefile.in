@@ -94,6 +94,44 @@ makefoo_COMPONENTS = \
 	makefoo_pkg_config \
 	makefoo_doc \
 	makefoo_aclocal
+
+test_FILES=\
+	tests/autoconf_project/Makefile.in \
+	tests/autoconf_project/baz/baz.cpp \
+	tests/autoconf_project/baz.txt \
+	tests/autoconf_project/configure.ac \
+	tests/autoconf_project/libbar/bar.cpp \
+	tests/autoconf_project/libbar/bar.h \
+	tests/autoconf_project/libbar/bar_ex.cpp \
+	tests/autoconf_project/libbar/bar_test.cpp \
+	tests/autoconf_project/libbar-config.in \
+	tests/autoconf_project/libbar.pc.in \
+	tests/autoconf_project/libfoo/foo.cpp \
+	tests/autoconf_project/libfoo/spam.c \
+	tests/lib_simple/Makefile \
+	tests/lib_simple/lib.c \
+	tests/lib_simple/lib.h \
+	tests/lib_simple/prog.cpp \
+	tests/lib_simple_basic_test.sh \
+	tests/lib_simple_msvs_test.sh \
+	tests/program_simple/Makefile \
+	tests/program_simple/a.cpp \
+	tests/program_simple/b.c \
+	tests/program_simple_basic_test.sh \
+	tests/program_simple_cppcheck_test.sh \
+	tests/program_simple_msvs_test.sh \
+	tests/program_simple_src_dist_test.sh \
+	tests/simple_autoconf_oos_build_test.sh \
+	tests/simple_autoconf_project_rpm_test.sh \
+	tests/test.sh \
+	tests/test_program_coverage_test.sh \
+	tests/test_program_test.sh \
+	tests/testlib.sh
+
+EXTRA_DIST += $(test_FILES)
+
+MAKEFOO_DISTCHECK_TARGETS=check
+
 PACKAGES += makefoo
 
 PRODUCT=makefoo

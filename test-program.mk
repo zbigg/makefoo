@@ -45,6 +45,13 @@ test: $(1)-test
 coverage-test: $(1)-coverage-test
 endef
 
+#
+# TBD, this shall be reverse!
+# makefoo.test: various targets
+# test: makefoo.test
+#
+makefoo.test: test
+
 coverage-test-report: coverage-test
 	$(COMMENT) generating coverage test report in 'coverage-test-report'
 	$(EXEC) genhtml -o coverage-test-report $(coverage_trace_files)
@@ -53,6 +60,10 @@ TEST_PROGRAMS_sorted := $(sort $(TEST_PROGRAMS))
 
 $(foreach test_program,$(TEST_PROGRAMS_sorted),$(eval $(call test_program_template,$(test_program))))
 
+#
+# distcheck integration (src-dist.post.mk)
+#
+makefoo.default_distcheck_targets += makefoo.test
 
 # jedit: :tabSize=8:mode=makefile:
 
