@@ -25,8 +25,10 @@ invoke_make
 # now touch one file and check if
 # only it is being recompiled
 # and program is relinked
+sleep_hack
 touch a.cpp
 rm program_simple$EXECUTABLE_SUFFIX
+
 
 invoke_make 
     assert_grep "compiling a.cpp" stdout

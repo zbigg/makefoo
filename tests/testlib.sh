@@ -77,6 +77,12 @@ skip_test()
     exit 0
 }
 
+sleep_hack()
+{
+    if [[ "$OSTYPE" = "msys" ]] ; then
+        sleep 1
+    fi
+}
 if [ -z $MAKEFOO ] ; then
     MAKEFOO_dir=`pwd`/../
     MAKEFOO=${MAKEFOO_dir}/main.mk  
