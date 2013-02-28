@@ -40,6 +40,8 @@ makefoo_lib_FILES = \
 	native.reg.mk \
         native-gcc.mk \
         native-msvs.mk \
+	autolib.mk \
+	autolib.pre.mk \
         rpm.mk \
 	rpm.reg.mk \
         rpm-spec-template.in \
