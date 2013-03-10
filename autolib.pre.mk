@@ -59,23 +59,24 @@
 # 	# pkg-config --libs libname will be added to C(XX)FLAGS
 # 	# the library will be linked just as -lFOO foo.lib (msvs) at the end of list
 
+
+makefoo.link-type ?= dynamic
+
 #
 # implementation
 #
-# # $(call static_libs, lib_names)
-# #  coverts to absolute paths of lib files
 
+# get library names, use xxx_LIBNAMES
+#  $(1) - library NAME
 makefoo.autolib.lib-names=$(if $($(1)_LIBNAMES),$($(1)_LIBNAMES),$(1))
 
-makefoo.autolib.system-libflags=\
-	$(if $($(1)_LIBS), \
-	     $($(1)_LIBS), \
-	     $(patsubst %,-l%,$(call makefoo.autolib.lib-names,$(1))))
+# call pkg-config $(1) $(2)
+makefoo.pkg-config = $(if $(2),$(shell pkg-config $(1) $(2)),)
 
-makefoo.autolib.pkg-config-libdir=$(shell pkg-config --variable=libdir $(1))
-makefoo.autolib.pkg-config-libflags-static=$(patsubst %, $(call pkg-config-libdir,$(1))/lib%.a,$(call lib-names,$(1)))
-
-
+# calculate dependencies
+#  $(1) - component
+#  $(call makefoo.autolib.resolve-tsorted-dep-libs,COMPONENT_NAME)
+#
 # for each dep 
 #   print edge lib->dep
 #   recursiveal print all deps of dep
@@ -90,23 +91,9 @@ makefoo.autolib.resolve-tsorted-dep-libs = \
     $(filter-out autolib-dummy-value,\
 	$(strip \
 	    $(shell ( $(call makefoo.autolib.tsort-echos-for-deps,$(1)) ) | tsort )))
-
-# $(call makefoo.autolib.custom_flags,FLAGTYPE,$libs 
-makefoo.autolib.custom_flags = \
-	$(forach lib,$(1),$(if $($(lib)_$(2)), $($(lib)_$(2))))
 	
-#
-makefoo.pkg-config = $(if $(2),$(shell pkg-config $(1) $(2)),)
 makefoo.autolib.filter-pkg-config = $(filter $(makefoo.autolib.pkg-config-libs),$(1))
 makefoo.autolib.filter-no-pkg-config = $(filter-out $(makefoo.autolib.pkg-config-libs),$(1))
-
-
-# TBD, for each non-pkg-config library
-#  find library folder, add explicit linking path: DIR/libFOO.a
-makefoo.autolib.make_lib_flags-static = 
-# same as above more or less, but with -L and -lfoo
-makefoo.autolib.make_lib_flags-dynamic = \
-	$(foreach lib,$(1),$(call makefoo.autolib.system-libflags,$(lib)))
 
 makefoo.autolib.all-libs = \
 	$(pkg-config_EXT_LIBS) \
@@ -125,45 +112,82 @@ makefoo.autolib.pkg-config-libs += $(1)
 endif
 endef
 
+define makefoo.autolib.pkg-config.template
+$(1)_makefoo_cflags = $$(shell pkg-config --cflags $(1))
+$(1)_makefoo_cxxflags = $$(shell pkg-config --cflags $(1))
+$(1)_makefoo_libs-dynamic = $$(shell pkg-config --libs $(1))
+$(1)_makefoo_libdir = $$(shell pkg-config --variable=libdir $(1))
+$(1)_makefoo_libs-static = $$(patsubst %,$$($(1)_makefoo_libdir)/lib%.a,$$(call makefoo.autolib.lib-names,$(1)))
+endef
+
+define makefoo.autolib.normal.template
+$(1)_makefoo_cflags =
+$(1)_makefoo_cxxflags =
+$(1)_makefoo_libs-dynamic = $$(if $$($(1)_LIBS),$$($(1)_LIBS),$$(patsubst %,-l%,$$(call makefoo.autolib.lib-names,$(1))))
+
+ifeq (system,$$($(1)_TYPE))
+    #
+    # system libs are always linked "in default way"
+    #
+$(1)_makefoo_libs-static = $$(if $$($(1)_LIBS),$$($(1)_LIBS),$$(patsubst %,-l%,$$(call makefoo.autolib.lib-names,$(1))))
+else
+    #
+    # for others, static link needs specified lib_DIR
+    #
+$(1)_makefoo_libdir = $$(if $$($(1)_DIR),$$($(1)_DIR),\
+                            ./$$(error error $(1)_DIR not defined, it is required for non-system libs in STATIC build))
+$(1)_makefoo_libs-static = $$(if $$($(1)_LIBS),$$($(1)_LIBS),$$(patsubst %,$$($(1)_makefoo_libdir)/lib%.a,$$(call makefoo.autolib.lib-names,$(1))))
+endif
+
+endef
+
+# get variable of all EXT_LIBS of component
+#  $(1) - component name
+#  $(2) - dynamic|static
+
+makefoo.each-ext-library-var = $(foreach lib,$($(1)_makefoo_autolibs_tsorted),$($(lib)_$(2)))
 
 define makefoo.autolib.update_flags
 #  $(1) - native component
 #  $(1)_LINK_TYPE
 ifdef $(1)_EXT_LIBS
+#
+# the big problem here is that pkg-config libs are mixed with rest
+# normal libs are correctly sorted, but
 
 $(1)_makefoo_autolibs_tsorted := $$(call makefoo.autolib.resolve-tsorted-dep-libs, $$($(1)_EXT_LIBS))
-$(1)_makefoo_autolibs_pkg-config := $$(call makefoo.autolib.filter-pkg-config,$$($(1)_makefoo_autolibs_tsorted))
-$(1)_makefoo_autolibs_other := $$(call makefoo.autolib.filter-no-pkg-config,$$($(1)_makefoo_autolibs_tsorted))
+$(1)_makefoo_autolib_link_type := $$(if $$($(1)_LINK_TYPE),$$($(1)_LINK_TYPE),$(makefoo.link-type))
 
-$(1)_makefoo_autolib_link_type := $$(if $$($(1)_LINK_TYPE),$$($(1)_LINK_TYPE),dynamic)
+$(1)_CFLAGS   += $$(call makefoo.each-ext-library-var,$(1),makefoo_cflags)
+$(1)_CXXFLAGS += $$(call makefoo.each-ext-library-var,$(1),makefoo_cxxflags)
 
-$(1)_CXXFLAGS += \
-	$$(call makefoo.pkg-config,--cflags,$$($(1)_makefoo_autolibs_pkg-config)) \
-	$$(call makefoo.autolib.custom_flags,CXXFLAGS,$$($(1)_makefoo_autolibs_other))
-	
-$(1)_CFLAGS += \
-	$$(call makefoo.pkg-config,--cflags,$$($(1)_makefoo_autolibs_pkg-config)) \
-	$$(call makefoo.autolib.custom_flags,CFLAGS,$$($(1)_makefoo_autolibs_other))
+$(1)_LIBS   += $$(call makefoo.each-ext-library-var,$(1),makefoo_libs-$$($(1)_makefoo_autolib_link_type))
 
-$(1)_LDFLAGS += \
-	$$(call makefoo.autolib.custom_flags,LDFLAGS,$$($(1)_makefoo_autolibs_other))
-	
-$(1)_LIBS    += \
-	$$(call makefoo.pkg-config,--libs,$$($(1)_makefoo_autolibs_pkg-config)) \
-	$$(call makefoo.autolib.make_lib_flags-$$($(1)_makefoo_autolib_link_type),$$($(1)_makefoo_autolibs_other))
+endif # _EXT_LIBS
 
-endif
-endef
+endef # makefoo.autolib.update_flags
 
 # gather all pkg-config libs from native components
 # 
 
 autolib_COMPONENTS_SORTED := $(sort $(COMPONENTS))
 
-$(foreach component,$(autolib_COMPONENTS_SORTED),$(eval $(call makefoo.autolib.gather,$(component))))
+# gather all libraries in
+#   makefoo.autolib.pkg-config-libs
+#   makefoo.autolib.all-libs
 
+makefoo.autolib.normal-libs = $(sort $(call makefoo.autolib.filter-no-pkg-config, $(makefoo.autolib.all-libs))) 
+
+$(foreach component,$(autolib_COMPONENTS_SORTED),$(eval $(call makefoo.autolib.gather,$(component))))
 $(foreach autolib,$(makefoo.autolib.all-libs),$(eval $(call makefoo.autolib.template,$(autolib))))
 
+# now create defs for
+#  - pkg-config libs
+$(foreach lib,$(makefoo.autolib.pkg-config-libs),$(eval $(call makefoo.autolib.pkg-config.template,$(lib))))
+#  - normal libs
+$(foreach lib,$(makefoo.autolib.normal-libs),$(eval $(call makefoo.autolib.normal.template,$(lib))))
+
+# update target flags
 $(foreach component,$(autolib_COMPONENTS_SORTED),$(eval $(call makefoo.autolib.update_flags,$(component))))
 
 # jedit: :tabSize=8:mode=makefile:
