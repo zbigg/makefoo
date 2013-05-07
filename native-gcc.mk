@@ -314,11 +314,12 @@ define native_common
 $(1): $$($(1)_outputs)
 
 ifdef USE_D_FILES
-$(1)_d_files  = $$(patsubst %.o, %.d, $$($(1)_cpp_objects) $$($(1)_c_objects))
-all_objects   += $$($(1)_objects)
-all_outputs   += $$($(1)_outputs)
+$(1)_d_files  = $$(patsubst %.o,%.d, $$($(1)_objects))
 all_d_files   += $$($(1)_d_files)
 endif
+
+all_objects   += $$($(1)_objects)
+all_outputs   += $$($(1)_outputs)
 
 $(1)-clean clean-$(1):
 	rm -rf $$($(1)_outputs) $$($(1)_objects) $$($(1)_d_files)
