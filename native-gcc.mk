@@ -196,7 +196,8 @@ endif
 define shared_library
 # 1 - component name
 
-$(1)_shlib_output = $$($(1)_destdir)/lib$$($(1)_name).$$(SHARED_LIBRARY_EXT)
+$(1)_libname = lib$$($(1)_name).$$(SHARED_LIBRARY_EXT)
+$(1)_shlib_output = $$($(1)_destdir)/$$($(1)_libname)
 $(1)_lib_outputs += $$($(1)_shlib_output)
 $(1)_outputs += $$($(1)_shlib_output)
 
@@ -205,6 +206,10 @@ $(1)_ldflags := $$($(1)_LDFLAGS) \
 	$$(sort $$($(1)_link_deps_link_dirs)) $$($(1)_link_deps_link_libs) \
 	$$($(1)_LIBS) \
 	$$(LIBS)
+
+ifdef TARGET_MACOSX
+$(1)_ldflags += -install_name $$($(1)_libname)
+endif
 
 tinfra_ldflags += $(1)_ldflags
 
