@@ -79,7 +79,7 @@ skip_test()
 
 sleep_hack()
 {
-    if [[ "$OSTYPE" = "msys" ]] ; then
+    if [[ "$OSTYPE" = "msys" || "$OSTYPE" = darwin* ]] ; then
         sleep 1
     fi
 }
