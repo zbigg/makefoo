@@ -45,6 +45,8 @@ makefoo_main_includes = $(patsubst %,$(MAKEFOO_dir)/%.mk,$(MAKEFOO_USE))
 makefoo_post_includes = $(patsubst %,$(MAKEFOO_dir)/%.post.mk,$(MAKEFOO_USE))
 
 default: build
+
+include $(MAKEFOO_dir)/int_helpers.mk
 -include $(makefoo_reg_includes)
 
 include $(MAKEFOO_dir)/defs.mk
