@@ -56,7 +56,7 @@ COMPONENTS += libbar-config libbar_pkg_config
 # baz program definiions (should be in baz/component_defs.mk)
 baz_NAME    = baz
 baz_SOURCES = baz.cpp
-baz_DEPS    = libbar libfoo
+baz_LINK_DEPS    = libbar libfoo
 
 baz_doc_FILES = baz.txt
 baz_doc_INSTALL_DEST = $(docdir)/baz
