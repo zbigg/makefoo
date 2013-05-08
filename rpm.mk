@@ -101,6 +101,31 @@ rpm_sysconfdir=$(call rpm_arg,_sysconfdir)
 rpm_datadir=$(call rpm_arg,_datadir)
 rpm_localstatedir=$(call rpm_arg,_localstatedir)
 
+#
+# rpmbuild in version before 4.7 needs additional
+# --root $$($(1)_rpmbuilddir)/BUILDROOT/$$($(1)_rpm_name)
+#
+# (http://rpm.org/gitweb?p=rpm.git;a=commitdiff_plain;h=217e5700c0cd76cfce32a50a11d7cb8b719dd446)
+# otherwise it tries to search for files literally in root and
+# test 'simple_autoconf_project_rpm_test.sh' fails with:
+#
+#  [ddd] creating rpm package ././ddd-1.1-1.x86_64.rpm
+#  error: File not found: /usr/lib64/libbar2.a
+#  error: File not found: /usr/bin/baz
+#    File not found: /usr/lib64/libbar2.a
+#    File not found: /usr/bin/baz
+#  make: *** [ddd-1.1-1.x86_64.rpm] Error 1
+#  simple_autoconf_project_rpm_test.sh: expected file 'ddd-1.1-1*.rpm' doesn't exist
+
+#
+# now how to check  which version of rpm we have ???
+# current workaround:
+#   RPMBUILD_ROOT_HACK=1 ./simple_autoconf_project_rpm_test.sh
+
+ifdef RPMBUILD_ROOT_HACK
+rpmbuild_flags_compat += --root $(1)
+endif
+
 define rpm_template
 # 1 - component name
 # 2 - target type (PROGRAM, SHARED_LIBRARY, STATIC_LIBRARY)
@@ -139,7 +164,7 @@ endif
 
 $(1)_rpmbuild_flags = \
 	        --define "_topdir $$(abspath $$($(1)_rpmbuilddir))" \
-	        --root $$(abspath $$($(1)_rpmbuilddir)/BUILDROOT/$$($(1)_rpm_name))
+	        $(call rpmbuild_flags_compat,$$(abspath $$($(1)_rpmbuilddir)/BUILDROOT/$$($(1)_rpm_name)))
 	        
 $$($(1)_rpm): $(MAKEFOO_dir)/rpm-spec-template.in
 	@mkdir -p $$($(1)_rpmbuilddir)/SOURCES $$($(1)_rpmbuilddir)/SPECS $$($(1)_rpmbuilddir)/BUILD $$($(1)_rpmbuilddir)/RPMS
