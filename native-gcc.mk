@@ -109,7 +109,7 @@ $(1)_debug_vars += $(1)_$(3)_cflags
 $$(foreach source,$$($(1)_$(3)_c_sources_rel),$$(eval $$(call compile_dep_template,$(1),$(3),$$(source))))
 
 $$($(1)_$(3)_c_objects):
-	mkdir -p $$($(1)_objdir)
+	@mkdir -p $$($(1)_objdir)
 	$(COMMENT) "[$1] compiling $$< ($(3))"
 	$(EXEC) $$(CC) $$($(1)_$(3)_cflags) -c -o $$@ $$< 
 endef
