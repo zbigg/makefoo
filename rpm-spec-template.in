@@ -6,6 +6,7 @@
 #
 # See Makefile.in/rpm-dist target
 #
+# jedit: :tabSize=8:mode=rpm-spec:
 
 Summary:    @PRODUCT@ - @COMPONENT@
 License:    proprietary
@@ -44,12 +45,4 @@ Group:      System Environment/Daemons
 
 %files
 %defattr(-,root,root)
-%{_prefix}
-#%{_bindir}/*
-#%{_sysconfdir}/*
-#%{_defaultdocdir}/*
-#%{_libdir}/*
-#%{_localstatedir}/*
-
-# jedit: :tabSize=8:mode=rpm-spec:
 

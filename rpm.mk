@@ -137,15 +137,12 @@ $(1)_deps = $$($(1)_outputs)
 $(1)_install_targets = $(1)_install
 endif
 
+$(1)_rpmbuild_flags = \
+	        --define "_topdir $$(abspath $$($(1)_rpmbuilddir))" \
+	        --root $$(abspath $$($(1)_rpmbuilddir)/BUILDROOT/$$($(1)_rpm_name))
+	        
 $$($(1)_rpm): $(MAKEFOO_dir)/rpm-spec-template.in
 	@mkdir -p $$($(1)_rpmbuilddir)/SOURCES $$($(1)_rpmbuilddir)/SPECS $$($(1)_rpmbuilddir)/BUILD $$($(1)_rpmbuilddir)/RPMS
-	
-	$(COMMENT) "[$1] creating rpm spec file $$($(1)_spec)"
-	$(EXEC) sed -e s/@VERSION@/$$($(1)_rpm_version)/ \
-	    -e s/@RELEASE@/$$($(1)_rpm_release)/   \
-	    -e s/@COMPONENT@/$(1)/           \
-	    -e s/@PRODUCT@/$(PRODUCT)/       \
-	    $$(MAKEFOO_dir)/rpm-spec-template.in > $$($(1)_spec)
 	    
 	$(COMMENT) "[$1] installing in staging area [$$($(1)_rpmbuilddir)/BUILDROOT/$$($(1)_rpm_name)]"
 	@rm -rf $$($(1)_rpmbuilddir)/BUILDROOT/
@@ -158,8 +155,18 @@ $$($(1)_rpm): $(MAKEFOO_dir)/rpm-spec-template.in
 		datadir=$(rpm_datadir)         \
 		localstatedir=$(rpm_localstatedir) 
 	
+	$(COMMENT) "[$1] creating rpm spec file $$($(1)_spec)"
+	$(EXEC) sed -e s/@VERSION@/$$($(1)_rpm_version)/ \
+	    -e s/@RELEASE@/$$($(1)_rpm_release)/   \
+	    -e s/@COMPONENT@/$(1)/           \
+	    -e s/@PRODUCT@/$(PRODUCT)/       \
+	    $$(MAKEFOO_dir)/rpm-spec-template.in > $$($(1)_spec)
+        
+	$(COMMENT) "[$1] listing files for rpm into $$($(1)_spec)"
+	$(EXEC) ( cd $$($(1)_rpmbuilddir)/BUILDROOT/$$($(1)_rpm_name) && find -type f | sed -e 's/^\.//' ) | tee -a $$($(1)_spec)
+	
 	$(COMMENT) "[$1] creating rpm package $$($(1)_rpm)"
-	$(EXEC) rpmbuild $(RPMBUILD_FLAGS) --define "_topdir $$(abspath $$($(1)_rpmbuilddir))" -bb $$($(1)_spec)
+	$(EXEC) rpmbuild $(RPMBUILD_FLAGS) $$($(1)_rpmbuild_flags) -bb $$($(1)_spec)
 	
 	$(EXEC) mv $$($(1)_rpmbuilddir)/RPMS/$(RPM_ARCH)/$$($(1)_rpm_name).rpm $$($(1)_rpm)
 	
