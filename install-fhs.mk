@@ -84,14 +84,10 @@ endef
 # define X_lib_outputs
 #
 
-$(DESTDIR)$(libdir):
-	$(COMMENT) create installation folder $@
-	$(EXEC) mkdir -p $@
-
 define install_fhs_libs
 ifdef $(1)_lib_outputs
 
-$(1)_install_lib: $$($(1)_lib_outputs) $$(DESTDIR)$(libdir)
+$(1)_install_lib: $$($(1)_lib_outputs)
 	$$(call makefoo.install.flat,$(1),library,$(libdir),$$($(1)_lib_outputs),.) 
 
 $(1)_install_targets += $(1)_install_lib
@@ -103,14 +99,11 @@ endef
 # install script for all targets that
 # define X_bin_outputs
 #
-$(DESTDIR)$(bindir):
-	$(COMMENT) create installation folder $@
-	$(EXEC) mkdir -p $@
 
 define install_fhs_programs
 ifdef $(1)_bin_outputs
 
-$(1)_install_bin: $$($(1)_bin_outputs) $$(DESTDIR)$(bindir)
+$(1)_install_bin: $$($(1)_bin_outputs)
 	$$(call makefoo.install.flat,$(1),program,$(bindir),$$($(1)_bin_outputs),.) 
 
 $(1)_install_targets += $(1)_install_bin
