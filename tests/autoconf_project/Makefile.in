@@ -20,6 +20,15 @@ baz_DIR    = baz
 libfoo_SOURCES = foo.cpp spam.c
 libfoo_NAME    = foo
 
+libfoo_PACKAGE_SUMMARY     = foo library for fooization
+libfoo_PACKAGE_LICENCE    = SomeCustomLicence
+define libfoo_PACKAGE_DESCRIPTION
+POSIX compatible C library for:
+ - fooization of bars
+ - spam generation
+website http://spam_and_foo.org
+endef
+ 
 SHARED_LIBRARIES += libfoo
 STATIC_LIBRARIES += libfoo
 

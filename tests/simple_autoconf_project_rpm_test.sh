@@ -36,6 +36,18 @@ invoke_make rpm
     # LIBFOO should contain $p/lib/libfoo
     assert_grep "/usr/lib(64)?/libfoo.a" libfoo.list
     assert_grep "/usr/lib(64)?/libfoo.so" libfoo.list
+    
+    # LIBFOO defines rpm attributes
+    rpm -qpi libfoo/libfoo-1.2-1*.rpm  > libfoo.info
+    
+    # summary
+    assert_grep 'Summary.*foo library for fooization' libfoo.info
+    
+    # description 
+    assert_grep "^POSIX compatible C library for:" libfoo.info
+    assert_grep "^website http://spam_and_foo.org" libfoo.info
+    
+    assert_grep "License.*SomeCustomLicence" libfoo.info
 }
 
 cd ..

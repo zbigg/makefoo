@@ -144,6 +144,10 @@ endif
 endif
 endif
 
+$(1)_rpm_summary     = $$(call makefoo.choose3,$$($(1)_RPM_SUMMARY),$$($(1)_PACKAGE_SUMMARY),$(1) - no package summary)
+$(1)_rpm_description = $$(call makefoo.choose3,$$($(1)_RPM_DESCRIPTION),$$($(1)_PACKAGE_DESCRIPTION),$(1) - no package description)
+$(1)_rpm_licence     = $$(call makefoo.choose4,$$($(1)_RPM_LICENCE),$$($(1)_PACKAGE_LICENCE),$$(LICENCE),unknown licence)
+
 $(1)_rpm_release = $(RPM_RELEASE)
 $(1)_rpm_name    =  $(1)-$$($(1)_rpm_version)-$$($(1)_rpm_release).$$(RPM_ARCH)
 $(1)_rpm         := $$($(1)_builddir)/$$($(1)_rpm_name).rpm
@@ -166,7 +170,7 @@ $(1)_rpmbuild_flags = \
 	        --define "_topdir $$(abspath $$($(1)_rpmbuilddir))" \
 	        $(call rpmbuild_flags_compat,$$(abspath $$($(1)_rpmbuilddir)/BUILDROOT/$$($(1)_rpm_name)))
 	        
-$$($(1)_rpm): $(MAKEFOO_dir)/rpm-spec-template.in
+$$($(1)_rpm):
 	@mkdir -p $$($(1)_rpmbuilddir)/SOURCES $$($(1)_rpmbuilddir)/SPECS $$($(1)_rpmbuilddir)/BUILD $$($(1)_rpmbuilddir)/RPMS
 	    
 	$(COMMENT) "[$1] installing in staging area [$$($(1)_rpmbuilddir)/BUILDROOT/$$($(1)_rpm_name)]"
@@ -181,12 +185,23 @@ $$($(1)_rpm): $(MAKEFOO_dir)/rpm-spec-template.in
 		localstatedir=$(rpm_localstatedir) 
 	
 	$(COMMENT) "[$1] creating rpm spec file $$($(1)_spec)"
-	$(EXEC) sed -e s/@VERSION@/$$($(1)_rpm_version)/ \
-	    -e s/@RELEASE@/$$($(1)_rpm_release)/   \
-	    -e s/@COMPONENT@/$(1)/           \
-	    -e s/@PRODUCT@/$(PRODUCT)/       \
-	    $$(MAKEFOO_dir)/rpm-spec-template.in > $$($(1)_spec)
+	
+	$(EXEC) echo Summary: $$($(1)_rpm_summary)  > $$($(1)_spec)
+	$(EXEC) echo License: $$($(1)_rpm_licence) >> $$($(1)_spec)
+	$(EXEC) echo Name:    $(1)                 >> $$($(1)_spec)
+	$(EXEC) echo Version: $$($(1)_rpm_version) >> $$($(1)_spec)
+	$(EXEC) echo Release: $$($(1)_rpm_release) >> $$($(1)_spec)
+	$(EXEC) echo Group:   System Environment/Daemons >> $$($(1)_spec)
+	$(EXEC) echo %description >> $$($(1)_spec)
+	@$$(call makefoo.echo_many_lines,$$($(1)_rpm_description)) >> $$($(1)_spec) 
+	
+	$(EXEC) echo "%prep"    >> $$($(1)_spec)
+	$(EXEC) echo "%build"   >> $$($(1)_spec)
+	$(EXEC) echo "%install" >> $$($(1)_spec)
         
+	$(EXEC) echo "%files"                 >> $$($(1)_spec)
+	$(EXEC) echo "%defattr(-,root,root)"  >> $$($(1)_spec)
+	        
 	$(COMMENT) "[$1] listing files for rpm into $$($(1)_spec)"
 	$(EXEC) ( cd $$($(1)_rpmbuilddir)/BUILDROOT/$$($(1)_rpm_name) && find -type f | sed -e 's/^\.//' ) | tee -a $$($(1)_spec)
 	
