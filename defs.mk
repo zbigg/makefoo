@@ -94,7 +94,7 @@ makefoo.relativize = \
 	$(patsubst %, $($(1)_srcdir)/%, $(call makefoo.static_files,$(1), $(2))) \
 	$(call makefoo.generated_files,$(1),$(2))
 
-makefoo.static_files_rel = $(patsubst %, $($(1)_srcdir)/%, $(call makefoo.static_files_f,$(1), $(2)))
+makefoo.static_files_rel = $(patsubst %, $($(1)_srcdir)/%, $(call makefoo.static_files,$(1), $(2)))
 
 COMPONENTS_sorted = $(sort $(COMPONENTS) $(PUBLIC_COMPONENTS))
 
