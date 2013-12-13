@@ -11,23 +11,7 @@ include $(top_builddir)/makefoo_configured_defs.mk
 
 #USE_MAKEFOO_LOG=0
 
-ifdef USE_MAKEFOO_LOG
-LOG=$(MAKEFOO_dir)/log.sh $(1)
-endif
-
-ifeq ($(QUIET),1)
-VERBOSE=0
-endif
-
-ifeq ($(VERBOSE),1)
-COMMENT=@true
-COMMENT_SHELL=true
-EXEC=$(LOG)
-else
-COMMENT=@$(LOG) echo 
-COMMENT_SHELL=$(LOG) echo
-EXEC=@$(LOG)
-endif
+include $(MAKEFOO_dir)/log.mk
 
 #
 # the not-autoconf build dir and build options

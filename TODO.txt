@@ -7,7 +7,6 @@ done:
 priority:
     * allow shared objects
     * allow custom "common targets"
-    * dist-check
     * automake
 
 

@@ -34,6 +34,7 @@ makefoo_lib_FILES = \
         autoconf.mk \
         autoconf.reg.mk \
         defs.mk \
+        log.mk \
         main.mk \
 	debug.mk \
         native.mk \
@@ -44,7 +45,6 @@ makefoo_lib_FILES = \
 	autolib.pre.mk \
         rpm.mk \
 	rpm.reg.mk \
-        rpm-spec-template.in \
         install-fhs.mk \
         test-program.mk \
         test-program.reg.mk \
@@ -52,13 +52,14 @@ makefoo_lib_FILES = \
         src-dist.post.mk \
         cppcheck.mk \
         amalgamation.mk \
-        amalgamation.pre.mk
+        amalgamation.pre.mk \
+        int_helpers.mk
 
 makefoo_lib_SCRIPTS = \
         configure.sh \
         log.sh \
         autoconf_helpers/config.guess
-        
+
 makefoo_lib_INSTALL_DEST=$(datadir)/makefoo
 COMPONENTS += makefoo_lib
 
