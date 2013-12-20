@@ -65,7 +65,7 @@ endif
 define makefoo.install.tree
 $(EXEC) for FILE in $(4) ; do \
 	dir="$(DESTDIR)$(3)/`dirname $$FILE`" ; \
-	$(COMMENT_SHELL) [$(1)] install $(2) $(DESTDIR)$(3)/$$FILE ; \
+	$(COMMENT_SHELL) "[$(1)] install $(2) $(DESTDIR)$(3)/$$FILE" ; \
 	mkdir -p $$dir ; \
 	$(INSTALL.$(2))  $(5)/$$FILE "$$dir" ; done
 endef
@@ -74,7 +74,7 @@ define makefoo.install.flat
 $(EXEC) for FILE in $(4) ; do \
 	dir="$(DESTDIR)$(3)" ; \
 	file="$$(basename $$FILE)" ; \
-	$(COMMENT_SHELL) [$(1)] install $(2) $(DESTDIR)$(3)/$$file ; \
+	$(COMMENT_SHELL) "[$(1)] install $(2) $(DESTDIR)$(3)/$$file" ; \
 	mkdir -p $$dir ; \
 	$(INSTALL.$(2))  $(5)/$$FILE "$$dir" ; done
 endef
