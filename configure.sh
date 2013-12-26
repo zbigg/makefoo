@@ -93,12 +93,13 @@ esac
 #
 if [ -z "$TOOLSET" ] ; then
     case "${target_arch}" in
-        *msvc*|*msvs*)
-            default_TOOLSET=msvs
-            ;;
         *mingw*)
             default_TOOLSET=gcc
             ;;
+	*msvc*|*msvs*)
+            default_TOOLSET=msvs
+            ;;
+
         *)
             if [ -z "$TOOLSET" ] ; then
                 if exists_in_path cl ; then
