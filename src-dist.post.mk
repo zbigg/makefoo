@@ -26,19 +26,19 @@ define src_dist_component
 # $1 - component name
 
 ifdef $(1)_SOURCES
-src_dist_all_files += $$(patsubst %, $$($(1)_DIR)/%, $$($(1)_SOURCES))
+src_dist_all_files += $$(patsubst %, $$($(1)_DIR)/%, $$(call makefoo.static_files_rel,$(1),$$($(1)_SOURCES)))
 endif
 
 ifdef $(1)_FILES
-src_dist_all_files += $$(patsubst %, $$($(1)_DIR)/%, $$($(1)_FILES))
+src_dist_all_files += $$(patsubst %, $$($(1)_DIR)/%, $$(call makefoo.static_files_rel,$(1),$$($(1)_FILES)))
 endif
 
 ifdef $(1)_SCRIPTS
-src_dist_all_files += $$(patsubst %, $$($(1)_DIR)/%, $$($(1)_SCRIPTS))
+src_dist_all_files += $$(patsubst %, $$($(1)_DIR)/%, $$(call makefoo.static_files_rel,$(1),$$($(1)_SCRIPTS)))
 endif
 
 ifdef $(1)_EXTRA_DIST
-src_dist_all_files += $$(patsubst %, $$($(1)_DIR)/%, $$($(1)_EXTRA_DIST))
+src_dist_all_files += $$(patsubst %, $$($(1)_DIR)/%, $$(call makefoo.static_files_rel,$(1),$$($(1)_EXTRA_DIST)))
 endif
 
 endef
