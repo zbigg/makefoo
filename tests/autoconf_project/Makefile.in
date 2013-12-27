@@ -1,6 +1,7 @@
 srcdir = @srcdir@
 top_srcdir = @top_srcdir@
 datadir=@datadir@
+datarootdir=@datarootdir@
 
 top_builddir = .
 

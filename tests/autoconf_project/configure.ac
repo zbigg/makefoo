@@ -14,6 +14,6 @@ AC_PROG_CXX
 AC_PROG_CC
 AC_PROG_INSTALL
 AC_PROG_RANLIB
-AC_CONFIG_FILES([Makefile])
+AC_CONFIG_FILES([Makefile libbar-config libbar.pc])
 AC_OUTPUT
 
