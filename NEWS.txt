@@ -1,5 +1,8 @@
-YYYY-MM-DD, release 0.0.2
+2013-12-27, release 0.0.2
 
+    Many fixes, stabilization for OSX & Linux targets.
+
+    Highlights:
     * Makefile debug module added (show-defs and show-outputs targets)
     * makefoo.m4 downloads makefoo if needed (not yet ready)
     * GENERATED_FILES works for installed files
