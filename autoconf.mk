@@ -23,8 +23,8 @@ config.status : $(srcdir)/configure
 	$(EXEC) ./config.status --recheck 
 
 $(AUTOCONF_GENERATED_FILES): %: $(srcdir)/%.in config.status $(srcdir)/configure
-	$(COMMENT) recreating $@
-	$(EXEC) ./config.status --quiet --file=$@
+	$(COMMENT) recreating autoconf output $@
+	$(EXEC) ./config.status --quiet $@
 
 ifndef AUTOCONF_AUX_DIR
 AUTOCONF_AUX_DIR=.
