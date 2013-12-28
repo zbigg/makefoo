@@ -277,14 +277,15 @@ endif
 define program_template
 # 1 - component name
 
-$(1)_bin_outputs = $$($(1)_destdir)/$$($(1)_name)$(PROGRAM_SUFFIX)
+$(1)_program_output = $$($(1)_destdir)/$$($(1)_name)$(PROGRAM_SUFFIX)
+
 $(1)_ldflags = $$($(1)_LDFLAGS) \
 	$$(LDFLAGS) \
 	$$(sort $$($(1)_link_deps_link_dirs)) $$($(1)_link_deps_link_libs) \
 	$$($(1)_LIBS) \
 	$$(LIBS)
 
-$(1)_debug_vars += $(1)_bin_outputs
+$(1)_debug_vars += $(1)_program_output
 $(1)_debug_vars += $(1)_ldflags
 # link with CXX if there are any C++ sources in
 
@@ -295,22 +296,29 @@ $(1)_linker=$$(CC)
 endif
 $(1)_debug_vars += $(1)_linker
 
-$$($(1)_bin_outputs): $$($(1)_link_deps_targets)
-$$($(1)_bin_outputs): $$($(1)_objects)
+$$($(1)_program_output): $$($(1)_link_deps_targets)
+$$($(1)_program_output): $$($(1)_objects)
 	@mkdir -p $$($(1)_destdir)
 	$(COMMENT) [$1] linking program $$@ using $$($(1)_linker) 
 	$(EXEC) $$($(1)_linker) -o $$@ $$($(1)_objects) $$($(1)_ldflags)
 
-$(1)_outputs += $$($(1)_bin_outputs)
+$(1)_outputs += $$($(1)_program_output)
 endef
 
-PROGRAMS_sorted=$(sort $(PROGRAMS))
-NATIVE_COMPONENTS += $(PROGRAMS_sorted)
+define bin_program_template
+$(1)_bin_outputs = $$($(1)_program_output)
+endef
 
-$(foreach program,$(PROGRAMS_sorted),$(eval $(call c_template,$(program),PROGRAM,prog)))
-$(foreach program,$(PROGRAMS_sorted),$(eval $(call cpp_template,$(program),PROGRAM,prog)))
-$(foreach program,$(PROGRAMS_sorted),$(eval $(call link_deps,$(program),PROGRAM,prog)))
-$(foreach program,$(PROGRAMS_sorted),$(eval $(call program_template,$(program))))
+PROGRAMS_ALL_sorted=$(sort $(PROGRAMS) $(noinst_PROGRAMS))
+NATIVE_COMPONENTS += $(PROGRAMS_ALL_sorted)
+
+$(foreach program,$(PROGRAMS_ALL_sorted),$(eval $(call c_template,$(program),PROGRAM,prog)))
+$(foreach program,$(PROGRAMS_ALL_sorted),$(eval $(call cpp_template,$(program),PROGRAM,prog)))
+$(foreach program,$(PROGRAMS_ALL_sorted),$(eval $(call link_deps,$(program),PROGRAM,prog)))
+$(foreach program,$(PROGRAMS_ALL_sorted),$(eval $(call program_template,$(program))))
+
+PROGRAMS_bin_sorted=$(sort $(PROGRAMS))
+$(foreach program,$(PROGRAMS_bin_sorted),$(eval $(call bin_program_template,$(program))))
 
 define native_common
 # TBD: this is responsible for

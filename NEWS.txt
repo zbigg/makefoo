@@ -1,3 +1,8 @@
+XXXX-XX-XX, release 0.0.3
+    
+    Not releases yet ...
+    * don't install TEST_PROGRAMS 
+
 2013-12-27, release 0.0.2
 
     Many fixes, stabilization for OSX & Linux targets.

@@ -34,7 +34,7 @@ test_shortcut_COMPONENTS=$(sort $(COMPONENTS) $(PROGRAMS) $(STATIC_LIBRARIES) $(
 $(foreach component,$(test_shortcut_COMPONENTS) ,$(eval $(call test_shortcut_program_register_template,$(component))))
 
 TEST_PROGRAMS_sorted := $(sort $(TEST_PROGRAMS))
-PROGRAMS   += $(TEST_PROGRAMS_sorted)
+noinst_PROGRAMS   += $(TEST_PROGRAMS_sorted)
 COMPONENTS += $(TEST_PROGRAMS_sorted)
 
 # jedit: :tabSize=8:mode=makefile:
