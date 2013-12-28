@@ -23,7 +23,7 @@ INSTALL_DIR = mkdir -p
 all:
 
 check:
-	( cd tests ; ./test.sh)
+	( cd $(srcdir)/tests ; ./test.sh)
 
 #
 # makefoo lib > prefix/lib/makefoo
