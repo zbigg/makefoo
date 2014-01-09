@@ -56,7 +56,7 @@ include $(MAKEFOO_dir)/defs.mk
 include $(makefoo_main_includes)
 -include $(makefoo_post_includes)
 
-makefoo.build: $(DEFAULT_COMPONENTS)
+makefoo.build: $(all_outputs)
 build: makefoo.build
 
 makefoo.clean:

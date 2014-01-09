@@ -303,6 +303,7 @@ $$($(1)_program_output): $$($(1)_objects)
 	$(EXEC) $$($(1)_linker) -o $$@ $$($(1)_objects) $$($(1)_ldflags)
 
 $(1)_outputs += $$($(1)_program_output)
+
 endef
 
 define bin_program_template
@@ -321,10 +322,6 @@ PROGRAMS_bin_sorted=$(sort $(PROGRAMS))
 $(foreach program,$(PROGRAMS_bin_sorted),$(eval $(call bin_program_template,$(program))))
 
 define native_common
-# TBD: this is responsible for
-#  make: Circular tinfra_test_program <- tinfra_test_program dependency dropped.
-#
-$(1): $$($(1)_outputs)
 
 ifdef USE_D_FILES
 $(1)_d_files  = $$(patsubst %.o,%.d, $$($(1)_objects))
