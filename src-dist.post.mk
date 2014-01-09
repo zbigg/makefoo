@@ -59,9 +59,10 @@ makefoo_dist_files_abs += \
         $$(patsubst %, $$(MAKEFOO_dir)/%, $$($(1)_MAKEFOO_DIST)) 
 endef
 
+MAKEFOO_CORE_MODULES=main defs log debug int_helpers
 ifndef MAKEFOO_SRC_DIST_DONT_BUNDLE_MAKEFOO
 
-$(foreach makefoo_component, $(MAKEFOO_USE) main defs, $(eval $(call makefoo_component_files,$(makefoo_component))))
+$(foreach makefoo_component, $(MAKEFOO_USE) $(MAKEFOO_CORE_MODULES), $(eval $(call makefoo_component_files,$(makefoo_component))))
 
 makefoo_dist_files_rel = $(patsubst $(MAKEFOO_dir)/%,%, $(makefoo_dist_files_abs))
 
@@ -120,7 +121,7 @@ makefoo.distcheck: $(src_dist_tgz_name)
 	
 	$(COMMENT) "running autoconf & configuring if needed"
 	( cd $(makefoo_distcheck_dir)/$(src_dist_folder) ; [ -f configure.ac ] && autoreconf -v -i )	
-	( cd $(makefoo_distcheck_dir)/$(src_dist_folder) ; [ -f Makefile.in ] && ./configure )
+	( cd $(makefoo_distcheck_dir)/$(src_dist_folder) ; [ -f Makefile.in ] && ./configure --with-makefoo-dir=makefoo )
 
 	$(COMMENT) "invoking testing targets: $(makefoo.default_distcheck_targets) $(MAKEFOO_DISTCHECK_TARGETS)" ; \
 	$(MAKE) -C $(makefoo_distcheck_dir)/$(src_dist_folder) makefoo_distcheck_dir=$(abspath $(makefoo_distcheck_dir)) makefoo.distcheck.internal
