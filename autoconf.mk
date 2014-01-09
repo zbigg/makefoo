@@ -25,6 +25,7 @@ config.status : $(srcdir)/configure
 $(AUTOCONF_GENERATED_FILES): %: $(srcdir)/%.in config.status $(srcdir)/configure
 	$(COMMENT) recreating autoconf output $@
 	$(EXEC) ./config.status --quiet $@
+	@touch $@
 
 ifndef AUTOCONF_AUX_DIR
 AUTOCONF_AUX_DIR=.
