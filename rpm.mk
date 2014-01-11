@@ -2,9 +2,9 @@
 # rpm is created from package definitions
 #
 # example:
-# 
-#   foobar is application that consists of 4 components 
-#     - fooctl, 
+#
+#   foobar is application that consists of 4 components
+#     - fooctl,
 #     - food (daemon ;) )
 #     - libfoo, libfoospam
 #
@@ -44,7 +44,7 @@
 #   component specific release
 #   postun/post hooks
 #   custom spec file
-#  
+#
 
 # example of current package info. it is r
 # $ rpm -qpi simple_autoconf_project_rpm_build/ddd-dev-1.i386.rpm
@@ -58,7 +58,7 @@
 # Summary     : - ddd
 # Description :
 # @@DESCRIPTION@@
-# 
+#
 #  MUST define way to carry:
 #   description
 #   summary
@@ -135,7 +135,7 @@ define rpm_template
 ifdef $(1)_VERSION
 $(1)_rpm_version = $$($(1)_VERSION)
 else
-ifdef VERSION 
+ifdef VERSION
 $(1)_rpm_version = $$(VERSION)
 else
 ifneq ($(1),)
@@ -169,10 +169,10 @@ endif
 $(1)_rpmbuild_flags = \
 	        --define "_topdir $$(abspath $$($(1)_rpmbuilddir))" \
 	        $(call rpmbuild_flags_compat,$$(abspath $$($(1)_rpmbuilddir)/BUILDROOT/$$($(1)_rpm_name)))
-	        
+
 $$($(1)_rpm):
 	@mkdir -p $$($(1)_rpmbuilddir)/SOURCES $$($(1)_rpmbuilddir)/SPECS $$($(1)_rpmbuilddir)/BUILD $$($(1)_rpmbuilddir)/RPMS
-	    
+
 	$(COMMENT) "[$1] installing in staging area [$$($(1)_rpmbuilddir)/BUILDROOT/$$($(1)_rpm_name)]"
 	@rm -rf $$($(1)_rpmbuilddir)/BUILDROOT/
 	$(EXEC) $(MAKE) $$($(1)_install_targets) DESTDIR=$$($(1)_rpmbuilddir)/BUILDROOT/$$($(1)_rpm_name) \
@@ -182,10 +182,10 @@ $$($(1)_rpm):
 		libdir=$(rpm_libdir)           \
 		sysconfdir=$(rpm_sysconfdir)   \
 		datadir=$(rpm_datadir)         \
-		localstatedir=$(rpm_localstatedir) 
-	
+		localstatedir=$(rpm_localstatedir)
+
 	$(COMMENT) "[$1] creating rpm spec file $$($(1)_spec)"
-	
+
 	$(EXEC) echo Summary: $$($(1)_rpm_summary)  > $$($(1)_spec)
 	$(EXEC) echo License: $$($(1)_rpm_licence) >> $$($(1)_spec)
 	$(EXEC) echo Name:    $(1)                 >> $$($(1)_spec)
@@ -193,23 +193,23 @@ $$($(1)_rpm):
 	$(EXEC) echo Release: $$($(1)_rpm_release) >> $$($(1)_spec)
 	$(EXEC) echo Group:   System Environment/Daemons >> $$($(1)_spec)
 	$(EXEC) echo %description >> $$($(1)_spec)
-	@$$(call makefoo.echo_many_lines,$$($(1)_rpm_description)) >> $$($(1)_spec) 
-	
+	@$$(call makefoo.echo_many_lines,$$($(1)_rpm_description)) >> $$($(1)_spec)
+
 	$(EXEC) echo "%prep"    >> $$($(1)_spec)
 	$(EXEC) echo "%build"   >> $$($(1)_spec)
 	$(EXEC) echo "%install" >> $$($(1)_spec)
-        
+
 	$(EXEC) echo "%files"                 >> $$($(1)_spec)
 	$(EXEC) echo "%defattr(-,root,root)"  >> $$($(1)_spec)
-	        
+
 	$(COMMENT) "[$1] listing files for rpm into $$($(1)_spec)"
 	$(EXEC) ( cd $$($(1)_rpmbuilddir)/BUILDROOT/$$($(1)_rpm_name) && find -type f | sed -e 's/^\.//' ) | tee -a $$($(1)_spec)
-	
+
 	$(COMMENT) "[$1] creating rpm package $$($(1)_rpm)"
 	$(EXEC) rpmbuild $(RPMBUILD_FLAGS) $$($(1)_rpmbuild_flags) -bb $$($(1)_spec)
-	
+
 	$(EXEC) mv $$($(1)_rpmbuilddir)/RPMS/$(RPM_ARCH)/$$($(1)_rpm_name).rpm $$($(1)_rpm)
-	
+
 	@rm -rf $$($(1)_rpmbuilddir)
 
 $(1)_rpm: $$($(1)_rpm)
@@ -223,9 +223,6 @@ RPM_COMPONENTS_sorted := $(sort $(PACKAGES))
 $(foreach component,$(RPM_COMPONENTS_sorted),$(eval $(call rpm_template,$(component))))
 
 rpm: $(rpm_targets)
-
-# makefoo_amalgamation support:
-rpm_MAKEFOO_DIST=rpm-spec-template.in
 
 # jedit: :tabSize=8:mode=makefile:
 
