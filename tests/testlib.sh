@@ -85,7 +85,7 @@ sleep_hack()
 }
 if [ -z $MAKEFOO ] ; then
     MAKEFOO_dir=`pwd`/../
-    MAKEFOO=${MAKEFOO_dir}/main.mk  
+    MAKEFOO=${MAKEFOO_dir}/main.mk
 fi
 
 MAKEFOO_dir=`dirname $MAKEFOO`
