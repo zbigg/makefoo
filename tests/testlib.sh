@@ -31,7 +31,13 @@ show_file()
     egrep -H "^" $1
 }
 assert_grep() {
-    egrep -q "$@" || {
+    local grep="egrep"
+    if [ "$1" = -F ] ; then
+        shift
+        grep="grep -F"
+    fi
+    $grep -q "$@" || {
+        while [[ "$1" =~ "-*" ] ; do shift ; done
         secho "expected '$1' in '$2' not found"
         show_file $2
         exit 1
@@ -39,7 +45,13 @@ assert_grep() {
 }
 
 assert_grepv() {
-    egrep -qv "$@" || {
+    local grep="egrep"
+    if [ "$1" = -F ] ; then
+        shift
+        grep="grep -F"
+    fi
+    $grep -qv "$@" || {
+        while [[ "$1" =~ "-*" ] ; do shift ; done
         secho "not expected '$1' found in $2"
         show_file $2
         exit 1
