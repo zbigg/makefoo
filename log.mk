@@ -2,6 +2,10 @@
 # log.mk
 #
 
+help::
+	@echo "make VERBOSE=1            -- verbose mode - show all commands"
+	@echo "make QUIET=1              -- quiet mode   - show only descriptive summary (default)"
+
 ifdef USE_MAKEFOO_LOG
 LOG=$(MAKEFOO_dir)/log.sh $(1)
 endif

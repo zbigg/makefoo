@@ -12,7 +12,7 @@
 # creates $(PRODUCT)-$(VERSION).tar.gz containing bundled
 # source distribution in same layout as components in view
 #
-# input variables: 
+# input variables:
 #   PRODUCT - name of product, will name the archive
 #   VERSION - the version, preferred form 1.2.3-3
 #
@@ -20,10 +20,10 @@
 #   $(component)_FILES
 #   $(component)_SCRIPTS
 #   $(component)_EXTRA_DIST - bundle these files from $(top_srcdir)/$(component)_dir
-#   
+#
 #   EXTRA_DIST - bundle also these (remap to $(top_srcdir))
 #
-#   MAKEFOO_DISTCHECK_TARGETS 
+#   MAKEFOO_DISTCHECK_TARGETS
 #     these targets are executed when running distcheck targers
 #     NOTE: test and install are default distcheck targets if used
 #
@@ -35,6 +35,13 @@
 #
 # impl note: main implementation in src-dist.post.mk
 #
-#  
+#
 
+help::
+	@echo "-- source distribution --"
+	@echo "make src-dist          -- make source distribution ($(src_dist_tgz_name))"
+	@echo "make distcheck         -- check source distribution (configure, make, test, install)"
+	@echo
+
+# jedit: :tabSize=8:mode=makefile:
 

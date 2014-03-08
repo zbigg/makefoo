@@ -49,7 +49,15 @@ default: build
 include $(MAKEFOO_dir)/int_helpers.mk
 -include $(makefoo_reg_includes)
 
+help::
+	@echo "-- makefoo commons --"
+
 include $(MAKEFOO_dir)/defs.mk
+include $(MAKEFOO_dir)/debug.mk
+
+# help end common
+help::
+	@echo
 
 -include $(makefoo_pre_includes)
 
@@ -67,7 +75,6 @@ $(top_builddir)/makefoo_configured_defs.mk: $(MAKEFOO_dir)/configure.sh
 	@mkdir -p $(top_builddir)
 	MAKEFOO_dir=$(MAKEFOO_dir) $(MAKEFOO_dir)/configure.sh > $@
 
-include $(MAKEFOO_dir)/debug.mk
 
 ifndef MAKEFOO_USE_AUTOCONF
 

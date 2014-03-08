@@ -3,6 +3,16 @@
 #
 #
 
+help::
+	@echo "-- installation --"
+	@echo "make install                         -- install all in $(prefix)"
+	@echo "make <component>-install             -- install only <component>"
+	@echo "make install DESTDIR=<folder>        -- install into staging root (instead of /)"
+	@echo "installable components:"
+	@echo "  $(INSTALLABLE_sorted)"
+	@echo
+
+
 ifndef INSTALL
 INSTALL     := install
 endif

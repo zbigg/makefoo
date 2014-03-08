@@ -69,6 +69,12 @@
 #   rpm-group
 #
 # (before freezing, consult also deb list of major important fields in package)
+
+help::
+	@echo "-- rpm packaging --"
+	@echo "make rpm          -- make source distribution ($(rpm_targets))"
+	@echo
+
 ifeq ($(RELEASE),)
 RPM_RELEASE=1
 else

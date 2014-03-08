@@ -10,6 +10,10 @@
 #  xxx-show-outputs
 #  xxx-show-defs
 
+help::
+	@echo "make show NAME=variable   -- show value of variable"
+	@echo "make show-outputs         -- show key outputs variables"
+	@echo "make show-defs            -- show all keyvariables"
 
 show:
 	@echo $($(NAME))

@@ -2,6 +2,14 @@
 # C/C++ test program execution and LCOV based coverage test reports
 #
 
+
+help::
+	@echo "-- C/C++ testing --"
+	@echo "make test                 -- run all test programs"
+	@echo "make coverage-test        -- ... and show coverage summary (require scoverage test information)"
+	@echo "make coverage-test-report -- ... and generate coverage report in (coverage-test-report) (^^)"
+	@echo
+
 ifdef VERBOSE
 LCOV_QUIET=
 else

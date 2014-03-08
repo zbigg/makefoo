@@ -27,6 +27,12 @@
 #  - be quiet, show only results 
 #
 
+
+help::
+	@echo "-- cppcheck --"
+	@echo "make cppcheck          -- invoke cppcheck on C/C++ sources"
+	@echo
+
 ifndef MAKEFOO_CPPCHECK_FLAGS 
 MAKEFOO_CPPCHECK_FLAGS=--quiet --enable=all --template gcc
 endif

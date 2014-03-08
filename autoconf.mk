@@ -11,8 +11,6 @@
 #
 #
 
-MAKEFOO_USE_AUTOCONF:=1
-
 
 $(srcdir)/configure: $(srcdir)/configure.ac
 	$(COMMENT) recreating configure

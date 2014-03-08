@@ -1,5 +1,28 @@
+#
+# C/C++ programs & libraries compilation & linking
+#
 
-# product/system defs
+help::
+	@echo "-- building C/C++ components --"
+	@echo "make <component>           -- build component"
+	@echo "make <component>-clean     -- clean component"
+	@echo "native components:"
+	@echo "  programs:  $(PROGRAMS_ALL_sorted)"
+	@echo "  libraries: $(sort $(STATIC_LIBRARIES_sorted) $(SHARED_LIBRARIES_sorted))"
+	@echo
+	@echo "make PROFILE=1  -- enable profiling information in build"
+	@echo "make COVERAGE=1 -- enable coverage test information in build"
+
+ifndef MAKEFOO_USE_AUTOCONF
+# these doesn't make sense in case of autoconf build
+# in this case, one shall pass CXXFLAGS/LDFLAGS to configure
+help::
+	@echo "make BUILD_TYPE=debug      -- build without optimization"
+	@echo "make BUILD_TYPE=<anything> -- build with optimization (default)"
+endif
+
+help::
+	@echo
 
 ifeq ($(BUILD_TYPE),debug)
 build_type_CXXFLAGS = -g -O0
@@ -10,6 +33,7 @@ build_type_CXXFLAGS = -g -O2
 build_type_CFLAGS   = -g -O2
 build_type_LDFLAGS  = -g
 endif
+
 
 ifeq ($(COVERAGE),1)
 features_CXXFLAGS += -fprofile-arcs -ftest-coverage
