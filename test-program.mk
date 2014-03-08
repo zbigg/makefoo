@@ -1,5 +1,5 @@
 #
-# test
+# C/C++ test program execution and LCOV based coverage test reports
 #
 
 ifdef VERBOSE
@@ -39,24 +39,32 @@ $(1)-test: $$($(1)_outputs)
 	$(COMMENT) "[$(1)] running test program: $$($(1)_test_executable)"
 	$(EXEC) cd $$($(1)_testdir) && $(LD_LIBRARY_PATH_ENV_NAME)="$$($(1)_LD_LIBRARY_PATH)" $$(TEST_RUNNER) $$($(1)_test_executable) $$($(1)_TEST_INVOKE_ARGS)
 
-$(1)_coverage_test_result := $$($(1)_builddir)/coverage-test-result.lcov
-$(1)-coverage-test: $$($(1)_outputs)
+$(1)_coverage_test_result := $$($(1)_builddir)/.$(1)-coverage-test-result.lcov
+
+$$($(1)_coverage_test_result): $$($(1)_outputs)
 	@mkdir -p $$($(1)_testdir)
 	$(EXEC) lcov $(LCOV_QUIET) --directory $$($(1)_tested_component_builddir) --zerocounters
-	
+
 	$(COMMENT) "[$(1)] running test program: $$($(1)_test_executable)"
 	$(EXEC) cd $$($(1)_testdir) && $(LD_LIBRARY_PATH_ENV_NAME)="$$($(1)_LD_LIBRARY_PATH)" $$($(1)_test_executable) $$($(1)_TEST_INVOKE_ARGS)
-	
-	$(COMMENT) "[$(1)] analyzing coverage test results"
-	$(EXEC) lcov $(LCOV_QUIET) --test-name=$(1) --directory $$($(1)_tested_component_builddir) -b . --capture --output-file $$($(1)_coverage_test_result)
-	$(EXEC) lcov $(LCOV_QUIET) --extract $$($(1)_coverage_test_result) $$($(1)_tested_component_sources) -o $$($(1)_coverage_test_result)
-	$(EXEC) lcov $(LCOV_QUIET) --list $$($(1)_coverage_test_result)
 
+	$(COMMENT) "[$(1)] analyzing coverage test results"
+	$(EXEC) lcov $(LCOV_QUIET) --test-name=$(1) --directory $$($(1)_tested_component_builddir) -b . --capture --output-file $$@
+	$(EXEC) lcov $(LCOV_QUIET) --extract $$($(1)_coverage_test_result) $$($(1)_tested_component_sources) -o $$@
+
+$(1)-coverage-test: $$($(1)_coverage_test_result)
+	$(EXEC) lcov $(LCOV_QUIET) --list $$<
+
+
+gcda_files += $$(patsubst %.o,%.gcda,$$($(1)_objects))
+gcno_files += $$(patsubst %.o,%.gcno,$$($(1)_objects))
 
 coverage_trace_files += $$($(1)_coverage_test_result)
 test: $(1)-test
 coverage-test: $(1)-coverage-test
 endef
+
+$(foreach test_program,$(TEST_PROGRAMS_sorted),$(eval $(call test_program_template,$(test_program))))
 
 #
 # TBD, this shall be reverse!
@@ -65,18 +73,28 @@ endef
 #
 makefoo.test: test
 
-coverage-test-report: coverage-test
+coverage-test-report: coverage-test-report/index.html
+
+coverage-test-report/index.html: $(coverage_trace_files)
 	$(COMMENT) generating coverage test report in 'coverage-test-report'
 	$(EXEC) genhtml -o coverage-test-report $(coverage_trace_files)
 
+# clean integration
+clean: clean-coverage-test-reports
+
+clean-coverage-test-reports:
+	rm -rf $(gcno_files)
+	rm -rf $(gcda_files)
+	rm -rf coverage-test-report $(coverage_trace_files)
+
 TEST_PROGRAMS_sorted := $(sort $(TEST_PROGRAMS))
 
-$(foreach test_program,$(TEST_PROGRAMS_sorted),$(eval $(call test_program_template,$(test_program))))
 
 #
 # distcheck integration (src-dist.post.mk)
 #
 makefoo.default_distcheck_targets += makefoo.test
+
 
 # jedit: :tabSize=8:mode=makefile:
 
