@@ -279,9 +279,9 @@ case "${target_arch}" in
         SHARED_LIBRARY_MODEL=so
         
         if [ -n "$TARGET_X86_64" ] ; then
-            RPM_ARCH=i386
-        else
             RPM_ARCH=x86_64
+        else
+            RPM_ARCH=i386
         fi
         ;;
     *darwin*|*Darwin*)
