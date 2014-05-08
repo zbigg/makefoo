@@ -30,6 +30,9 @@ autoreconf -f -i
 header "configure"
 ./configure
 
+header "configure.sh (makefoo internal)"
+
+./configure.sh > makefoo_configured_defs.mk
 source makefoo_configured_defs.mk
 
 #header "make"
