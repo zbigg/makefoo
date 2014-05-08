@@ -25,7 +25,7 @@ header()
 set -e
 
 header "autoreconf"
-autoreconf -f
+autoreconf -f -i
 
 header "configure"
 ./configure
