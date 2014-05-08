@@ -24,15 +24,8 @@ header()
 
 set -e
 
-header "makefoo"
-if [ ! -d makefoo-master ] ; then
-    git clone https://github.com/zbigg/makefoo.git makefoo-master
-else
-    ( cd makefoo-master; git pull )
-fi
-
-header "aclocal"
-aclocal -I makefoo-master
+header "autoreconf"
+autoreconf -f
 
 header "configure"
 ./configure
