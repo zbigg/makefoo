@@ -121,8 +121,8 @@ makefoo.distcheck: $(src_dist_tgz_name)
 	( cd $(makefoo_distcheck_dir) ; tar zxf ../$(src_dist_tgz_name) )
 	
 	$(COMMENT) "running autoconf & configuring if needed"
-	( cd $(makefoo_distcheck_dir)/$(src_dist_folder) ; [ -f configure.ac ] && autoreconf -v -i )	
-	( cd $(makefoo_distcheck_dir)/$(src_dist_folder) ; [ -f Makefile.in ] && ./configure --with-makefoo-dir=makefoo )
+	( cd $(makefoo_distcheck_dir)/$(src_dist_folder) ; if  [ ! -f configure -a -f configure.ac ] ; then autoreconf -v -i ; fi )
+	( cd $(makefoo_distcheck_dir)/$(src_dist_folder) ; [ -f Makefile.in ] && [ -f configure ]    && ./configure --with-makefoo-dir=makefoo )
 
 	$(COMMENT) "invoking testing targets: $(makefoo.default_distcheck_targets) $(MAKEFOO_DISTCHECK_TARGETS)" ; \
 	$(MAKE) -C $(makefoo_distcheck_dir)/$(src_dist_folder) makefoo_distcheck_dir=$(abspath $(makefoo_distcheck_dir)) makefoo.distcheck.internal
