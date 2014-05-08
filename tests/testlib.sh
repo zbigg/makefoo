@@ -37,7 +37,7 @@ assert_grep() {
         grep="grep -F"
     fi
     $grep -q "$@" || {
-        while [[ "$1" =~ "-*" ] ; do shift ; done
+        while [[ "$1" =~ "-*" ]] ; do shift ; done
         secho "expected '$1' in '$2' not found"
         show_file $2
         exit 1
@@ -51,7 +51,7 @@ assert_grepv() {
         grep="grep -F"
     fi
     $grep -qv "$@" || {
-        while [[ "$1" =~ "-*" ] ; do shift ; done
+        while [[ "$1" =~ "-*" ]] ; do shift ; done
         secho "not expected '$1' found in $2"
         show_file $2
         exit 1
