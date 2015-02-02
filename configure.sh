@@ -124,12 +124,6 @@ fi
 #
 if [ -z "$TOOLSET" ] ; then
     case "${target_arch}" in
-        *x86_64-w64-mingw32*)
-            found TOOLSET=mingw64 "because target_arch looks like MinGW 64"
-            ;;
-        *i*86*-mingw32)
-            found TOOLSET=mingw32 "because target_arch looks like MinGW 32"
-            ;;
 	*msvc*|*msvs*|w32|w64)
             found TOOLSET=msvs "because target_arch looks like W32/W64 and is not MinGW"
             ;;
@@ -297,14 +291,17 @@ case "${target_arch}" in
         SHARED_LIBRARY_EXT=so
         SHARED_LIBRARY_MODEL=so
         ;;
-    *msvc*|*msvs|*mingw*)
+    *mingw*)
         TARGET_W32=1
+        IMPORT_LIBRARY_EXT=dll.a
+        TARGET_SHARED_LIBRARY_LDFLAGS="-Wl,--enable-auto-import"
 
-        if [ -n "$COMPILER_GCC" ] ; then
-            # mingw
-            IMPORT_LIBRARY_EXT=dll.a
-            TARGET_SHARED_LIBRARY_LDFLAGS="-Wl,--enable-auto-import"
-        fi
+        SHARED_LIBRARY_EXT=dll
+        SHARED_LIBRARY_MODEL=dll
+        EXECUTABLE_EXT=exe
+        ;;
+    *msvc*|*msvs)
+        IMPORT_LIBRARY_EXT=lib
 
         SHARED_LIBRARY_EXT=dll
         SHARED_LIBRARY_MODEL=dll
