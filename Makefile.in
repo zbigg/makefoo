@@ -67,7 +67,7 @@ COMPONENTS += makefoo_lib
 # makefoo documentation > docdir (prefix/share/doc/makefoo)
 #
 makefoo_doc_DIR=.
-makefoo_doc_FILES = MANUAL.txt README.txt
+makefoo_doc_FILES = MANUAL.txt README.md
 makefoo_doc_INSTALL_DEST=$(docdir)/makefoo
 COMPONENTS += makefoo_doc
 
