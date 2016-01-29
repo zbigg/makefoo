@@ -1,10 +1,11 @@
-2014-XX-XX, release 0.0.3
-    
+2016-01-29, release 0.0.3
+
     Bugfixing release:
 
     * don't install TEST_PROGRAMS if not specified directly (noinst_PROGRAMS added)
     * fix spurious autoconf regeneration (always recreating config.h)
     * src-dist: fixed bundling of makefoo
+    * make help added to most of targets
 
 2013-12-27, release 0.0.2
 
