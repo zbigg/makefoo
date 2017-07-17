@@ -39,9 +39,9 @@ exists_in_path()
 
 found()
 {
-    eval "$1"
-    if [ -n "$2" ] ; then
-        echo "$PNAME: found $1 ($2)" >&2
+    eval "$1='$2'"
+    if [ -n "$3" ] ; then
+        echo "$PNAME: found $1 ($3)" >&2
     else
         echo "$PNAME: found $1" >&2
     fi
@@ -78,12 +78,12 @@ if [ -z "$target_arch" ] ; then
     if [ -n "${CC}" ] ; then
         r=`target_arch_from_compiler "$CC"`
         if [ -n "$r" ] ; then
-            found target_arch=$r "because CC=$CC looks like cross compiler to $r"
+            found target_arch "$r" "because CC=$CC looks like cross compiler to $r"
         fi
     elif [ -n "${CXX}" ] ; then
         r=`target_arch_from_compiler "$CXX"`
         if [ -n "$r" ] ; then
-            found target_arch=$r "because CXX=$CXX looks like cross compiler to $r"
+            found target_arch "$r" "because CXX=$CXX looks like cross compiler to $r"
         fi
     fi
 fi
@@ -94,13 +94,13 @@ fi
 if [ -z "$TOOLSET" -a -n "${CC}" ] ; then
     case "${CC}" in
         *cl|*cl.exe)
-            found TOOLSET=msvs "because CC=$CC looks like Microsoft Visual Studio C++ compiler"
+            found TOOLSET msvs "because CC=$CC looks like Microsoft Visual Studio C++ compiler"
             ;;
         *gcc)
-            found TOOLSET=gcc "because CC=$CC looks like GNU GCC"
+            found TOOLSET gcc "because CC=$CC looks like GNU GCC"
             ;;
         *clang*)
-            found TOOLSET=clang "because CC=$CC looks like LLVM CLang"
+            found TOOLSET clang "because CC=$CC looks like LLVM CLang"
             ;;
     esac
 fi
@@ -108,13 +108,13 @@ fi
 if [ -z "$TOOLSET" -a -n "${CXX}" ] ; then
     case "${CC}" in
         *cl|*cl.exe)
-            found TOOLSET=msvs "because CXX=$CXX looks like Microsoft Visual Studio C++ compiler"
+            found TOOLSET msvs "because CXX=$CXX looks like Microsoft Visual Studio C++ compiler"
             ;;
         *gcc|*g++)
-            found TOOLSET=gcc "because CXX=$CXX looks like GNU GCC"
+            found TOOLSET gcc "because CXX=$CXX looks like GNU GCC"
             ;;
         *clang*)
-            found TOOLSET=clang "because CX=$CXX looks like LLVM CLang"
+            found TOOLSET clang "because CX=$CXX looks like LLVM CLang"
             ;;
     esac
 fi
@@ -125,7 +125,7 @@ fi
 if [ -z "$TOOLSET" ] ; then
     case "${target_arch}" in
 	*msvc*|*msvs*|w32|w64)
-            found TOOLSET=msvs "because target_arch looks like W32/W64 and is not MinGW"
+            found TOOLSET msvs "because target_arch looks like W32/W64 and is not MinGW"
             ;;
     esac
 fi
@@ -135,11 +135,11 @@ fi
 #
 if [ -z "$TOOLSET" ] ; then
     if exists_in_path cl ; then
-        found TOOLSET=msvs "because cl (MSVS C++ compiler) is found in PATH"
+        found TOOLSET msvs "because cl (MSVS C++ compiler) is found in PATH"
     elif exists_in_path gcc ; then
-        found TOOLSET=gcc "because gcc was found in PATH"
+        found TOOLSET gcc "because gcc was found in PATH"
     elif exists_in_path clang ; then
-        found TOOLSET=clang "because clang was found in PATH"
+        found TOOLSET clang "because clang was found in PATH"
     elif exists_in_path cc ; then
         TOOLSET=unix "because generic 'cc' was found in PAth"
     else
@@ -206,13 +206,13 @@ target_arch=${target_arch-$build_arch}
 #
 if [ "$COMPILER_GCC" ] ; then
     if   [ -n "$CC" -a -z "$CXX" ] ; then
-        found CXX="${CC/-gcc/-g++}" "because user defined CC=$CC"
+        found CXX "${CC/-gcc/-g++}" "because user defined CC=$CC"
     elif [ -n "$CC" -a -z "$CXX" ] ; then
-        found CXX="${CC/-g++/-gcc}" "because user defined CXX=$CXX"
+        found CXX "${CC/-g++/-gcc}" "because user defined CXX=$CXX"
     fi
 
     if [ "$target_arch" != "$build_arch" ] ; then
-        found cross_compiler_prefix="${target_arch}-" "because we're cross compiling using gcc to $target_arch"
+        found cross_compiler_prefix "${target_arch}-" "because we're cross compiling using gcc to $target_arch"
     fi
     if [ -z "$CC" ] ; then
         CC="${cross_compiler_prefix}gcc"
@@ -224,8 +224,8 @@ if [ "$COMPILER_GCC" ] ; then
     STATIC_LIBRARY_EXT=a
     OBJECT_EXT=o
 
-    found TOOLSET_CC="${CC-gcc}"
-    found TOOLSET_CXX="${CXX-g++}"
+    found TOOLSET_CC "${CC-gcc}"
+    found TOOLSET_CXX "${CXX-g++}"
 fi
 
 #
@@ -233,13 +233,13 @@ fi
 # 
 if [ "$COMPILER_CLANG" ] ; then
     if   [ -n "$CC" -a -z "$CXX" ] ; then
-        found CXX="${CC/clang/clang++}" "because user defined CC=$CC"
+        found CXX "${CC/clang/clang++}" "because user defined CC=$CC"
     elif [ -n "$CC" -a -z "$CXX" ] ; then
-        found CXX="${CC/clang++/clang}" "because user defined CXX=$CXX"
+        found CXX "${CC/clang++/clang}" "because user defined CXX=$CXX"
     fi
 
-    found TOOLSET_CC="${CC-clang}"
-    found TOOLSET_CXX="${CXX-clang++}"
+    found TOOLSET_CC "${CC-clang}"
+    found TOOLSET_CXX "${CXX-clang++}"
 fi
 
 #
